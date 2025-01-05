@@ -64,8 +64,9 @@ public class g {
    * 
    */
   public static class ROBOT {
-    public static Drivetrain drive = new Drivetrain();
+    
     public static Pigeon2 gyro = new Pigeon2(g.CAN_IDS_CANIVORE.PIGEON2, g.CAN_IDS_CANIVORE.NAME);
+    
     public static volatile double angleActual_deg;
     public static volatile Rotation2d angleActual_Rot2d = new Rotation2d();
     public static volatile double angleTarget_deg;
@@ -79,6 +80,7 @@ public class g {
     public static final long ODOMETRY_RATE_ms = 5;
 
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
+    public static Drivetrain drive = new Drivetrain();
   }
   /** This is one place to store all the devices that are on the RoboRIO CAN bus.
    *  The RoboRIO CAN bus runs at a rate slower that the CANIvore bus.
@@ -97,7 +99,7 @@ public class g {
 
     public static final String NAME = "CANivore";
     public static final int PIGEON2 = 5;
-    public static final double UPDATE_FREQ_hz = 250;
+    public static final double UPDATE_FREQ_hz = 100;
     
   }
   /** CV contains the data for Conversion Variables. 

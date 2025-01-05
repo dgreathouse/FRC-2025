@@ -44,7 +44,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         22,
         true,
         2,
-        0.4304,
+        0.425,
         g.CHASSIS.BACK_RIGHT_SWERVE_X_POSITION_m,
         g.CHASSIS.BACK_RIGHT_SWERVE_Y_POSITION_m);
     g.SWERVE.modules[1] = new SwerveModule(
@@ -54,7 +54,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         23,
         true,
         3,
-        -0.1567,
+        -0.160,
         g.CHASSIS.BACK_LEFT_SWERVE_X_POSITION_m,
         g.CHASSIS.BACK_LEFT_SWERVE_Y_POSITION_m);
     g.SWERVE.modules[2] = new SwerveModule(
@@ -64,7 +64,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         21,
         true,
         1,
-        0.04785,
+        0.0344,
         g.CHASSIS.FRONT_SWERVE_X_POSITION_m,
         g.CHASSIS.FRONT_SWERVE_Y_POSITION_m);
     if (g.SWERVE.COUNT == 4) {
@@ -246,8 +246,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
+    
   }
-
   private void updatePositions() {
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
@@ -267,7 +267,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         updatePositions();
         m_yaw = g.ROBOT.gyro.getYaw();
         m_angularVelocityZ = g.ROBOT.gyro.getAngularVelocityZDevice();
-        g.ROBOT.angleActual_deg = g.SIM.IS_GYRO_DISABLED ? 0.0 : StatusSignal.getLatencyCompensatedValueAsDouble(m_yaw, m_angularVelocityZ);
+        g.ROBOT.angleActual_deg = m_yaw.getValueAsDouble();//StatusSignal.getLatencyCompensatedValueAsDouble(m_yaw, m_angularVelocityZ);
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
         g.ROBOT.pose2d = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
