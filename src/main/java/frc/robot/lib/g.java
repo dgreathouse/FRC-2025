@@ -220,6 +220,15 @@ public class g {
     public static volatile double speedMultiplier = 1.0;
   }
 
+  public static class ALGAE {
+    
+  }
+  public static class CORAL {
+
+  }
+  public static class LIFT {
+
+  }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;
   }
