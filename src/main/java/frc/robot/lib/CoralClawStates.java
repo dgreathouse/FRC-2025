@@ -5,13 +5,7 @@
 package frc.robot.lib;
 
 /** Add your docs here. */
-public enum CoralStates {
-    STATION,
-    L1,
-    L2,
-    L3,
-    L4,
-    FLOOR_VERTICAL,
-    FLOOR_HORIZONTAL
-
+public enum CoralClawStates {
+    OPEN,
+    CLOSED
 }

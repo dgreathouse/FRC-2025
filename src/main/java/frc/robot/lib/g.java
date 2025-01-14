@@ -11,11 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.AlgaeArm;
-import frc.robot.subsystems.CoralArm;
-import frc.robot.subsystems.CoralIntake;
+import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ScissorLift;
+import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.SwerveModule;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,10 +90,9 @@ public class g {
 
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
     public static Drivetrain drive = new Drivetrain();
-    public static AlgaeArm algaeArm = new AlgaeArm();
-    public static CoralArm coralArm = new CoralArm();
-    public static CoralIntake coralIntake = new CoralIntake();
-    public static ScissorLift scissorLift = new ScissorLift();
+    public static Algae algaeArm = new Algae();
+    public static Coral coralIntake = new Coral();
+    public static Lift scissorLift = new Lift();
 
   }
   /** This is one place to store all the devices that are on the RoboRIO CAN bus.
@@ -241,13 +239,15 @@ public class g {
   }
 
   public static class ALGAE {
-    public static AlgaePositionStates state = AlgaePositionStates.START;
+    public static AlgaeAngleStates angleState = AlgaeAngleStates.START;
+    public static volatile AlgaeIntakeStates intakeState = AlgaeIntakeStates.OFF;
   }
   public static class CORAL {
-
+    public static volatile CoralArmStates clawArmAngleState = CoralArmStates.STATION;
+    public static volatile CoralClawStates clawState = CoralClawStates.OPEN;
   }
   public static class LIFT {
-
+    public static LiftStates state = LiftStates.START;
   }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;
