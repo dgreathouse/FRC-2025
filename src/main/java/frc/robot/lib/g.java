@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -63,6 +64,9 @@ import java.util.List;
  * deg,rad,in,mm,m,sec,ft,rot degPsec, ftPsec, mPsec
  */
 public class g {
+  public static class MATCH {
+    public static Alliance alliance = Alliance.Blue;
+  }
   /** ROBOT class contains the static data associated with Robot.java
    *  The ROBOT represents the robot as a whole and not one subsystem.
    *  Therefore the ROBOT class holds data like the subsystem instances, gyro, field,

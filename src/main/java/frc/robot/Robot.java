@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -51,6 +52,7 @@ public class Robot extends TimedRobot {
     for (IUpdateDashboard updates : g.DASHBOARD.updates) {
       updates.updateDashboard();
     }
+    g.MATCH.alliance = DriverStation.getAlliance().get();
   }
 
   /** */
@@ -118,6 +120,8 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue( new InstantCommand( () -> { g.SWERVE.isEnabled = !g.SWERVE.isEnabled; }, g.ROBOT.drive));
     g.OI.DRIVER_DISABLE_YAW.onTrue(new InstantCommand(() -> {g.SIM.IS_GYRO_DISABLED = !g.SIM.IS_GYRO_DISABLED;}, g.ROBOT.drive));
 
+    //Button board
     g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() -> {g.ALGAE.state = AlgaePositionStates.BARGE;}, g.ROBOT.algaeArm));
+    
   }
 }
