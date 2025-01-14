@@ -5,10 +5,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.AlgaeArm;
+import frc.robot.subsystems.CoralArm;
+import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ScissorLift;
 import frc.robot.subsystems.SwerveModule;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +87,11 @@ public class g {
 
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
     public static Drivetrain drive = new Drivetrain();
+    public static AlgaeArm algaeArm = new AlgaeArm();
+    public static CoralArm coralArm = new CoralArm();
+    public static CoralIntake coralIntake = new CoralIntake();
+    public static ScissorLift scissorLift = new ScissorLift();
+
   }
   /** This is one place to store all the devices that are on the RoboRIO CAN bus.
    *  The RoboRIO CAN bus runs at a rate slower that the CANIvore bus.
@@ -133,6 +144,11 @@ public class g {
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;
     public static CommandPS5Controller operatorController = new CommandPS5Controller(OPERATOR_CONTROLLER_PORT);
+
+    // Button Board
+    public static final int BUTTON_BOARD_PORT = 2;
+    public static CommandJoystick buttonBoard = new CommandJoystick(BUTTON_BOARD_PORT);
+    public static Trigger BB_ALGAE_BARGE = buttonBoard.button(0);
   }
   /** DASHBOARD store data for the smartdashboard. The smartdashboard that we use for 2025 is Elastic   */
   public static class DASHBOARD {
@@ -221,7 +237,7 @@ public class g {
   }
 
   public static class ALGAE {
-    
+    public static AlgaePositionStates state = AlgaePositionStates.START;
   }
   public static class CORAL {
 

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
 import frc.robot.commandGroups.AutoDriveRotateTest;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
+import frc.robot.lib.AlgaePositionStates;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.g;
@@ -116,5 +117,7 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_MODE_SPEED_LOW.onTrue( new InstantCommand( () -> { g.DRIVETRAIN.speedMultiplier = 0.5; }, g.ROBOT.drive));
     g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue( new InstantCommand( () -> { g.SWERVE.isEnabled = !g.SWERVE.isEnabled; }, g.ROBOT.drive));
     g.OI.DRIVER_DISABLE_YAW.onTrue(new InstantCommand(() -> {g.SIM.IS_GYRO_DISABLED = !g.SIM.IS_GYRO_DISABLED;}, g.ROBOT.drive));
+
+    g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() -> {g.ALGAE.state = AlgaePositionStates.BARGE;}, g.ROBOT.algaeArm));
   }
 }
