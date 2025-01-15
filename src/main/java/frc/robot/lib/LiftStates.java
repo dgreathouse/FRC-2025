@@ -6,18 +6,20 @@ package frc.robot.lib;
 
 /** Add your docs here. */
 public enum LiftStates {
-    ALGAE_PARGE,
+    ALGAE_BARGE,
     ALGAE_HIGH,
     ALGAE_LOW,
     ALGAE_PROCESSOR,
     ALGAE_FLOOR,
 
-    CORAL_STATION,
-    CORAL_L1,
-    CORAL_L2,
-    CORAL_L3,
     CORAL_L4,
-    CORAL_FLOOR,
+    CORAL_L3,
+    CORAL_L2,
+    CORAL_L1,
+    CORAL_FLOOR_VERT,
+    CORAL_FLOOR_HORZ,
+    CORAL_START,
 
-    START,
+    START_CORAL,
+    START_ALGAE
 }

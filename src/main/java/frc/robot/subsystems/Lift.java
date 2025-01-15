@@ -18,6 +18,5 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
 
   @Override
   public void updateDashboard() {
-    SmartDashboard.putString("Lift/State", g.LIFT.state.toString());
   }
 }

@@ -19,7 +19,6 @@ public class Algae extends SubsystemBase implements IUpdateDashboard{
 
   @Override
   public void updateDashboard() {
-    SmartDashboard.putString("Algaw/Algae Arm State", g.ALGAE.angleState.toString());
     SmartDashboard.putString("Algaw/Algae Intake State", g.ALGAE.intakeState.toString());
 
   }

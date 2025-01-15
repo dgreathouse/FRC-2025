@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -94,6 +93,9 @@ public class g {
     public static Coral coralIntake = new Coral();
     public static Lift scissorLift = new Lift();
 
+    public static RobotAlignStates alignmentState = RobotAlignStates.FRONT;
+    public static boolean mechanismReset = false;
+
   }
   /** This is one place to store all the devices that are on the RoboRIO CAN bus.
    *  The RoboRIO CAN bus runs at a rate slower that the CANIvore bus.
@@ -150,7 +152,36 @@ public class g {
     // Button Board
     public static final int BUTTON_BOARD_PORT = 2;
     public static CommandJoystick buttonBoard = new CommandJoystick(BUTTON_BOARD_PORT);
-    public static Trigger BB_ALGAE_BARGE = buttonBoard.button(0);
+
+    public static final Trigger BB_ALGAE_BARGE = buttonBoard.button(0);
+    public static final Trigger BB_ALGAE_HI = buttonBoard.button(1);
+    public static final Trigger BB_ALGAE_LOW = buttonBoard.button(2);
+    public static final Trigger BB_ALGAE_PROCESSOR = buttonBoard.button(3);
+    public static final Trigger BB_ALGAE_FLOOR = buttonBoard.button(4);
+    public static final Trigger BB_ALGAE_START = buttonBoard.button(4);
+
+    public static final Trigger BB_CORAL_L4 = buttonBoard.button(5);
+    public static final Trigger BB_CORAL_L3 = buttonBoard.button(6);
+    public static final Trigger BB_CORAL_L2 = buttonBoard.button(7);
+    public static final Trigger BB_CORAL_L1 = buttonBoard.button(8);
+    public static final Trigger BB_CORAL_FLOOR_VERT = buttonBoard.button(9);
+    public static final Trigger BB_CORAL_FLOOR_HORZ = buttonBoard.button(10);
+    public static final Trigger BB_CORAL_START = buttonBoard.button(11);
+
+    public static final Trigger BB_ROBOT_BACK = buttonBoard.button(12);
+    public static final Trigger BB_ROBOT_FRONT = buttonBoard.button(13);
+    public static final Trigger BB_ROBOT_RIGHT = buttonBoard.button(14);
+    public static final Trigger BB_ROBOT_LEFT = buttonBoard.button(15);
+    public static final Trigger BB_ROBOT_BACK_RIGHT = buttonBoard.button(16);
+    public static final Trigger BB_ROBOT_BACK_LEFT = buttonBoard.button(17);
+    public static final Trigger BB_ROBOT_FRONT_RIGHT = buttonBoard.button(18);
+    public static final Trigger BB_ROBOT_FRONT_LEFT = buttonBoard.button(19);
+    public static final Trigger BB_ROBOT_STATION_RIGHT = buttonBoard.button(20);
+    public static final Trigger BB_ROBOT_STATION_LEFT = buttonBoard.button(21);
+
+    public static final Trigger BB_APRIL_RIGHT = buttonBoard.button(22);
+    public static final Trigger BB_APRIL_LEFT = buttonBoard.button(22);
+    public static final Trigger BB_APRIL_CENTER = buttonBoard.button(24);
   }
   /** DASHBOARD store data for the smartdashboard. The smartdashboard that we use for 2025 is Elastic   */
   public static class DASHBOARD {
@@ -239,15 +270,12 @@ public class g {
   }
 
   public static class ALGAE {
-    public static AlgaeAngleStates angleState = AlgaeAngleStates.START;
     public static volatile AlgaeIntakeStates intakeState = AlgaeIntakeStates.OFF;
   }
   public static class CORAL {
-    public static volatile CoralArmStates clawArmAngleState = CoralArmStates.STATION;
     public static volatile CoralClawStates clawState = CoralClawStates.OPEN;
   }
   public static class LIFT {
-    public static LiftStates state = LiftStates.START;
   }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;

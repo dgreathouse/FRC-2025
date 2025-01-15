@@ -17,7 +17,6 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   }
   @Override
   public void updateDashboard() {
-    SmartDashboard.putString("Coral/Coral Arm State", g.CORAL.clawArmAngleState.toString());
     SmartDashboard.putString("Coral/Coral Claw State", g.CORAL.clawState.toString());
   }
 }

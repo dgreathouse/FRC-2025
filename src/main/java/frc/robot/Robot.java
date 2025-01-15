@@ -11,9 +11,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
 import frc.robot.commandGroups.AutoDriveRotateTest;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
-import frc.robot.lib.AlgaeAngleStates;
+
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
+import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
@@ -121,7 +122,12 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_DISABLE_YAW.onTrue(new InstantCommand(() -> {g.SIM.IS_GYRO_DISABLED = !g.SIM.IS_GYRO_DISABLED;}, g.ROBOT.drive));
 
     //Button board
-    g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() -> {g.ALGAE.angleState = AlgaeAngleStates.BARGE;}, g.ROBOT.algaeArm));
-    
+
+  
+
+
+
+
+
   }
 }
