@@ -89,9 +89,9 @@ public class g {
 
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
     public static Drivetrain drive = new Drivetrain();
-    public static Algae algaeArm = new Algae();
-    public static Coral coralIntake = new Coral();
-    public static Lift scissorLift = new Lift();
+    public static Algae algae = new Algae();
+    public static Coral coral = new Coral();
+    public static Lift lift = new Lift();
 
     public static RobotAlignStates alignmentState = RobotAlignStates.FRONT;
     public static boolean mechanismReset = false;
@@ -158,6 +158,7 @@ public class g {
     public static final Trigger BB_ALGAE_LOW = buttonBoard.button(2);
     public static final Trigger BB_ALGAE_PROCESSOR = buttonBoard.button(3);
     public static final Trigger BB_ALGAE_FLOOR = buttonBoard.button(4);
+    public static final Trigger BB_ALGAE_FLORAL = buttonBoard.button(4);
     public static final Trigger BB_ALGAE_START = buttonBoard.button(4);
 
     public static final Trigger BB_CORAL_L4 = buttonBoard.button(5);
@@ -270,12 +271,17 @@ public class g {
   }
 
   public static class ALGAE {
+    public static volatile AlgaeArmState armState = AlgaeArmState.START;
     public static volatile AlgaeIntakeStates intakeState = AlgaeIntakeStates.OFF;
   }
   public static class CORAL {
+    public static volatile CoralArmState armState = CoralArmState.START;
     public static volatile CoralClawStates clawState = CoralClawStates.OPEN;
   }
   public static class LIFT {
+  }
+  public static class VISION {
+    public static volatile AprilTagButtonState buttonState = AprilTagButtonState.CENTER;
   }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;

@@ -5,12 +5,8 @@
 package frc.robot.lib;
 
 /** Add your docs here. */
-public enum AlgaeArmState {
-    BARGE,
-    HIGH,
-    LOW,
-    PROCESSOR,
-    FLOOR,
-    FLORAL,
-    START
+public enum AprilTagButtonState {
+    LEFT,
+    CENTER,
+    RIGHT
 }
