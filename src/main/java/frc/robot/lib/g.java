@@ -282,6 +282,12 @@ public class g {
   }
   public static class VISION {
     public static volatile AprilTagButtonState buttonState = AprilTagButtonState.CENTER;
+    public static volatile int aprilTagIDRequested = 0;
+    public static volatile double aprilTagAngle_deg = 0;
+    public static volatile double aprilTagDistance_m = 0;
+    public static volatile boolean aprilTagIsFound = false;
+
+
   }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;

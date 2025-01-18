@@ -17,6 +17,7 @@ import frc.robot.lib.CoralArmState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
+import frc.robot.lib.VisionProcessor;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
@@ -25,6 +26,7 @@ public class Robot extends TimedRobot {
   private Notifier m_telemetry = new Notifier(this::updateDashboard);
 
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
+  VisionProcessor m_vision = new VisionProcessor();
 
   /**
    * This function is run when the robot is first started up and should be used for any
