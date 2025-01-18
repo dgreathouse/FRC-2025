@@ -1,11 +1,13 @@
 package frc.robot.defaultCommands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.lib.g;
 
-public class CoralArmDefaultCommand extends Command {
-  /** Creates a new CoralArmDefaultCommand. */
-  public CoralArmDefaultCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
+public class CoralDefaultCommand extends Command {
+  /** Creates a new CoralIntakeDefaultCommand. */
+  public CoralDefaultCommand() {
+    addRequirements(g.ROBOT.coral);
   }
 
   // Called when the command is initially scheduled.
@@ -14,7 +16,10 @@ public class CoralArmDefaultCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    int val = (int)SmartDashboard.getNumber("Servo", 2500);
+    g.ROBOT.coral.setServo(val);
+  }
 
   // Called once the command ends or is interrupted.
   @Override

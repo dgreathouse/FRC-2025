@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
 import frc.robot.commandGroups.AutoDriveRotateTest;
+import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.lib.AlgaeArmState;
 import frc.robot.lib.AprilTagButtonState;
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
   private Notifier m_telemetry = new Notifier(this::updateDashboard);
 
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
+  private CoralDefaultCommand m_coralDefaultCommand = new CoralDefaultCommand();
   VisionProcessor m_vision = new VisionProcessor();
 
   /**
