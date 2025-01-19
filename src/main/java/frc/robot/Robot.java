@@ -18,7 +18,6 @@ import frc.robot.lib.CoralArmState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
-import frc.robot.lib.VisionProcessor;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
