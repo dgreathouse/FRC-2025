@@ -77,7 +77,7 @@ public class g {
     
     public static volatile double angleActual_deg;
     public static volatile Rotation2d angleActual_Rot2d = new Rotation2d();
-    public static volatile double angleTarget_deg;
+    public static volatile double angleRobotTarget_deg;
     public static volatile double angleDriveTarget_deg;
     public static volatile double speedDriveTarget_mPsec;
     public static volatile Pose2d pose2d = new Pose2d();
@@ -88,11 +88,14 @@ public class g {
     public static final long ODOMETRY_RATE_ms = 5;
 
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
+    
+    public static VisionProcessor vision = new VisionProcessor();
+    
     public static Drivetrain drive = new Drivetrain();
     public static Algae algae = new Algae();
     public static Coral coral = new Coral();
     public static Lift lift = new Lift();
-
+    
     public static RobotAlignStates alignmentState = RobotAlignStates.FRONT;
     public static boolean mechanismReset = false;
 
@@ -153,7 +156,7 @@ public class g {
     public static final int BUTTON_BOARD_PORT = 2;
     public static CommandJoystick buttonBoard = new CommandJoystick(BUTTON_BOARD_PORT);
 
-    public static final Trigger BB_ALGAE_BARGE = buttonBoard.button(0);
+    public static final Trigger BB_ALGAE_BARGE = buttonBoard.button(1);
     public static final Trigger BB_ALGAE_HI = buttonBoard.button(1);
     public static final Trigger BB_ALGAE_LOW = buttonBoard.button(2);
     public static final Trigger BB_ALGAE_PROCESSOR = buttonBoard.button(3);
@@ -180,9 +183,12 @@ public class g {
     public static final Trigger BB_ROBOT_STATION_RIGHT = buttonBoard.button(20);
     public static final Trigger BB_ROBOT_STATION_LEFT = buttonBoard.button(21);
 
-    public static final Trigger BB_APRIL_RIGHT = buttonBoard.button(22);
-    public static final Trigger BB_APRIL_LEFT = buttonBoard.button(22);
-    public static final Trigger BB_APRIL_CENTER = buttonBoard.button(24);
+    public static final int BB_APRIL_LEFT_ID = 22;
+    public static final int BB_APRIL_RIGHT_ID = 23;
+    public static final int BB_APRIL_CENTER_ID = 24;
+    public static final Trigger BB_APRIL_RIGHT = buttonBoard.button(BB_APRIL_LEFT_ID);
+    public static final Trigger BB_APRIL_LEFT = buttonBoard.button(BB_APRIL_RIGHT_ID);
+    public static final Trigger BB_APRIL_CENTER = buttonBoard.button(BB_APRIL_CENTER_ID);
   }
   /** DASHBOARD store data for the smartdashboard. The smartdashboard that we use for 2025 is Elastic   */
   public static class DASHBOARD {
@@ -281,13 +287,12 @@ public class g {
   public static class LIFT {
   }
   public static class VISION {
-    public static volatile AprilTagButtonState buttonState = AprilTagButtonState.CENTER;
-    public static volatile int aprilTagIDRequested = 0;
+    public static volatile AprilTagButtonState aprilTagButtonState = AprilTagButtonState.CENTER;
+    public static volatile int aprilTagRequestedID = 0;
     public static volatile double aprilTagAngle_deg = 0;
     public static volatile double aprilTagDistance_m = 0;
-    public static volatile boolean aprilTagIsFound = false;
-
-
+    public static volatile boolean isAprilTagFound = false;
+    
   }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;

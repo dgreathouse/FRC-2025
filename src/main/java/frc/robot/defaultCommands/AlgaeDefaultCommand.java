@@ -2,9 +2,9 @@ package frc.robot.defaultCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class AlgaeArmDefaultCommand extends Command {
+public class AlgaeDefaultCommand extends Command {
   /** Creates a new AlgaeArmDefaultCommand. */
-  public AlgaeArmDefaultCommand() {
+  public AlgaeDefaultCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

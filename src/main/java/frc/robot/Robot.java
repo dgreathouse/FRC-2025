@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   private CoralDefaultCommand m_coralDefaultCommand = new CoralDefaultCommand();
-  VisionProcessor m_vision = new VisionProcessor();
+ 
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     // Set the default commands for the subsystems
     g.ROBOT.drive.setDefaultCommand(m_drivetrainDefaultCommand);
-
+    g.ROBOT.coral.setDefaultCommand(m_coralDefaultCommand);
     // Configure/Map all the controller buttons to commands
     configureBindings();
 
@@ -134,6 +134,12 @@ public class Robot extends TimedRobot {
 
     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive ));
 
-    g.OI.BB_APRIL_CENTER.onTrue(new InstantCommand(() ->{ g.VISION.buttonState = AprilTagButtonState.CENTER; }, g.ROBOT.drive ));
+    g.OI.BB_APRIL_LEFT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.LEFT; }, g.ROBOT.drive));
+    g.OI.BB_APRIL_RIGHT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.RIGHT; }, g.ROBOT.drive));
+    g.OI.BB_APRIL_CENTER.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.CENTER; }, g.ROBOT.drive));
+
+    g.OI.BB_APRIL_LEFT.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
+    g.OI.BB_APRIL_RIGHT.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
+    g.OI.BB_APRIL_CENTER.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
   }
 }

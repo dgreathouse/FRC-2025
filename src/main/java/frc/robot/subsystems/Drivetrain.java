@@ -110,7 +110,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
-
+    
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
     setSwerveModules(states);
   }
@@ -167,6 +167,21 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _speed;
     driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg);
   }
+  /** This is a compensated AngleFieldCentric that takes the speed from the x,y and generates a new X,Y from driveAngle
+   * 
+   * @param _xSpeed The X speed in +/- 1.0
+   * @param _ySpeed The Y speed in +/- 1.0
+   * @param _robotAngle_deg The current robot angle 
+   * @param _targetAngle_deg The desired angle for the front of the robot to face.
+   * @param _driveAngle_deg The angle to drive the robot at on the field
+   */
+  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg){
+
+    double speed = Math.max(Math.abs(_xSpeed), Math.abs(_ySpeed));
+    double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * speed;
+    double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * speed;
+    driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg);
+  }
 
   /**
    * This is the final method of all drive methods that sends the array of 
@@ -184,7 +199,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _x The X value
    * @param _y The Y value
    */
-  public void setAngleTarget(double _x, double _y) {
+  public void setTargetRobotAngle(double _x, double _y) {
     double x = _x; // -g.OI.driverController.getRightX();
     double y = _y; // -g.OI.driverController.getRightY();
     double hyp = Math.hypot(x, y);
@@ -192,22 +207,22 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     if (Math.abs(hyp) > g.OI.ANGLE_TARGET_DEADBAND) {
       if (joystickAngle >= -22.5 && joystickAngle <= 22.5) { // North
-        g.ROBOT.angleTarget_deg = 0.0;
+        g.ROBOT.angleRobotTarget_deg = 0.0;
       } else if (joystickAngle >= -67.5 && joystickAngle < -22.5) { // North East
-        g.ROBOT.angleTarget_deg = -45.0;
+        g.ROBOT.angleRobotTarget_deg = -45.0;
       } else if (joystickAngle >= -112.5 && joystickAngle < -67.5) { // East
-        g.ROBOT.angleTarget_deg = -90.0;
+        g.ROBOT.angleRobotTarget_deg = -90.0;
       } else if (joystickAngle >= -157.5 && joystickAngle < -112.5) { // South East
-        g.ROBOT.angleTarget_deg = -135.0;
+        g.ROBOT.angleRobotTarget_deg = -135.0;
       } else if ((joystickAngle >= 157.5 && joystickAngle <= 180.0)
           || (joystickAngle <= -157.5 && joystickAngle > -179.99)) { // South
-        g.ROBOT.angleTarget_deg = 180.0;
+        g.ROBOT.angleRobotTarget_deg = 180.0;
       } else if (joystickAngle <= 67.5 && joystickAngle > 22.5) { // North West
-        g.ROBOT.angleTarget_deg = 45.0;
+        g.ROBOT.angleRobotTarget_deg = 45.0;
       } else if (joystickAngle <= 112.5 && joystickAngle > 67.5) { // West
-        g.ROBOT.angleTarget_deg = 90.0;
+        g.ROBOT.angleRobotTarget_deg = 90.0;
       } else if (joystickAngle <= 157.5 && joystickAngle > 112.5) { // South West
-        g.ROBOT.angleTarget_deg = 135.0;
+        g.ROBOT.angleRobotTarget_deg = 135.0;
       }
     }
   }
@@ -220,7 +235,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    *                   AngleFieldCentric Mode.
    */
   public void setAngleTarget(double _angle_deg) {
-    g.ROBOT.angleTarget_deg = _angle_deg;
+    g.ROBOT.angleRobotTarget_deg = _angle_deg;
   }
 
     /**
@@ -244,7 +259,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     }
     SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
-    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleTarget_deg);
+    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
     
   }
@@ -272,6 +287,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.pose2d = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
         g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
+        g.ROBOT.vision.setAprilTagData();
         try {
           Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
         } catch (InterruptedException e) {

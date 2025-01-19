@@ -26,7 +26,7 @@ public class AutoRotateToAngle extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    g.ROBOT.angleTarget_deg = m_angleDesired_deg;
+    g.ROBOT.angleRobotTarget_deg = m_angleDesired_deg;
     m_timer = new Timer();
     m_timer.restart();
   }

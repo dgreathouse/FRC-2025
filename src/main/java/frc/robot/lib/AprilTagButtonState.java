@@ -8,5 +8,6 @@ package frc.robot.lib;
 public enum AprilTagButtonState {
     LEFT,
     CENTER,
-    RIGHT
+    RIGHT,
+    NONE
 }
