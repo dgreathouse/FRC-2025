@@ -3,6 +3,7 @@ package frc.robot.lib;
 import static edu.wpi.first.units.Units.Meter;
 import java.util.List;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -45,19 +46,19 @@ public class VisionProcessor implements IUpdateDashboard{
                 camera = m_rightCamera;
                 break;
         }
-        var results = camera.getAllUnreadResults();
+        List<PhotonPipelineResult> results = camera.getAllUnreadResults();
         g.VISION.isAprilTagFound = false;
         if(!results.isEmpty()){
-            var result = results.get(results.size() -1);
+            PhotonPipelineResult result = results.get(results.size() -1);
             if (result.hasTargets()){
-                for (var target: result.getTargets()){
+                for (PhotonTrackedTarget target: result.getTargets()){
+                    g.VISION.aprilTagAngle_deg = getYawFromCamera(target.getYaw());
+                    double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
+                    double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
+                    g.VISION.aprilTagDistance_m = Math.sqrt(a*a + b*b);
+                    g.VISION.isAprilTagFound = false;
                     if(target.getFiducialId() == getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get())){
                         g.VISION.isAprilTagFound = true;
-                        g.VISION.aprilTagAngle_deg = getYawFromCamera(target.getYaw());
-                        
-                        double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
-                        double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
-                        g.VISION.aprilTagDistance_m = Math.sqrt(a*a + b*b);
                     }
                 }
             }

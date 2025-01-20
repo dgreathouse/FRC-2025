@@ -12,9 +12,6 @@ import frc.robot.commandGroups.AutoDoNothing;
 import frc.robot.commandGroups.AutoDriveRotateTest;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
-import frc.robot.lib.AlgaeArmState;
-import frc.robot.lib.AprilTagButtonState;
-import frc.robot.lib.CoralArmState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
@@ -117,6 +114,7 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void configureBindings() {
+    // Driver controls
     g.OI.DRIVER_RESET_YAW.onTrue( new InstantCommand(() -> g.ROBOT.drive.resetYaw(0.0), g.ROBOT.drive));
     g.OI.DRIVER_MODE_ANGLEFIELDCENTRIC.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.driveMode = DriveMode.ANGLE_FIELD_CENTRIC;}, g.ROBOT.drive));
     g.OI.DRIVER_MODE_FIELDCENTRIC.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.driveMode = DriveMode.FIELD_CENTRIC; }, g.ROBOT.drive));
@@ -124,21 +122,26 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_MODE_SPEED_HI.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.speedMultiplier = 1.0; }, g.ROBOT.drive));
     g.OI.DRIVER_MODE_SPEED_LOW.onTrue( new InstantCommand( () -> { g.DRIVETRAIN.speedMultiplier = 0.5; }, g.ROBOT.drive));
     g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue( new InstantCommand( () -> { g.SWERVE.isEnabled = !g.SWERVE.isEnabled; }, g.ROBOT.drive));
-    g.OI.DRIVER_DISABLE_YAW.onTrue(new InstantCommand(() -> {g.SIM.IS_GYRO_DISABLED = !g.SIM.IS_GYRO_DISABLED;}, g.ROBOT.drive));
+    g.OI.DRIVER_DISABLE_YAW.onTrue(new InstantCommand(() -> { g.SIM.IS_GYRO_DISABLED = !g.SIM.IS_GYRO_DISABLED; }, g.ROBOT.drive));
 
+    // Test driver controls
+    g.OI.DRIVER_TEST_BB_FRONT.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.FRONT; }, g.ROBOT.drive));
+    g.OI.DRIVER_TEST_BB_BACK.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive));
+
+    
     //Button board
-    g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
+    // g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
   
-    g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L4; }, g.ROBOT.coral ));
+    // g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L4; }, g.ROBOT.coral ));
 
-    g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive ));
+    // g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive ));
 
-    g.OI.BB_APRIL_LEFT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.LEFT; }, g.ROBOT.drive));
-    g.OI.BB_APRIL_RIGHT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.RIGHT; }, g.ROBOT.drive));
-    g.OI.BB_APRIL_CENTER.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.CENTER; }, g.ROBOT.drive));
+    // g.OI.BB_APRIL_LEFT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.LEFT; }, g.ROBOT.drive));
+    // g.OI.BB_APRIL_RIGHT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.RIGHT; }, g.ROBOT.drive));
+    // g.OI.BB_APRIL_CENTER.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.CENTER; }, g.ROBOT.drive));
 
-    g.OI.BB_APRIL_LEFT.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
-    g.OI.BB_APRIL_RIGHT.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
-    g.OI.BB_APRIL_CENTER.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
+    // g.OI.BB_APRIL_LEFT.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
+    // g.OI.BB_APRIL_RIGHT.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
+    // g.OI.BB_APRIL_CENTER.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
   }
 }

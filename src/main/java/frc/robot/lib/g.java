@@ -147,6 +147,9 @@ public class g {
     public static final Trigger DRIVER_DISABLE_YAW = driverController.options();
 
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
+
+    public static final Trigger DRIVER_TEST_BB_BACK = driverController.triangle();
+    public static final Trigger DRIVER_TEST_BB_FRONT = driverController.cross();
     
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;
