@@ -1,11 +1,16 @@
 package frc.robot.lib;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -73,8 +78,10 @@ public class g {
    */
   public static class ROBOT {
     
-    public static Pigeon2 gyro = new Pigeon2(g.CAN_IDS_CANIVORE.PIGEON2, g.CAN_IDS_CANIVORE.NAME);
-    
+    public static final Pigeon2 gyro_pigeon2 = new Pigeon2(g.CAN_IDS_CANIVORE.PIGEON2, g.CAN_IDS_CANIVORE.NAME);
+    public static final AHRS gyro_navx = new AHRS(NavXComType.kMXP_SPI);
+    public static final PowerDistribution pd = new PowerDistribution(1, ModuleType.kRev);
+    public static volatile boolean isPrimaryGyroActive = true;
     public static volatile double angleActual_deg;
     public static volatile Rotation2d angleActual_Rot2d = new Rotation2d();
     public static volatile double angleRobotTarget_deg;
@@ -192,6 +199,9 @@ public class g {
     public static final Trigger BB_APRIL_RIGHT = buttonBoard.button(BB_APRIL_LEFT_ID);
     public static final Trigger BB_APRIL_LEFT = buttonBoard.button(BB_APRIL_RIGHT_ID);
     public static final Trigger BB_APRIL_CENTER = buttonBoard.button(BB_APRIL_CENTER_ID);
+
+    // Smartdashboard buttons that are on the screen
+    public static boolean isGyroPrimaryActive = true;
   }
   /** DASHBOARD store data for the smartdashboard. The smartdashboard that we use for 2025 is Elastic   */
   public static class DASHBOARD {

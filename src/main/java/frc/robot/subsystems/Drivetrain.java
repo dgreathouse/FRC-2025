@@ -22,8 +22,12 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private SwerveDriveKinematics m_kinematics;
   private SwerveDriveOdometry m_odometry;
   private OdometryThread m_odometryThread;
-  private StatusSignal<Angle> m_yaw;
-  private StatusSignal<AngularVelocity> m_angularVelocityZ;
+  private StatusSignal<Angle> m_yawStatusPrimary;
+  private StatusSignal<AngularVelocity> m_angularVelocityZStatusPrimary;
+  private double m_yawPrimary;
+  private double m_angularVelocityZPrimary;
+  private double m_yawSecondary = 0;
+  private double m_angularVelocityZSecondary = 0;
   // TODO: Tune KP,KI,KD max output should be +/-1 Start around 1/3.14 for Kp
   private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
 
@@ -32,10 +36,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   /** Creates a new Drivetrain. */
   @SuppressWarnings("unused")
   public Drivetrain() {
-    m_yaw = g.ROBOT.gyro.getYaw();
-    m_yaw.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
-    m_angularVelocityZ = g.ROBOT.gyro.getAngularVelocityZDevice();
-    m_angularVelocityZ.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
+    m_yawStatusPrimary = g.ROBOT.gyro_pigeon2.getYaw();
+    m_yawStatusPrimary.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
+    m_angularVelocityZStatusPrimary = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
+    m_angularVelocityZStatusPrimary.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
 
     g.SWERVE.modules[0] = new SwerveModule(
         "BR",
@@ -91,7 +95,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     m_odometryThread = new OdometryThread();
     m_odometryThread.start();
-
+    SmartDashboard.putBoolean("Robot/IsGyroPrimaryActive", true);
+    resetYaw(0);
     g.DASHBOARD.updates.add(this);
   }
 
@@ -248,7 +253,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
 
   public void resetYaw(double _angle) {
-    g.ROBOT.gyro.setYaw(_angle);
+    g.ROBOT.gyro_pigeon2.setYaw(_angle);
+    g.ROBOT.gyro_navx.reset();
   }
 
   public void updateDashboard() {
@@ -261,6 +267,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
+
+    SmartDashboard.putNumber("Robot/GyroPrimary_deg", m_yawPrimary);
+    SmartDashboard.putNumber("Robot/GyroSecondary_deg", m_yawSecondary);
+    SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());
+
+    // Get from Dashboard
+    g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
     
   }
   private void updatePositions() {
@@ -268,7 +281,12 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
     }
   }
-
+  public double getYaw(){
+    return g.ROBOT.isPrimaryGyroActive ? m_yawPrimary : m_yawSecondary;
+  }
+  public double getAngularVelocityZ(){
+    return g.ROBOT.isPrimaryGyroActive ? m_angularVelocityZPrimary : m_angularVelocityZSecondary;
+  }
   private class OdometryThread extends Thread {
     public OdometryThread() {
       super();
@@ -280,10 +298,17 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       while (true) {
         /* Now update odometry */
         updatePositions();
-        m_yaw = g.ROBOT.gyro.getYaw();
-        m_angularVelocityZ = g.ROBOT.gyro.getAngularVelocityZDevice();
-        g.ROBOT.angleActual_deg = m_yaw.getValueAsDouble();//StatusSignal.getLatencyCompensatedValueAsDouble(m_yaw, m_angularVelocityZ);
+        m_yawStatusPrimary = g.ROBOT.gyro_pigeon2.getYaw();
+        m_angularVelocityZStatusPrimary = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
+        m_yawPrimary = m_yawStatusPrimary.getValueAsDouble();
+        m_angularVelocityZPrimary = m_angularVelocityZStatusPrimary.getValueAsDouble();
+        
+        m_yawSecondary = -g.ROBOT.gyro_navx.getAngle();
+        m_angularVelocityZSecondary = -g.ROBOT.gyro_navx.getVelocityZ();
+
+        g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
+
         g.ROBOT.pose2d = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
         g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
