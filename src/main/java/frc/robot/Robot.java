@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -128,7 +129,8 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_TEST_BB_FRONT.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.FRONT; }, g.ROBOT.drive));
     g.OI.DRIVER_TEST_BB_BACK.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive));
 
-    
+    g.OI.DRIVER_TEST_COR_BACK.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.centerOfRotation_m = new Translation2d(-1.0,0.0);}, g.ROBOT.drive));
+    g.OI.DRIVER_TEST_COR_RESET.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.centerOfRotation_m = new Translation2d(0,0.0);}, g.ROBOT.drive));
     //Button board
     // g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
   

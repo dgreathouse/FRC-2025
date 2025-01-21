@@ -159,6 +159,9 @@ public class g {
     public static final Trigger DRIVER_TEST_BB_BACK = driverController.triangle();
     public static final Trigger DRIVER_TEST_BB_FRONT = driverController.cross();
     
+    public static final Trigger DRIVER_TEST_COR_RESET = driverController.circle();
+    public static final Trigger DRIVER_TEST_COR_BACK = driverController.square();
+    
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;
     public static CommandPS5Controller operatorController = new CommandPS5Controller(OPERATOR_CONTROLLER_PORT);
@@ -280,8 +283,8 @@ public class g {
   }
 
   public static class DRIVETRAIN {
-    public static final double TURN_KP = 1.0;
-    public static final double TURN_KI = 0.0;
+    public static final double TURN_KP = .45;
+    public static final double TURN_KI = 0.10;
     public static final double TURN_KD = 0.0;
     public static final double TURN_DEADBAND = 0.02;
     public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.125; // 5 inches

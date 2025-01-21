@@ -137,7 +137,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
 
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
-
+    SmartDashboard.putNumber("COR", _centerOfRotation_m.getX());
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
@@ -191,7 +191,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
 
   public void setSwerveModuleStates(ChassisSpeeds _speeds, Translation2d _centerOfRotation_m){
-    _centerOfRotation_m = _centerOfRotation_m == null ? _centerOfRotation_m : g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m;
+    //_centerOfRotation_m = _centerOfRotation_m == null ? g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m :_centerOfRotation_m  ;
 
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, _centerOfRotation_m);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));

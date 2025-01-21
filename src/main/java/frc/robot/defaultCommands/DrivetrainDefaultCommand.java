@@ -24,7 +24,12 @@ public class DrivetrainDefaultCommand extends Command {
   @Override
   public void execute() {
 
-    // get thumbstick values
+  
+    // kLeftX(0),
+    //kLeftY(1),
+    //kRightX(2),
+    //kRightY(5),
+
     double leftYRaw = -g.OI.driverController.getLeftX(); // 0
     double leftXRaw = -g.OI.driverController.getLeftY(); // 1
     double rightXRaw = -g.OI.driverController.getRightX(); // 2
@@ -53,7 +58,7 @@ public class DrivetrainDefaultCommand extends Command {
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:
-          g.ROBOT.drive.driveFieldCentric( leftXFiltered, leftYFiltered, rightXFiltered, g.ROBOT.angleActual_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+          g.ROBOT.drive.driveFieldCentric( leftXFiltered, leftYFiltered, rightXFiltered, g.ROBOT.angleActual_deg, g.DRIVETRAIN.centerOfRotation_m);
           break;
         case ANGLE_FIELD_CENTRIC:
           g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
