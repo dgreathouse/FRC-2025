@@ -25,10 +25,10 @@ public class DrivetrainDefaultCommand extends Command {
   public void execute() {
 
     // get thumbstick values
-    double leftYRaw = -g.OI.driverController.getLeftX();
-    double leftXRaw = -g.OI.driverController.getLeftY();
-    double rightXRaw = -g.OI.driverController.getRightX();
-    double rightYRaw = -g.OI.driverController.getRightY();
+    double leftYRaw = -g.OI.driverController.getLeftX(); // 0
+    double leftXRaw = -g.OI.driverController.getLeftY(); // 1
+    double rightXRaw = -g.OI.driverController.getRightX(); // 2
+    double rightYRaw = -g.OI.driverController.getRightY(); // 5
     
     if(!g.OI.driverControllerSignNegative){
       leftYRaw = -leftYRaw;
