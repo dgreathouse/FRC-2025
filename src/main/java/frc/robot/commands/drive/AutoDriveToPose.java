@@ -51,7 +51,7 @@ public class AutoDriveToPose extends Command {
     double speed =  m_drivePID.calculate(0,driveDistance_m);
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, -m_speed, m_speed);
-    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_desiredPose.getRotation().getDegrees(), driveAngle_deg);
+    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_desiredPose.getRotation().getDegrees(), driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
 
   }
   private double rampUpValue(double _val, double _rampTime_sec){   

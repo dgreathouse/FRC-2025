@@ -49,22 +49,22 @@ public class DrivetrainDefaultCommand extends Command {
     rightYFiltered = m_stickLimiterRY.calculate(rightYFiltered);
 
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
-      g.ROBOT.drive.driveAngleFieldCentric(leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.VISION.aprilTagAngle_deg);
+      g.ROBOT.drive.driveAngleFieldCentric(leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.VISION.aprilTagAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:
-          g.ROBOT.drive.driveFieldCentric( leftXFiltered, leftYFiltered, rightXFiltered, g.ROBOT.angleActual_deg);
+          g.ROBOT.drive.driveFieldCentric( leftXFiltered, leftYFiltered, rightXFiltered, g.ROBOT.angleActual_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case ANGLE_FIELD_CENTRIC:
           g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
-          g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg);
+          g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case POLAR_CENTRIC:
           // This mode is not used by the operator. It is intented for autonomous or teleOp commands. 
-          g.ROBOT.drive.drivePolarFieldCentric(g.ROBOT.speedDriveTarget_mPsec, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.ROBOT.angleDriveTarget_deg);
+          g.ROBOT.drive.drivePolarFieldCentric(g.ROBOT.speedDriveTarget_mPsec, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.ROBOT.angleDriveTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case ROBOT_CENTRIC:
-          g.ROBOT.drive.driveRobotCentric(leftXFiltered, leftYFiltered, rightXFiltered);
+          g.ROBOT.drive.driveRobotCentric(leftXFiltered, leftYFiltered, rightXFiltered, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case FAST_STOP:
           // g.ROBOT.drive.fastStop();

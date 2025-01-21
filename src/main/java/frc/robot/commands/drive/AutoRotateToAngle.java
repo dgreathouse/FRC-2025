@@ -1,5 +1,6 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -7,6 +8,7 @@ import frc.robot.lib.g;
 
 public class AutoRotateToAngle extends Command {
   double m_angleDesired_deg;
+  Translation2d m_centerOfRotation_m;
   double m_timeOut_sec;
   Timer m_timer;
 
@@ -17,9 +19,10 @@ public class AutoRotateToAngle extends Command {
    * @param _angle_deg
    * @param _timeOut_sec
    */
-  public AutoRotateToAngle(double _angle_deg, double _timeOut_sec) {
+  public AutoRotateToAngle(double _angle_deg, Translation2d _centerOfRotation_m, double _timeOut_sec) {
     addRequirements(g.ROBOT.drive);
     m_angleDesired_deg = _angle_deg;
+    m_centerOfRotation_m = _centerOfRotation_m;
     m_timeOut_sec = _timeOut_sec;
   }
 
@@ -35,7 +38,7 @@ public class AutoRotateToAngle extends Command {
   //   [ ] Turn goes both directions
   @Override
   public void execute() {
-    g.ROBOT.drive.driveAngleFieldCentric(0, 0, g.ROBOT.angleActual_deg, m_angleDesired_deg);
+    g.ROBOT.drive.driveAngleFieldCentric(0, 0, g.ROBOT.angleActual_deg, m_angleDesired_deg, m_centerOfRotation_m);
   }
 
   // Called once the command ends or is interrupted.

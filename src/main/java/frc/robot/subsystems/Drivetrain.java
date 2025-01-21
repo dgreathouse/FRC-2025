@@ -7,6 +7,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -110,37 +111,34 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
   /** Drive in old fashion mode. Forward on thumb stick makes the robot go forward with reference to the front of the robot.
    * 
-   * @param _xSpeed The X speed in +/- 1.0
-   * @param _ySpeed The Y speed in +/- 1.0
+   * @param _xSpeed The X speed in +/- 1.0 Forward +
+   * @param _ySpeed The Y speed in +/- 1.0 Left +
    * @param _rotate The rotational speed in +/- 1.0
    */
-  public void driveRobotCentric(double _xSpeed, double _ySpeed, double _rotate) {
+  public void driveRobotCentric(double _xSpeed, double _ySpeed, double _rotate, Translation2d _centerOfRotation_m) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
     
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
-    setSwerveModules(states);
+    setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
   /** Drive in field centric mode. Forward on thumb stick is always forward on field no matter what way the robot is facing
    * 
-   * @param _xSpeed The X speed in +/- 1.0
-   * @param _ySpeed The Y speed in +/- 1.0
+   * @param _xSpeed The X speed in +/- 1.0 Forward +
+   * @param _ySpeed The Y speed in +/- 1.0 Left +
    * @param _rotate The rotational speed in +/- 1.0
    * @param _robotAngle_deg The current robot angle 
    */
-  public void driveFieldCentric(double _xSpeed, double _ySpeed, double _rotate, double _robotAngle_deg) {
+  public void driveFieldCentric(double _xSpeed, double _ySpeed, double _rotate, double _robotAngle_deg, Translation2d _centerOfRotation_m) {
     
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
 
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
-    setSwerveModules(states);
+
+    setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
   /** Use the X and Y values that usually come from a joystick and drive with a robot target angle.
@@ -151,19 +149,16 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _robotAngle_deg The current robot angle 
    * @param _targetAngle_deg The desired angle for the front of the robot to face.
    */
-  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg) {
+  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, Translation2d _centerOfRotation_m) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-
     double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
     rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND);
-
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
+
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
 
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
-    setSwerveModules(states);
+    setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
   /** Get the X and Y values from the Drive Angle and call {@link #driveAngleFieldCentric(double, double, double, double)}
@@ -174,10 +169,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _driveAngle_deg The drive angle you want the robot to drive at
    * @param _targetAngle_deg The angle you want the robot front to point to.
    */
-  public void drivePolarFieldCentric(double _speed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg) {
+  public void drivePolarFieldCentric(double _speed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m) {
     double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _speed;
     double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _speed;
-    driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg);
+    driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg, _centerOfRotation_m);
   }
   /** This is a compensated AngleFieldCentric that takes the speed from the x,y and generates a new X,Y from driveAngle
    * 
@@ -187,24 +182,36 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _targetAngle_deg The desired angle for the front of the robot to face.
    * @param _driveAngle_deg The angle to drive the robot at on the field
    */
-  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg){
+  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m){
 
     double speed = Math.max(Math.abs(_xSpeed), Math.abs(_ySpeed));
     double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * speed;
     double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * speed;
-    driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg);
+    driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg, _centerOfRotation_m);
   }
 
-  /**
-   * This is the final method of all drive methods that sends the array of 
-   * Swerve Module angles and speeds to the SwerveModule classes
-   * @param _states
-   */
-  public void setSwerveModules(SwerveModuleState[] _states) {
+  public void setSwerveModuleStates(ChassisSpeeds _speeds, Translation2d _centerOfRotation_m){
+    _centerOfRotation_m = _centerOfRotation_m == null ? _centerOfRotation_m : g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m;
+
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, _centerOfRotation_m);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
+
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
-      g.SWERVE.modules[i].setDesiredState(_states[i]);
+      g.SWERVE.modules[i].setDesiredState(states[i]);
     }
   }
+
+
+  // /**
+  //  * This is the final method of all drive methods that sends the array of 
+  //  * Swerve Module angles and speeds to the SwerveModule classes
+  //  * @param _states
+  //  */
+  // public void setSwerveModules(SwerveModuleState[] _states) {
+  //   for (int i = 0; i < g.SWERVE.COUNT; i++) {
+  //     g.SWERVE.modules[i].setDesiredState(_states[i]);
+  //   }
+  // }
   /** Set the drive angle for AngleFieldCentric mode if the  
    * Hypotenus of the x,y is greater that a threashold
    * 
