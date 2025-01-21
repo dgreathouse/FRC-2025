@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -13,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.IUpdateDashboard;
@@ -117,6 +120,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
     
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
     setSwerveModules(states);
   }
 
@@ -135,6 +139,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
     setSwerveModules(states);
   }
 
@@ -155,7 +160,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
+
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
     setSwerveModules(states);
   }
 

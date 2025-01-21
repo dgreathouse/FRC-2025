@@ -2,9 +2,9 @@ package frc.robot.defaultCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class ScissorLiftDefaultCommand extends Command {
+public class LiftDefaultCommand extends Command {
   /** Creates a new ScissorLiftDefaultCommand. */
-  public ScissorLiftDefaultCommand() {
+  public LiftDefaultCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
