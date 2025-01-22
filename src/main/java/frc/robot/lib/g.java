@@ -104,7 +104,8 @@ public class g {
     public static Coral coral = new Coral();
     public static Lift lift = new Lift();
     
-    public static RobotAlignStates alignmentState = RobotAlignStates.FRONT;
+    public static RobotAlignStates alignmentState = RobotAlignStates.UNKNOWN;
+
     public static boolean mechanismReset = false;
 
   }
@@ -308,7 +309,7 @@ public class g {
   public static class LIFT {
   }
   public static class VISION {
-    public static volatile AprilTagButtonState aprilTagButtonState = AprilTagButtonState.CENTER;
+    public static volatile AprilTagAlignState aprilTagAlignState = AprilTagAlignState.CENTER;
     public static volatile int aprilTagRequestedID = 0;
     public static volatile double aprilTagAngle_deg = 0;
     public static volatile double aprilTagDistance_m = 0;

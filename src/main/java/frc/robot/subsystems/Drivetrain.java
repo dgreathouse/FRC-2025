@@ -113,6 +113,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _xSpeed The X speed in +/- 1.0 Forward +
    * @param _ySpeed The Y speed in +/- 1.0 Left +
    * @param _rotate The rotational speed in +/- 1.0
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
   public void driveRobotCentric(double _xSpeed, double _ySpeed, double _rotate, Translation2d _centerOfRotation_m) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
@@ -128,6 +129,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _ySpeed The Y speed in +/- 1.0 Left +
    * @param _rotate The rotational speed in +/- 1.0
    * @param _robotAngle_deg The current robot angle 
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
   public void driveFieldCentric(double _xSpeed, double _ySpeed, double _rotate, double _robotAngle_deg, Translation2d _centerOfRotation_m) {
     
@@ -147,6 +149,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _ySpeed The Y speed in +/- 1.0
    * @param _robotAngle_deg The current robot angle 
    * @param _targetAngle_deg The desired angle for the front of the robot to face.
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
   public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, Translation2d _centerOfRotation_m) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
@@ -165,8 +168,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * 
    * @param _speed The speed to drive at as +/- 1.0
    * @param _robotAngle_deg The angle of the robot which usually is g.ROBOT.angleActual_deg
-   * @param _driveAngle_deg The drive angle you want the robot to drive at
    * @param _targetAngle_deg The angle you want the robot front to point to.
+   * @param _driveAngle_deg The drive angle you want the robot to drive at
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
+  
    */
   public void drivePolarFieldCentric(double _speed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m) {
     double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _speed;
@@ -180,6 +185,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _robotAngle_deg The current robot angle 
    * @param _targetAngle_deg The desired angle for the front of the robot to face.
    * @param _driveAngle_deg The angle to drive the robot at on the field
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
   public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m){
 
@@ -190,7 +196,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
 
   public void setSwerveModuleStates(ChassisSpeeds _speeds, Translation2d _centerOfRotation_m){
-    //_centerOfRotation_m = _centerOfRotation_m == null ? g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m :_centerOfRotation_m  ;
+    _centerOfRotation_m = _centerOfRotation_m == null ? g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m : _centerOfRotation_m;
 
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, _centerOfRotation_m);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
@@ -325,7 +331,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.pose2d = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
         g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
-        g.ROBOT.vision.setAprilTagData();
+        g.ROBOT.vision.calculate();
         try {
           Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
         } catch (InterruptedException e) {

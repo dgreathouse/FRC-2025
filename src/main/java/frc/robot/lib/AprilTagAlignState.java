@@ -5,7 +5,7 @@
 package frc.robot.lib;
 
 /** Add your docs here. */
-public enum AprilTagButtonState {
+public enum AprilTagAlignState {
     LEFT,
     CENTER,
     RIGHT,

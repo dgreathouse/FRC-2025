@@ -29,7 +29,7 @@ public class VisionProcessor implements IUpdateDashboard{
     }
     public void setAprilTagData(){
         PhotonCamera camera = m_rightCamera;
-        switch (g.VISION.aprilTagButtonState) {
+        switch (g.VISION.aprilTagAlignState) {
             case CENTER:
                 camera = m_rightCamera;
                 break;
@@ -55,6 +55,7 @@ public class VisionProcessor implements IUpdateDashboard{
                     g.VISION.aprilTagAngle_deg = getYawFromCamera(target.getYaw());
                     double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
                     double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
+                    // TODO: since a pose is bumper distance away. The distance should subtract the bumber distance and camaera distance
                     g.VISION.aprilTagDistance_m = Math.sqrt(a*a + b*b);
                     g.VISION.isAprilTagFound = false;
                     if(target.getFiducialId() == getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get())){
@@ -64,11 +65,12 @@ public class VisionProcessor implements IUpdateDashboard{
             }
         }
     }
+
     private double getYawFromCamera(double _yaw){
         // Determine which camera is being used.
         // 
         double rtn = _yaw;
-        switch (g.VISION.aprilTagButtonState) {
+        switch (g.VISION.aprilTagAlignState) {
             case CENTER:
                 // TODO: adjust the yaw to compensate for the use of the right camera
                 rtn = _yaw;
@@ -83,54 +85,63 @@ public class VisionProcessor implements IUpdateDashboard{
         return rtn;
     }
     public boolean getIsAutoAprilTagActive(){
-        if(g.VISION.aprilTagButtonState != AprilTagButtonState.NONE && g.VISION.isAprilTagFound){
+        if(g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.VISION.isAprilTagFound){
             return true;
         }
         return false;
     }
+    
+    public static int getAprilTagID(){
+        return getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
+    }
 
-    // TODO: Finish adding logic for all apriltags
-    private static int getAprilTagID(RobotAlignStates _alignState, Alliance _alliance){
+    public static int getAprilTagID(RobotAlignStates _alignState, Alliance _alliance) {
         int rtn = 0; // 0 is an invalid ID
-        switch(_alignState){
+        switch (_alignState) {
             case BACK:
-                // The long if/else approach
-                if(_alliance == Alliance.Blue){
-                    rtn = 21;
-                }else {
-                    rtn = 10;
-                }
-                // Exactly the same but on one line
-                if(_alliance == Alliance.Blue){ rtn = 21; }else { rtn = 10; }
-                // Shorthand if/else
                 rtn = _alliance == Alliance.Blue ? 21 : 10;
                 break;
             case BACK_LEFT:
+                rtn = _alliance == Alliance.Blue ? 20 : 11;
                 break;
             case BACK_RIGHT:
+                rtn = _alliance == Alliance.Blue ? 22 : 9;
                 break;
             case FRONT:
+                rtn = _alliance == Alliance.Blue ? 18 : 7;
                 break;
             case FRONT_LEFT:
+                rtn = _alliance == Alliance.Blue ? 19 : 6;
                 break;
             case FRONT_RIGHT:
+                rtn = _alliance == Alliance.Blue ? 17 : 8;
                 break;
             case LEFT:
+                rtn = _alliance == Alliance.Blue ? 3 : 16;
                 break;
             case RIGHT:
+                rtn = _alliance == Alliance.Blue ? 16 : 3;
                 break;
             case STATION_LEFT:
+                rtn = _alliance == Alliance.Blue ? 13 : 1;
                 break;
             case STATION_RIGHT:
+                rtn = _alliance == Alliance.Blue ? 12 : 2;
+                break;
+            case UNKNOWN:
+                rtn = 0;
                 break;
             default:
+                rtn = 0;
                 break;
-            
         }
-
         return rtn;
-        
+
     }
+    public void calculate(){
+        setAprilTagData();
+    }
+
     @Override
     public void updateDashboard() {
         SmartDashboard.putNumber("Vision/AprilTagYaw_deg", g.VISION.aprilTagAngle_deg);

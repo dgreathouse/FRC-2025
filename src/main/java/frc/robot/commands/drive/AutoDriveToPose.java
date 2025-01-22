@@ -5,6 +5,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.lib.AprilTagAlignState;
+import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.g;
 
 
@@ -15,6 +17,8 @@ public class AutoDriveToPose extends Command {
   double m_rampuUpTime_sec = 0.5;
   PIDController m_drivePID = new PIDController(1, 0, 0);
   Timer m_timer = new Timer();
+  RobotAlignStates m_alignState = RobotAlignStates.UNKNOWN;
+  AprilTagAlignState m_apriltagAlignState = AprilTagAlignState.NONE;
   /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
    * 
    * @param _pose The Pose to drive to
@@ -26,16 +30,29 @@ public class AutoDriveToPose extends Command {
     m_desiredPose = _pose;
     m_speed = _speed;
     m_timeOut_sec = _timeOut_sec;
-    m_drivePID.setTolerance(.1);
+    m_drivePID.setTolerance(0.1);
     m_drivePID.setIZone(0.5);
     m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
+  }
+  /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
+   * 
+   * @param _pose The Pose to drive to
+   * @param _speed The max speed +/- 1.0 to drive at
+   * @param _timeOut_sec The time to end if pose not reached
+   */
+  public AutoDriveToPose(Pose2d _pose, double _speed, double _timeOut_sec, RobotAlignStates _alingState, AprilTagAlignState _apriltagLocation) {
+    this(_pose, _speed, _timeOut_sec);
+    m_alignState = _alingState;
+    m_apriltagAlignState = _apriltagLocation;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     m_timer.restart();
-
+    // Set the global varables so the vision processor works on them
+    g.ROBOT.alignmentState = m_alignState;
+    g.VISION.aprilTagAlignState = m_apriltagAlignState;
   }
 
   // TODO: Test this class. Possible issues.
@@ -45,18 +62,25 @@ public class AutoDriveToPose extends Command {
 
   @Override
   public void execute() {
+
     Pose2d trajectory = m_desiredPose.relativeTo(g.ROBOT.pose2d);
     double driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
     double driveDistance_m = trajectory.getTranslation().getDistance(g.ROBOT.pose2d.getTranslation());
-    double speed =  m_drivePID.calculate(0,driveDistance_m);
+    if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) { // This means we are looking for an apriltag and vision found it.
+      driveAngle_deg = g.VISION.aprilTagAngle_deg;
+      driveDistance_m = g.VISION.aprilTagDistance_m;
+    }
+    double speed = m_drivePID.calculate(0, driveDistance_m);
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, -m_speed, m_speed);
-    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_desiredPose.getRotation().getDegrees(), driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_desiredPose.getRotation().getDegrees(),
+        driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
 
   }
-  private double rampUpValue(double _val, double _rampTime_sec){   
-    double currentTime_sec = m_timer.get();                                        
-    if(currentTime_sec < _rampTime_sec){
+
+  private double rampUpValue(double _val, double _rampTime_sec) {
+    double currentTime_sec = m_timer.get();
+    if (currentTime_sec < _rampTime_sec) {
       _val = _val * currentTime_sec / _rampTime_sec;
     }
     return _val;
