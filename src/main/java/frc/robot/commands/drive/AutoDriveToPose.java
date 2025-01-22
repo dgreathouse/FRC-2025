@@ -33,6 +33,8 @@ public class AutoDriveToPose extends Command {
     m_drivePID.setTolerance(0.1);
     m_drivePID.setIZone(0.5);
     m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
+    m_alignState = RobotAlignStates.UNKNOWN;
+    m_apriltagAlignState = AprilTagAlignState.NONE;
   }
   /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
    * 
@@ -44,6 +46,7 @@ public class AutoDriveToPose extends Command {
     this(_pose, _speed, _timeOut_sec);
     m_alignState = _alingState;
     m_apriltagAlignState = _apriltagLocation;
+
   }
 
   // Called when the command is initially scheduled.
@@ -63,16 +66,20 @@ public class AutoDriveToPose extends Command {
   @Override
   public void execute() {
 
+    // Calculate the angle and distance to the pose
     Pose2d trajectory = m_desiredPose.relativeTo(g.ROBOT.pose2d);
     double driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
     double driveDistance_m = trajectory.getTranslation().getDistance(g.ROBOT.pose2d.getTranslation());
-    if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) { // This means we are looking for an apriltag and vision found it.
+    // Overwrite the angle and distance is also looking for apriltag
+    if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) {
       driveAngle_deg = g.VISION.aprilTagAngle_deg;
       driveDistance_m = g.VISION.aprilTagDistance_m;
     }
+    // PID the speed based on distance
     double speed = m_drivePID.calculate(0, driveDistance_m);
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, -m_speed, m_speed);
+    // Drive the robot in Polar mode since we have a speed and angle.
     g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_desiredPose.getRotation().getDegrees(),
         driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
 
