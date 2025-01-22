@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -95,12 +96,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_turnPID.setTolerance(Math.toRadians(1.0), Double.POSITIVE_INFINITY);
     m_turnPID.setIZone(Math.toRadians(45));
     m_turnPID.setIntegratorRange(-0.5, 0.5);
-
+    
     m_odometryThread = new OdometryThread();
     m_odometryThread.start();
     SmartDashboard.putBoolean("Robot/IsGyroPrimaryActive", true);
     resetYaw(0);
     g.DASHBOARD.updates.add(this);
+    
   }
 
   @Override
@@ -137,8 +139,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
 
-    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
-    SmartDashboard.putNumber("COR", _centerOfRotation_m.getX());
+    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
@@ -158,7 +159,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND);
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
 
-    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
+    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
 
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
@@ -284,6 +285,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     }
     SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
+    SmartDashboard.putNumber("Robot/Pose X", g.ROBOT.pose2d.getX());
+    SmartDashboard.putNumber("Robot/Pose Y", g.ROBOT.pose2d.getY());
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
 
@@ -305,6 +308,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
   public double getAngularVelocityZ(){
     return g.ROBOT.isPrimaryGyroActive ? m_angularVelocityZPrimary : m_angularVelocityZSecondary;
+  }
+  public void updateOdometry(Pose2d _pose){
+    m_odometry.resetPose(_pose);
   }
   private class OdometryThread extends Thread {
     public OdometryThread() {

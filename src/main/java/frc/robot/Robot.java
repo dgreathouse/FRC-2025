@@ -21,6 +21,7 @@ import frc.robot.lib.g;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+  private SendableChooser<Command> m_startPoseChooser = new SendableChooser<>();
   private Notifier m_telemetry = new Notifier(this::updateDashboard);
 
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
@@ -43,6 +44,10 @@ public class Robot extends TimedRobot {
     m_autoChooser.addOption("Drive Rotate Test", new AutoDriveRotateTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 
+    m_startPoseChooser.setDefaultOption("Left", new InstantCommand(()->{g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartLeft);}));
+    m_autoChooser.addOption("Right", new InstantCommand(()->{g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartRight);}));
+    m_autoChooser.addOption("Center", new InstantCommand(()->{g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartCenter);}));
+    m_autoChooser.addOption("Zero", new InstantCommand(()->{g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartZero);}));
     // Start telemetry in a slower rate than the main loop
     m_telemetry.startPeriodic(g.ROBOT.TELEMETRY_RATE_sec);
   }

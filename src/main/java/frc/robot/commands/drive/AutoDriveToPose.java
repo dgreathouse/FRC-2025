@@ -21,13 +21,14 @@ public class AutoDriveToPose extends Command {
   AprilTagAlignState m_apriltagAlignState = AprilTagAlignState.NONE;
   /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
    * 
-   * @param _pose The Pose to drive to
+   * @param _desiredPose The Pose to drive to
+   * @param _startPose The field releative pose position
    * @param _speed The max speed +/- 1.0 to drive at
    * @param _timeOut_sec The time to end if pose not reached
    */
-  public AutoDriveToPose(Pose2d _pose, double _speed, double _timeOut_sec) {
+  public AutoDriveToPose(Pose2d _desiredPose,  double _speed, double _timeOut_sec) {
     addRequirements(g.ROBOT.drive);
-    m_desiredPose = _pose;
+    m_desiredPose = _desiredPose;
     m_speed = _speed;
     m_timeOut_sec = _timeOut_sec;
     m_drivePID.setTolerance(0.1);
@@ -38,12 +39,14 @@ public class AutoDriveToPose extends Command {
   }
   /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
    * 
-   * @param _pose The Pose to drive to
+   * @param _newPose The Pose to drive to
+   * @param _startPose The field releative pose position
    * @param _speed The max speed +/- 1.0 to drive at
    * @param _timeOut_sec The time to end if pose not reached
-   */
-  public AutoDriveToPose(Pose2d _pose, double _speed, double _timeOut_sec, RobotAlignStates _alingState, AprilTagAlignState _apriltagLocation) {
-    this(_pose, _speed, _timeOut_sec);
+   * @param _alingState The alignment state of the robot
+    */
+  public AutoDriveToPose(Pose2d _newPose, double _speed, double _timeOut_sec, RobotAlignStates _alingState, AprilTagAlignState _apriltagLocation) {
+    this(_newPose, _speed, _timeOut_sec);
     m_alignState = _alingState;
     m_apriltagAlignState = _apriltagLocation;
 
@@ -56,6 +59,8 @@ public class AutoDriveToPose extends Command {
     // Set the global varables so the vision processor works on them
     g.ROBOT.alignmentState = m_alignState;
     g.VISION.aprilTagAlignState = m_apriltagAlignState;
+    
+    //g.ROBOT.pose2d.transformBy(new Transform2d(7.62, 1.2192, new Rotation2d()));
   }
 
   // TODO: Test this class. Possible issues.
