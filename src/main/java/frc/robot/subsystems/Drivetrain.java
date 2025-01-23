@@ -139,7 +139,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
 
-    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
+    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
@@ -159,7 +159,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND);
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
 
-    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
+    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(_robotAngle_deg)));
 
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
@@ -167,16 +167,16 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   /** Get the X and Y values from the Drive Angle and call {@link #driveAngleFieldCentric(double, double, double, double)}
    * 
    * 
-   * @param _speed The speed to drive at as +/- 1.0
+   * @param _maxSpeed The max speed to drive at with range 0.0 to 1.0
    * @param _robotAngle_deg The angle of the robot which usually is g.ROBOT.angleActual_deg
    * @param _targetAngle_deg The angle you want the robot front to point to.
    * @param _driveAngle_deg The drive angle you want the robot to drive at
    * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
   
    */
-  public void drivePolarFieldCentric(double _speed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m) {
-    double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _speed;
-    double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _speed;
+  public void drivePolarFieldCentric(double _maxSpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m) {
+    double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _maxSpeed;
+    double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _maxSpeed;
     driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg, _centerOfRotation_m);
   }
   /** This is a compensated AngleFieldCentric that takes the speed from the x,y and generates a new X,Y from driveAngle
@@ -208,27 +208,18 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
 
 
-  // /**
-  //  * This is the final method of all drive methods that sends the array of 
-  //  * Swerve Module angles and speeds to the SwerveModule classes
-  //  * @param _states
-  //  */
-  // public void setSwerveModules(SwerveModuleState[] _states) {
-  //   for (int i = 0; i < g.SWERVE.COUNT; i++) {
-  //     g.SWERVE.modules[i].setDesiredState(_states[i]);
-  //   }
-  // }
   /** Set the drive angle for AngleFieldCentric mode if the  
    * Hypotenus of the x,y is greater that a threashold
    * 
-   * @param _x The X value
-   * @param _y The Y value
+   * @param _x The X value which is Forward Positive
+   * @param _y The Y value which is Left Positive
    */
   public void setTargetRobotAngle(double _x, double _y) {
-    double x = _x; // -g.OI.driverController.getRightX();
-    double y = _y; // -g.OI.driverController.getRightY();
-    double hyp = Math.hypot(x, y);
-    double joystickAngle = Math.toDegrees(Math.atan2(x, y));
+
+    double x = _x; 
+    double y = _y; 
+    double hyp = Math.hypot(x, y); // Always positive
+    double joystickAngle = Math.toDegrees(Math.atan2(y, x));
 
     if (Math.abs(hyp) > g.OI.ANGLE_TARGET_DEADBAND) {
       if (joystickAngle >= -22.5 && joystickAngle <= 22.5) { // North

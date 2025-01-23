@@ -23,7 +23,7 @@ public class AutoDriveToPose extends Command {
    * 
    * @param _desiredPose The Pose to drive to
    * @param _startPose The field releative pose position
-   * @param _speed The max speed +/- 1.0 to drive at
+   * @param _speed The max speed on a scale from 0.0 to 1.0. This is always positive
    * @param _timeOut_sec The time to end if pose not reached
    */
   public AutoDriveToPose(Pose2d _desiredPose,  double _speed, double _timeOut_sec) {
@@ -41,7 +41,7 @@ public class AutoDriveToPose extends Command {
    * 
    * @param _newPose The Pose to drive to
    * @param _startPose The field releative pose position
-   * @param _speed The max speed +/- 1.0 to drive at
+   * @param _speed The max speed on a scale from 0.0 to 1.0. This is always positive
    * @param _timeOut_sec The time to end if pose not reached
    * @param _alingState The alignment state of the robot
     */
