@@ -15,7 +15,7 @@ public class AutoDriveToPose extends Command {
   double m_speed;
   double m_timeOut_sec;
   double m_rampuUpTime_sec = 0.5;
-  PIDController m_drivePID = new PIDController(1, 0, 0);
+  PIDController m_drivePID = new PIDController(0.1, 0.01, 0);
   Timer m_timer = new Timer();
   RobotAlignStates m_alignState = RobotAlignStates.UNKNOWN;
   AprilTagAlignState m_apriltagAlignState = AprilTagAlignState.NONE;
@@ -64,7 +64,7 @@ public class AutoDriveToPose extends Command {
   }
 
   // TODO: Test this class. Possible issues.
-  //  [ ] Starting Pose
+  //  [x] Starting Pose
   //  [ ] Tolerance
   //  [ ] PIDs
 
@@ -75,7 +75,7 @@ public class AutoDriveToPose extends Command {
     Pose2d trajectory = m_desiredPose.relativeTo(g.ROBOT.pose2d);
     double driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
     double driveDistance_m = trajectory.getTranslation().getDistance(g.ROBOT.pose2d.getTranslation());
-    // Overwrite the angle and distance is also looking for apriltag
+    // Overwrite the angle and distance if looking for apriltag
     if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) {
       driveAngle_deg = g.VISION.aprilTagAngle_deg;
       driveDistance_m = g.VISION.aprilTagDistance_m;

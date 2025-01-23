@@ -36,6 +36,7 @@ public class AutoRotateToAngle extends Command {
   // TODO: Test this
   //   [ ] Time out not being activated
   //   [ ] Turn goes both directions
+  //   [ ] Speed is fast with minimal overshoot with turn of 15deg and 180deg
   @Override
   public void execute() {
     g.ROBOT.drive.driveAngleFieldCentric(0, 0, g.ROBOT.angleActual_deg, m_angleDesired_deg, m_centerOfRotation_m);

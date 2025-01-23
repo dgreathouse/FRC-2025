@@ -25,10 +25,8 @@ public class DrivetrainDefaultCommand extends Command {
   public void execute() {
 
   
-    // kLeftX(0),
-    //kLeftY(1),
-    //kRightX(2),
-    //kRightY(5),
+    //kLeftX(0),kLeftY(1),
+    //kRightX(2),kRightY(5),
 
     double leftYRaw = -g.OI.driverController.getLeftX(); // 0
     double leftXRaw = -g.OI.driverController.getLeftY(); // 1
