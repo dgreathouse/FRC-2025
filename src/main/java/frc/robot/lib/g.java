@@ -153,7 +153,7 @@ public class g {
     public static final Trigger DRIVER_MODE_ROBOTCENTRIC = driverController.povRight();
     public static final Trigger DRIVER_MODE_ANGLEFIELDCENTRIC = driverController.povDown();
     public static final Trigger DRIVER_SWAP_THUMBSTICK_DIRECTIONS = driverController.povUp();
-    public static boolean driverControllerSignNegative = true;
+    public static boolean driverControllerSignInverted = false;
     public static final Trigger DRIVER_MODE_SPEED_HI = driverController.R1();
     public static final Trigger DRIVER_MODE_SPEED_LOW = driverController.L1();
 

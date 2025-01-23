@@ -2,6 +2,7 @@ package frc.robot.defaultCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.g;
 
@@ -23,17 +24,15 @@ public class DrivetrainDefaultCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-  
     //kLeftX(0),kLeftY(1),
     //kRightX(2),kRightY(5),
 
     double leftYRaw = -g.OI.driverController.getLeftX(); // 0
     double leftXRaw = -g.OI.driverController.getLeftY(); // 1
-    double rightXRaw = -g.OI.driverController.getRightX(); // 2
-    double rightYRaw = -g.OI.driverController.getRightY(); // 5
+    double rightYRaw = -g.OI.driverController.getRightX(); // 2
+    double rightXRaw = -g.OI.driverController.getRightY(); // 5
     
-    if(!g.OI.driverControllerSignNegative){
+    if(g.OI.driverControllerSignInverted){
       leftYRaw = -leftYRaw;
       leftXRaw = -leftXRaw;
       rightXRaw = -rightXRaw;
@@ -62,7 +61,7 @@ public class DrivetrainDefaultCommand extends Command {
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:
-          g.ROBOT.drive.driveFieldCentric( leftXFiltered, leftYFiltered, rightXFiltered, g.ROBOT.angleActual_deg, g.DRIVETRAIN.centerOfRotation_m);
+          g.ROBOT.drive.driveFieldCentric( leftXFiltered, leftYFiltered, rightYFiltered, g.ROBOT.angleActual_deg, g.DRIVETRAIN.centerOfRotation_m);
           break;
         case ANGLE_FIELD_CENTRIC:
           g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
@@ -73,7 +72,7 @@ public class DrivetrainDefaultCommand extends Command {
           g.ROBOT.drive.drivePolarFieldCentric(g.ROBOT.speedDriveTarget_mPsec, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.ROBOT.angleDriveTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case ROBOT_CENTRIC:
-          g.ROBOT.drive.driveRobotCentric(leftXFiltered, leftYFiltered, rightXFiltered, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+          g.ROBOT.drive.driveRobotCentric(leftXFiltered, leftYFiltered, rightYFiltered, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case FAST_STOP:
           // g.ROBOT.drive.fastStop();
