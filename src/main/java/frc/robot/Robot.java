@@ -20,6 +20,7 @@ import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
+import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
@@ -52,10 +53,11 @@ public class Robot extends TimedRobot {
     m_autoChooser.addOption("Drive Rotate Test", new AutoDriveRotateTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 
-    m_startPoseChooser.setDefaultOption("Left", new InstantCommand(()->{g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartLeft);}));
-    m_autoChooser.addOption("Right", new InstantCommand(()->{g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartRight);}));
-    m_autoChooser.addOption("Center", new InstantCommand(()->{g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartCenter);}));
-    m_autoChooser.addOption("Zero", new InstantCommand(()->{g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartZero);}));
+    m_startPoseChooser.setDefaultOption("Left", new InstantCommand(()->{g.ROBOT.startLocation = StartLocation.LEFT;}));
+    m_startPoseChooser.addOption("Right", new InstantCommand(()->{g.ROBOT.startLocation = StartLocation.RIGHT;}));
+    m_startPoseChooser.addOption("Center", new InstantCommand(()->{g.ROBOT.startLocation = StartLocation.CENTER;}));
+    m_startPoseChooser.addOption("Zero", new InstantCommand(()->{g.ROBOT.startLocation = StartLocation.ZERO;}));
+    SmartDashboard.putData("Field Start Pose", m_startPoseChooser);
     // Start telemetry in a slower rate than the main loop
     m_telemetry.startPeriodic(g.ROBOT.TELEMETRY_RATE_sec);
   }

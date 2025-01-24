@@ -95,7 +95,7 @@ public class g {
     public static final Pose2d poseStartLeft = new Pose2d(7.1374, 6.9088, new Rotation2d());
     public static final Pose2d poseStartRight = new Pose2d(7.1374, 1.2192, new Rotation2d());
     public static final Pose2d poseStartCenter = new Pose2d(7.1374, 4.064, new Rotation2d());
-
+    public static StartLocation startLocation = StartLocation.LEFT;
     public static final double TELEMETRY_RATE_sec = 0.02;
     public static final long ODOMETRY_RATE_ms = 5;
 
@@ -293,7 +293,7 @@ public class g {
     public static final double TURN_KI = 0.10;
     public static final double TURN_KD = 0.0;
     public static final double TURN_DEADBAND = 0.02;
-    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.125; // 5 inches
+    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.025; // 1 inches
     public static final double AUTO_DRIVE_POSE_ANGLE_TOLERANCE_deg = 1.0; 
     public static volatile DriveMode driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
     public static volatile double speedMultiplier = 1.0;

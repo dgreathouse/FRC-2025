@@ -310,7 +310,23 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     @Override
     public void run() {
-      
+      switch (g.ROBOT.startLocation) {
+        case LEFT:
+          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartLeft);
+          break;
+          case RIGHT:
+          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartRight);
+          break;
+          case CENTER:
+          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartCenter);
+          break;
+          case ZERO:
+          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartZero);
+          break;
+        default:
+          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartLeft);
+          break;
+      }
       while (true) {
         /* Now update odometry */
         updatePositions();
