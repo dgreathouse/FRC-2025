@@ -91,11 +91,10 @@ public class g {
     public static volatile Pose2d pose2d = new Pose2d();
     public static volatile Pose3d pose3d = new Pose3d();
     public static volatile Field2d field2d = new Field2d();
-    public static final Pose2d poseStartZero = new Pose2d(0, 0, new Rotation2d());
-    public static final Pose2d poseStartLeft = new Pose2d(7.1374, 6.9088, new Rotation2d());
-    public static final Pose2d poseStartRight = new Pose2d(7.1374, 1.2192, new Rotation2d());
-    public static final Pose2d poseStartCenter = new Pose2d(7.1374, 4.064, new Rotation2d());
-    public static StartLocation startLocation = StartLocation.LEFT;
+    public static final Pose2d POSE_START_ZERO = new Pose2d(0, 0, new Rotation2d());
+    public static final Pose2d POSE_START_LEFT = new Pose2d(7.1374, 6.9088, new Rotation2d());
+    public static final Pose2d POSE_START_RIGHT = new Pose2d(7.1374, 1.2192, new Rotation2d());
+    public static final Pose2d POSE_START_CENTER = new Pose2d(7.1374, 4.064, new Rotation2d());
     public static final double TELEMETRY_RATE_sec = 0.02;
     public static final long ODOMETRY_RATE_ms = 5;
 
@@ -165,8 +164,8 @@ public class g {
     public static final Trigger DRIVER_TEST_BB_BACK = driverController.triangle();
     public static final Trigger DRIVER_TEST_BB_FRONT = driverController.cross();
     
-    public static final Trigger DRIVER_TEST_COR_RESET = driverController.circle();
-    public static final Trigger DRIVER_TEST_COR_BACK = driverController.square();
+    public static final Trigger DRIVER_STATION_RIGHT = driverController.circle();
+    public static final Trigger DRIVER_STATION_LEFT = driverController.square();
     
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;

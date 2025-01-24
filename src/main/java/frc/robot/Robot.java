@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -19,14 +18,11 @@ import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
-import frc.robot.lib.RobotAlignStates;
-import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private SendableChooser<Command> m_autoChooser = new SendableChooser<>();
-  private SendableChooser<Command> m_startPoseChooser = new SendableChooser<>();
   private Notifier m_telemetry = new Notifier(this::updateDashboard);
 
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
@@ -53,11 +49,6 @@ public class Robot extends TimedRobot {
     m_autoChooser.addOption("Drive Rotate Test", new AutoDriveRotateTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 
-    m_startPoseChooser.setDefaultOption("Left", new InstantCommand(()->{g.ROBOT.startLocation = StartLocation.LEFT;}));
-    m_startPoseChooser.addOption("Right", new InstantCommand(()->{g.ROBOT.startLocation = StartLocation.RIGHT;}));
-    m_startPoseChooser.addOption("Center", new InstantCommand(()->{g.ROBOT.startLocation = StartLocation.CENTER;}));
-    m_startPoseChooser.addOption("Zero", new InstantCommand(()->{g.ROBOT.startLocation = StartLocation.ZERO;}));
-    SmartDashboard.putData("Field Start Pose", m_startPoseChooser);
     // Start telemetry in a slower rate than the main loop
     m_telemetry.startPeriodic(g.ROBOT.TELEMETRY_RATE_sec);
   }
@@ -141,11 +132,11 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_DISABLE_YAW.onTrue(new InstantCommand(() -> { g.SIM.IS_GYRO_DISABLED = !g.SIM.IS_GYRO_DISABLED; }, g.ROBOT.drive));
 
     // Test driver controls
-    g.OI.DRIVER_TEST_BB_FRONT.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.FRONT; }, g.ROBOT.drive));
-    g.OI.DRIVER_TEST_BB_BACK.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive));
+    // g.OI.DRIVER_TEST_BB_FRONT.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.FRONT; }, g.ROBOT.drive));
+    // g.OI.DRIVER_TEST_BB_BACK.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive));
 
-    g.OI.DRIVER_TEST_COR_BACK.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.centerOfRotation_m = new Translation2d(-1.0,0.0);}, g.ROBOT.drive));
-    g.OI.DRIVER_TEST_COR_RESET.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.centerOfRotation_m = new Translation2d(0,0.0);}, g.ROBOT.drive));
+    g.OI.DRIVER_STATION_LEFT.onTrue(new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(-36);}, g.ROBOT.drive));
+    g.OI.DRIVER_STATION_RIGHT.onTrue(new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(36);}, g.ROBOT.drive));
     //Button board
     // g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
   

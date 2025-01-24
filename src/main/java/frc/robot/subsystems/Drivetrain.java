@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -20,6 +19,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.IUpdateDashboard;
+import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
@@ -225,20 +225,20 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       if (joystickAngle >= -22.5 && joystickAngle <= 22.5) { // North
         g.ROBOT.angleRobotTarget_deg = 0.0;
       } else if (joystickAngle >= -67.5 && joystickAngle < -22.5) { // North East
-        g.ROBOT.angleRobotTarget_deg = -45.0;
+        g.ROBOT.angleRobotTarget_deg = -60.0;
       } else if (joystickAngle >= -112.5 && joystickAngle < -67.5) { // East
         g.ROBOT.angleRobotTarget_deg = -90.0;
       } else if (joystickAngle >= -157.5 && joystickAngle < -112.5) { // South East
-        g.ROBOT.angleRobotTarget_deg = -135.0;
+        g.ROBOT.angleRobotTarget_deg = -120.0;
       } else if ((joystickAngle >= 157.5 && joystickAngle <= 180.0)
           || (joystickAngle <= -157.5 && joystickAngle > -179.99)) { // South
         g.ROBOT.angleRobotTarget_deg = 180.0;
       } else if (joystickAngle <= 67.5 && joystickAngle > 22.5) { // North West
-        g.ROBOT.angleRobotTarget_deg = 45.0;
+        g.ROBOT.angleRobotTarget_deg = 60.0;
       } else if (joystickAngle <= 112.5 && joystickAngle > 67.5) { // West
         g.ROBOT.angleRobotTarget_deg = 90.0;
       } else if (joystickAngle <= 157.5 && joystickAngle > 112.5) { // South West
-        g.ROBOT.angleRobotTarget_deg = 135.0;
+        g.ROBOT.angleRobotTarget_deg = 120.0;
       }
     }
   }
@@ -250,7 +250,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _angle_deg The target angle the robot should PID to in
    *                   AngleFieldCentric Mode.
    */
-  public void setAngleTarget(double _angle_deg) {
+  public void setTargetRobotAngle(double _angle_deg) {
     g.ROBOT.angleRobotTarget_deg = _angle_deg;
   }
 
@@ -300,33 +300,33 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   public double getAngularVelocityZ(){
     return g.ROBOT.isPrimaryGyroActive ? m_angularVelocityZPrimary : m_angularVelocityZSecondary;
   }
-  public void updateOdometry(Pose2d _pose){
-    m_odometry.resetPose(_pose);
+  public void setOdometry(StartLocation _start) {
+    switch (_start) {
+      case LEFT:
+        m_odometry.resetPose(g.ROBOT.POSE_START_LEFT);
+        break;
+      case RIGHT:
+        m_odometry.resetPose(g.ROBOT.POSE_START_RIGHT);
+        break;
+      case CENTER:
+        m_odometry.resetPose(g.ROBOT.POSE_START_CENTER);
+        break;
+      case ZERO:
+        m_odometry.resetPose(g.ROBOT.POSE_START_ZERO);
+        break;
+      default:
+        m_odometry.resetPose(g.ROBOT.POSE_START_LEFT);
+        break;
+    }
   }
   private class OdometryThread extends Thread {
     public OdometryThread() {
       super();
     }
-
+  
     @Override
     public void run() {
-      switch (g.ROBOT.startLocation) {
-        case LEFT:
-          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartLeft);
-          break;
-          case RIGHT:
-          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartRight);
-          break;
-          case CENTER:
-          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartCenter);
-          break;
-          case ZERO:
-          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartZero);
-          break;
-        default:
-          g.ROBOT.drive.updateOdometry(g.ROBOT.poseStartLeft);
-          break;
-      }
+
       while (true) {
         /* Now update odometry */
         updatePositions();

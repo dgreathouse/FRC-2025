@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.RobotAlignStates;
@@ -61,7 +60,6 @@ public class AutoDriveToPose extends Command {
     g.ROBOT.alignmentState = m_alignState;
     g.VISION.aprilTagAlignState = m_apriltagAlignState;
     
-    //g.ROBOT.pose2d.transformBy(new Transform2d(7.62, 1.2192, new Rotation2d()));
   }
 
   // TODO: Test this class. Possible issues.
@@ -77,11 +75,10 @@ public class AutoDriveToPose extends Command {
     double driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
     double driveDistance_m = trajectory.getTranslation().getDistance(g.ROBOT.pose2d.getTranslation());
     // Overwrite the angle and distance if looking for apriltag
-    // if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) {
-    //   driveAngle_deg = g.VISION.aprilTagAngle_deg;
-    //   driveDistance_m = g.VISION.aprilTagDistance_m;
-    // }
-    SmartDashboard.putNumber("driveAngel_deg", driveAngle_deg);
+    if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) {
+      driveAngle_deg = g.VISION.aprilTagAngle_deg;
+      driveDistance_m = g.VISION.aprilTagDistance_m;
+    }
     // PID the speed based on distance
     double speed = m_drivePID.calculate(0,driveDistance_m);
     speed = rampUpValue(speed, m_rampuUpTime_sec);
