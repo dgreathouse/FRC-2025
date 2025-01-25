@@ -292,7 +292,7 @@ public class g {
     public static final double TURN_KI = 0.10;
     public static final double TURN_KD = 0.0;
     public static final double TURN_DEADBAND = 0.02;
-    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.025; // 1 inches
+    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.2; // 1 inches
     public static final double AUTO_DRIVE_POSE_ANGLE_TOLERANCE_deg = 1.0; 
     public static volatile DriveMode driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
     public static volatile double speedMultiplier = 1.0;

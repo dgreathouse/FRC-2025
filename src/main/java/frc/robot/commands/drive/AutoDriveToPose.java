@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.RobotAlignStates;
@@ -14,6 +15,7 @@ public class AutoDriveToPose extends Command {
   Pose2d m_desiredPose;
   double m_speed;
   double m_timeOut_sec;
+  double m_driveDistance_m = 0;
   double m_rampuUpTime_sec = 0.5;
   PIDController m_drivePID = new PIDController(1, 0  , 0);
   Timer m_timer = new Timer();
@@ -31,7 +33,7 @@ public class AutoDriveToPose extends Command {
     m_desiredPose = _desiredPose;
     m_speed = _speed;
     m_timeOut_sec = _timeOut_sec;
-    m_drivePID.setTolerance(0.025);
+    m_drivePID.setTolerance(0.05);
     m_drivePID.setIZone(0.5);
     m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
     m_alignState = RobotAlignStates.UNKNOWN;
@@ -73,14 +75,15 @@ public class AutoDriveToPose extends Command {
     // Calculate the angle and distance to the pose
     Pose2d trajectory = m_desiredPose.relativeTo(g.ROBOT.pose2d);
     double driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
-    double driveDistance_m = trajectory.getTranslation().getDistance(g.ROBOT.pose2d.getTranslation());
+    m_driveDistance_m = trajectory.getTranslation().getDistance(g.ROBOT.pose2d.getTranslation());
     // Overwrite the angle and distance if looking for apriltag
-    if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) {
-      driveAngle_deg = g.VISION.aprilTagAngle_deg;
-      driveDistance_m = g.VISION.aprilTagDistance_m;
-    }
+    // if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) {
+    //   driveAngle_deg = g.VISION.aprilTagAngle_deg;
+    //   m_driveDistance_m = g.VISION.aprilTagDistance_m;
+    // }
+    SmartDashboard.putNumber("m_driveDistance_m", m_driveDistance_m);
     // PID the speed based on distance
-    double speed = m_drivePID.calculate(0,driveDistance_m);
+    double speed = m_drivePID.calculate(0,m_driveDistance_m);
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, -m_speed, m_speed);
     // Drive the robot in Polar mode since we have a speed and angle.
@@ -104,10 +107,10 @@ public class AutoDriveToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(
-      Math.abs((g.ROBOT.pose2d.getX()) - m_desiredPose.getX()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-      && Math.abs((g.ROBOT.pose2d.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-      && g.ROBOT.drive.isRotateAtTarget())
+    if(Math.abs(m_driveDistance_m) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m)
+      // Math.abs((g.ROBOT.pose2d.getX()) - m_desiredPose.getX()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+      // && Math.abs((g.ROBOT.pose2d.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+      // && g.ROBOT.drive.isRotateAtTarget())
     {
       return true;
     }
