@@ -3,6 +3,7 @@ package frc.robot.lib;
 import static edu.wpi.first.units.Units.Meter;
 import java.util.List;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.util.Units;
@@ -46,6 +47,7 @@ public class VisionProcessor implements IUpdateDashboard{
                 camera = m_rightCamera;
                 break;
         }
+        camera = m_leftCamera;
         List<PhotonPipelineResult> results = camera.getAllUnreadResults();
         g.VISION.isAprilTagFound = false;
         if(!results.isEmpty()){
@@ -53,10 +55,13 @@ public class VisionProcessor implements IUpdateDashboard{
             if (result.hasTargets()){
                 for (PhotonTrackedTarget target: result.getTargets()){
                     g.VISION.aprilTagAngle_deg = getYawFromCamera(target.getYaw());
-                    double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
-                    double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
-                    // TODO: since a pose is bumper distance away. The distance should subtract the bumber distance and camaera distance
-                    g.VISION.aprilTagDistance_m = Math.sqrt(a*a + b*b);
+                     double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
+                     double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
+                    // // TODO: since a pose is bumper distance away. The distance should subtract the bumber distance and camaera distance
+                     g.VISION.aprilTagDistance_m = Math.sqrt(a*a + b*b);
+                    
+                    //g.VISION.aprilTagDistance_m = PhotonUtils.calculateDistanceToTargetMeters(.3302, .5334, Units.degreesToRadians(0), target.getPitch());
+                    
                     g.VISION.isAprilTagFound = false;
                     if(target.getFiducialId() == getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get())){
                         g.VISION.isAprilTagFound = true;
@@ -145,7 +150,7 @@ public class VisionProcessor implements IUpdateDashboard{
     @Override
     public void updateDashboard() {
         SmartDashboard.putNumber("Vision/AprilTagYaw_deg", g.VISION.aprilTagAngle_deg);
-        SmartDashboard.putNumber("Vision/AprilTagDistance_in", Units.metersToInches(g.VISION.aprilTagDistance_m));
+        SmartDashboard.putNumber("Vision/AprilTagDistance_m", g.VISION.aprilTagDistance_m);
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
     }
 }

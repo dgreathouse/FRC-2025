@@ -21,14 +21,14 @@ public class AutoDriveToBackFromLeft extends SequentialCommandGroup {
 
     addCommands(
       new InstantCommand( ()-> {g.ROBOT.drive.setOdometry(StartLocation.LEFT);}, g.ROBOT.drive),
-      new AutoDriveToPose(new Pose2d(2.51,g.ROBOT.POSE_START_LEFT.getY(),new Rotation2d(0)), 0.5, 5),  // Drives straight to the back left of the field
-      new AutoDriveToPose(new Pose2d(2.51,4.492,new Rotation2d(0)), 0.5, 5),   // Drives behind the reef
-      new AutoDriveToPose(new Pose2d(3,4.492,new Rotation2d(0)), 0.5, 5),      // Drives up to the reef on the back side
-      new AutoRotateToAngle(-185, new Translation2d(-0.6, 0), 0),                             // Rotates on an offset center on rotation to pick up coral from the ground
-      new AutoDriveToPose(new Pose2d(1.77,4,new Rotation2d(0)), 0.5, 5),       // Drives forward to pick up coral
-      new AutoRotateToAngle(0, new Translation2d(0, 0), 0),                      // Rotates towards the reef
-      new AutoDriveToPose(new Pose2d(3,4.492,new Rotation2d(0)), 0.5, 5)       // Drives to the reef on the back side
-      // Drive backwards
+      new AutoDriveToPose(new Pose2d(2.51,g.ROBOT.POSE_START_LEFT.getY(),new Rotation2d(0)), 0.5, 5)  // Drives straight to the back left of the field
+      // new AutoDriveToPose(new Pose2d(2.51,4.492,new Rotation2d(0)), 0.5, 5),   // Drives behind the reef
+      // new AutoDriveToPose(new Pose2d(3,4.492,new Rotation2d(0)), 0.5, 5),      // Drives up to the reef on the back side
+      // new AutoRotateToAngle(-185, new Translation2d(-0.6, 0), 0),                             // Rotates on an offset center on rotation to pick up coral from the ground
+      // new AutoDriveToPose(new Pose2d(1.77,4,new Rotation2d(0)), 0.5, 5),       // Drives forward to pick up coral
+      // new AutoRotateToAngle(0, new Translation2d(0, 0), 0),                      // Rotates towards the reef
+      // new AutoDriveToPose(new Pose2d(3,4.492,new Rotation2d(0)), 0.5, 5)       // Drives to the reef on the back side
+      // // Drive backwards
       // straff to behind the reef
       // Drive to aprilTag
       // Raise lift
