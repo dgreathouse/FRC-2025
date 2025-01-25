@@ -1,13 +1,18 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MusicTone;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -32,6 +37,7 @@ public class SwerveModule implements IUpdateDashboard {
   private TalonFX m_driveMotor;
   private TalonFX m_steerMotor;
   private CANcoder m_canCoder;
+  private boolean m_musicEnabled = false;
   private SwerveModulePosition m_position = new SwerveModulePosition();
   // TODO Tune Steer PID kP, kI, kD
   private PIDController m_steerPID = new PIDController(g.SWERVE.STEER.PID_KP, g.SWERVE.STEER.PID_KI, 0);
@@ -64,12 +70,16 @@ public class SwerveModule implements IUpdateDashboard {
     m_canCoder = new CANcoder(_canCoderId, g.CAN_IDS_CANIVORE.NAME);
 
     // Configure Drive Motor
+    AudioConfigs audioConfig = new AudioConfigs();
+    audioConfig.AllowMusicDurDisable = true;
+    m_driveMotor.getConfigurator().apply(audioConfig);    
 
     MotorOutputConfigs driveMotorOutputConfig = new MotorOutputConfigs();
     driveMotorOutputConfig.NeutralMode = NeutralModeValue.Brake;
     driveMotorOutputConfig.Inverted = _driveIsReversed ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     status = m_driveMotor.getConfigurator().apply(driveMotorOutputConfig);
     System.out.println(m_name + " Drive Motor Output Config Status =" + status.toString());
+
 
     OpenLoopRampsConfigs driveOpenLoopRampsConfig = new OpenLoopRampsConfigs();
     driveOpenLoopRampsConfig.VoltageOpenLoopRampPeriod = 0.01;
@@ -196,4 +206,17 @@ public class SwerveModule implements IUpdateDashboard {
   public double getSteerCurrent() {
     return m_steerMotor.getTorqueCurrent().getValueAsDouble();
   }
+  public void toggleImperialMarch(){
+    m_musicEnabled = !m_musicEnabled;
+  }
+  public void playImperialMarch(){
+    if(m_musicEnabled){
+      Orchestra march = new Orchestra();
+      StatusCode status = march.loadMusic("march.chrp");
+      march.addInstrument(m_driveMotor);
+      System.out.println(m_name + " Music Status =" + status.toString());
+      march.close();
+    }
+  }
+  
 }
