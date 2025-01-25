@@ -41,9 +41,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   @SuppressWarnings("unused")
   public Drivetrain() {
     m_yawStatusPrimary = g.ROBOT.gyro_pigeon2.getYaw();
-    m_yawStatusPrimary.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
+    m_yawStatusPrimary.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
     m_angularVelocityZStatusPrimary = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
-    m_angularVelocityZStatusPrimary.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
+    m_angularVelocityZStatusPrimary.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
 
     g.SWERVE.modules[0] = new SwerveModule(
         "BR",

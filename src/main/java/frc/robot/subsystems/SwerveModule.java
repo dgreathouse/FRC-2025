@@ -2,9 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -38,8 +39,8 @@ public class SwerveModule implements IUpdateDashboard {
   private PIDController m_drivePID = new PIDController(g.SWERVE.DRIVE.PID_KP, g.SWERVE.DRIVE.PID_KI, 0);
   // TODO Tune Drive FF kV, kS, and kA
   private SimplerMotorFeedforward m_driveFF = new SimplerMotorFeedforward(g.SWERVE.DRIVE.PID_KS, g.SWERVE.DRIVE.PID_KV, 0.0);
-  private VoltageOut m_steerVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
-  private VoltageOut m_driveVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
+  private VoltageOut m_steerVoltageOut = new VoltageOut(0.0).withEnableFOC(true).withOverrideBrakeDurNeutral(true);
+  private VoltageOut m_driveVoltageOut = new VoltageOut(0.0).withEnableFOC(true).withOverrideBrakeDurNeutral(true);
   private StatusSignal<Angle> m_drivePosition;
   private StatusSignal<AngularVelocity> m_driveVelocity;
   private StatusSignal<Angle> m_steerPosition;
@@ -63,70 +64,69 @@ public class SwerveModule implements IUpdateDashboard {
     m_canCoder = new CANcoder(_canCoderId, g.CAN_IDS_CANIVORE.NAME);
 
     // Configure Drive Motor
-    TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-    driveConfigs.MotorOutput.Inverted =
-        _driveIsReversed
-            ? InvertedValue.Clockwise_Positive
-            : InvertedValue.CounterClockwise_Positive;
 
-    // FIXME: driveConfigs.withOpenLoopRamps(new OpenLoopRampsConfigs().withVoltageOpenLoopRampPeriod(0.1));
-    m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
+    MotorOutputConfigs driveMotorOutputConfig = new MotorOutputConfigs();
+    driveMotorOutputConfig.NeutralMode = NeutralModeValue.Brake;
+    driveMotorOutputConfig.Inverted = _driveIsReversed ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    status = m_driveMotor.getConfigurator().apply(driveMotorOutputConfig);
+    System.out.println(m_name + " Drive Motor Output Config Status =" + status.toString());
 
-    status = m_driveMotor.getConfigurator().apply(driveConfigs);
-    System.out.println(m_name + " Drive Motor TalonFX Config Status =" + status.toString());
+    OpenLoopRampsConfigs driveOpenLoopRampsConfig = new OpenLoopRampsConfigs();
+    driveOpenLoopRampsConfig.VoltageOpenLoopRampPeriod = 0.01;
+    m_driveMotor.getConfigurator().apply(driveOpenLoopRampsConfig);
+    System.out.println(m_name + " Drive Motor OpenLoopRamps Config Status =" + status.toString());
 
-    CurrentLimitsConfigs driveCurrentConfig =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(g.SWERVE.DRIVE.CURRENT_LIMIT_amps)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(g.SWERVE.DRIVE.CURRENT_LIMIT_amps)
-            .withSupplyCurrentLimitEnable(true);
-
+    CurrentLimitsConfigs driveCurrentConfig = new CurrentLimitsConfigs();
+    driveCurrentConfig.StatorCurrentLimitEnable = true;
+    driveCurrentConfig.StatorCurrentLimit = g.SWERVE.DRIVE.STATOR_CURRENT_LIMIT_amps;
+    driveCurrentConfig.SupplyCurrentLimitEnable = true;
+    driveCurrentConfig.SupplyCurrentLimit = g.SWERVE.DRIVE.SUPPLY_CURRENT_LIMIT_amps;   
     status = m_driveMotor.getConfigurator().apply(driveCurrentConfig);
     System.out.println(m_name + " Drive Motor Current Config Status =" + status.toString());
 
     m_drivePosition = m_driveMotor.getPosition();
-    m_drivePosition.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
+    m_drivePosition.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
     m_driveVelocity = m_driveMotor.getVelocity();
-    m_driveVelocity.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
+    m_driveVelocity.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
+
+
     // Configure Steer Motor
-    m_steerPID.enableContinuousInput(-180.0, 180.0);
-    TalonFXConfiguration steerConfigs = new TalonFXConfiguration();
-    steerConfigs.MotorOutput.Inverted =
-        _steerIsReversed
-            ? InvertedValue.Clockwise_Positive
-            : InvertedValue.CounterClockwise_Positive;
+    MotorOutputConfigs steerMotorOutputConfigs = new MotorOutputConfigs();
+    steerMotorOutputConfigs.Inverted = _steerIsReversed ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    steerMotorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+    status = m_steerMotor.getConfigurator().apply(steerMotorOutputConfigs);
+    System.out.println(m_name + " Steer Motor Output Config Status =" + status.toString());
 
-    // steerConfigs.withOpenLoopRamps(new
-    // OpenLoopRampsConfigs().withVoltageOpenLoopRampPeriod(1));
-    status = m_steerMotor.getConfigurator().apply(steerConfigs);
-    System.out.println(m_name + " Steer Motor TalonFX Config Status =" + status.toString());
-    m_steerMotor.setNeutralMode(NeutralModeValue.Brake);
+    OpenLoopRampsConfigs steerOpenLoopRampsConfigs = new OpenLoopRampsConfigs();
+    steerOpenLoopRampsConfigs.VoltageOpenLoopRampPeriod = 0.01;
+    status = m_steerMotor.getConfigurator().apply(steerOpenLoopRampsConfigs);
+    System.out.println(m_name + " Steer Motor Open Loop Ramp Config Status =" + status.toString());
 
-    CurrentLimitsConfigs steerCurrentConfig =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(g.SWERVE.STEER.CURRENT_LIMIT_amps)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(g.SWERVE.STEER.CURRENT_LIMIT_amps)
-            .withSupplyCurrentLimitEnable(true);
-
-    status = m_steerMotor.getConfigurator().apply(steerCurrentConfig);
-    System.out.println(m_name + " Steer Motor Current Config Status =" + status.toString());
+    CurrentLimitsConfigs steerCurrentLimitConfig = new CurrentLimitsConfigs();
+    steerCurrentLimitConfig.StatorCurrentLimitEnable = true;
+    steerCurrentLimitConfig.StatorCurrentLimit = g.SWERVE.STEER.STATOR_CURRENT_LIMIT_amps;
+    steerCurrentLimitConfig.SupplyCurrentLimitEnable = true;
+    steerCurrentLimitConfig.SupplyCurrentLimit = g.SWERVE.STEER.SUPPLY_CURRENT_LIMIT_amps;
+    status = m_steerMotor.getConfigurator().apply(steerCurrentLimitConfig);
+    System.out.println(m_name + " Steer Motor Current Limit Config Status =" + status.toString());
 
     // Configure CANCoder
-    CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-    cancoderConfigs.MagnetSensor.MagnetOffset = _canCoderOffset_rot;
+    MagnetSensorConfigs magnetSensorConfig = new MagnetSensorConfigs();
+    magnetSensorConfig.MagnetOffset = _canCoderOffset_rot;
+    m_canCoder.getConfigurator().apply(magnetSensorConfig);
+    status = m_canCoder.getConfigurator().apply(magnetSensorConfig);
+    System.out.println(m_name + " CANCOder Magnet Config Status =" + status.toString());
 
-    status = m_canCoder.getConfigurator().apply(cancoderConfigs);
-    System.out.println(m_name + " m_canCoder Config Status =" + status.toString());
     // Set the offset position of the steer motor based on the CANCoder
-    m_steerMotor.setPosition(
-        m_canCoder.getPosition().getValueAsDouble() * g.SWERVE.STEER.GEAR_RATIO);
+    m_steerMotor.setPosition(m_canCoder.getPosition().getValueAsDouble() * g.SWERVE.STEER.GEAR_RATIO);
 
     m_steerPosition = m_steerMotor.getPosition();
-    m_steerPosition.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
+    m_steerPosition.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
     m_steerVelocity = m_steerMotor.getVelocity();
-    m_steerVelocity.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
+    m_steerVelocity.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
+
+    m_steerPID.enableContinuousInput(-180.0, 180.0);
+ 
   }
 
   /**

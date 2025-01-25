@@ -130,7 +130,7 @@ public class g {
 
     public static final String NAME = "CANivore";
     public static final int PIGEON2 = 5;
-    public static final double UPDATE_FREQ_hz = 100;
+    //public static final double UPDATE_FREQ_hz = 200;
     
   }
   /** CV contains the data for Conversion Variables. 
@@ -225,6 +225,7 @@ public class g {
     public static volatile boolean isEnabled = true;
     public static final SwerveModule[] modules = new SwerveModule[COUNT];
     public static final SwerveModulePosition[] positions = new SwerveModulePosition[COUNT];
+    public static final double CAN_UPDATE_FREQ_hz = 200;
     /** The data for the SWERVE Drive motors */
     public static class DRIVE {
 
@@ -255,7 +256,10 @@ public class g {
       public static double PID_KV = g.ROBOT.MAX_BATTERY_SUPPLY_volts / MAX_VELOCITY_mPsec; // 2.8256;
       public static double PID_KS = 0.0;
 
-      public static final double CURRENT_LIMIT_amps = 50;
+      public static final double STATOR_CURRENT_LIMIT_amps = 80;
+      public static final double SUPPLY_CURRENT_LIMIT_amps = 60;
+      
+
     }
     /** The data for the SWERVE Steer motors */
     public static class STEER {
@@ -271,7 +275,8 @@ public class g {
           / ((MOTOR_PINION_TEETH / MOTOR_DRIVE_GEAR_TEETH)
               * (GEAR_1_DRIVE_TEETH / GEAR_1_DRIVEN_TEETH));
       public static final double GEAR_RATIO_TO_CANCODER = GEAR_RATIO * CANCODER_GEAR_RATIO;
-      public static final double CURRENT_LIMIT_amps = 50;
+      public static final double STATOR_CURRENT_LIMIT_amps = 50;
+      public static final double SUPPLY_CURRENT_LIMIT_amps = 50;
     }
   }
 
