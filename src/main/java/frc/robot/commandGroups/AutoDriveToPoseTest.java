@@ -13,10 +13,10 @@ public class AutoDriveToPoseTest extends SequentialCommandGroup {
   public AutoDriveToPoseTest() {
     // Pose X,Y are in Meters, X positive is forward, Y Positive is to the left
     addCommands(
-      new InstantCommand( ()-> {g.ROBOT.drive.setOdometry(StartLocation.LEFT);}, g.ROBOT.drive),
-      new AutoDriveToPose(new Pose2d(2.51,g.ROBOT.POSE_START_LEFT.getY(),new Rotation2d(0)), 0.35, 8), // Drives straight to the back left of the field
-      new AutoDriveToPose(new Pose2d(2.51,4.492,new Rotation2d(0)), 0.35, 8),   // Drives behind the reef
-      new AutoDriveToPose(new Pose2d(3,4.492,new Rotation2d(0)), 0.35, 8)    // Drives up to the reef on the back side
+      new InstantCommand( ()-> {g.ROBOT.drive.setOdometry(StartLocation.RIGHT);}, g.ROBOT.drive),
+      new AutoDriveToPose(new Pose2d(2.51,g.ROBOT. POSE_START_RIGHT.getY(),new Rotation2d(0)), 0.35, 8), // Drives straight to the back left of the field
+      new AutoDriveToPose(new Pose2d(2.51,4.492,new Rotation2d(0)), 0.35, 8) // Drives behind the reef
+      //new AutoDriveToPose(new Pose2d(3,4.492,new Rotation2d(0)), 0.35, 8)    // Drives up to the reef on the back side
       
     );
   }

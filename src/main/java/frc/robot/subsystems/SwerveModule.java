@@ -210,13 +210,14 @@ public class SwerveModule implements IUpdateDashboard {
     m_musicEnabled = !m_musicEnabled;
   }
   public void playImperialMarch(){
-    if(m_musicEnabled){
+ //  if(m_musicEnabled){
       Orchestra march = new Orchestra();
       StatusCode status = march.loadMusic("march.chrp");
       march.addInstrument(m_driveMotor);
       System.out.println(m_name + " Music Status =" + status.toString());
-      march.close();
-    }
+      march.play();
+     // march.close();
+ //   }
   }
   
 }

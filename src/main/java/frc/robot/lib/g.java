@@ -161,7 +161,7 @@ public class g {
 
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
 
-    public static final Trigger DRIVER_TEST_BB_BACK = driverController.triangle();
+    public static final Trigger DRIVER_MARCH = driverController.triangle();
     public static final Trigger DRIVER_TEST_BB_FRONT = driverController.cross();
     
     public static final Trigger DRIVER_STATION_RIGHT = driverController.circle();
@@ -293,10 +293,10 @@ public class g {
   }
 
   public static class DRIVETRAIN {
-    public static final double TURN_KP = .45;
-    public static final double TURN_KI = 0.10;
+    public static final double TURN_KP = 1;
+    public static final double TURN_KI = 0.50;
     public static final double TURN_KD = 0.0;
-    public static final double TURN_DEADBAND = 0.02;
+    public static final double TURN_DEADBAND_rad = 0.02;
     public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.2; // 1 inches
     public static final double AUTO_DRIVE_POSE_ANGLE_TOLERANCE_deg = 1.0; 
     public static volatile DriveMode driveMode = DriveMode.ANGLE_FIELD_CENTRIC;

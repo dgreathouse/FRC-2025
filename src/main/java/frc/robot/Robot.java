@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_MODE_SPEED_LOW.onTrue( new InstantCommand( () -> { g.DRIVETRAIN.speedMultiplier = 0.5; }, g.ROBOT.drive));
     g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue( new InstantCommand( () -> { g.SWERVE.isEnabled = !g.SWERVE.isEnabled; }, g.ROBOT.drive));
     g.OI.DRIVER_DISABLE_YAW.onTrue(new InstantCommand(() -> { g.SIM.IS_GYRO_DISABLED = !g.SIM.IS_GYRO_DISABLED; }, g.ROBOT.drive));
-
+    g.OI.DRIVER_MARCH.onTrue(new InstantCommand(() -> g.SWERVE.modules[0].playImperialMarch()));
     // Test driver controls
     // g.OI.DRIVER_TEST_BB_FRONT.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.FRONT; }, g.ROBOT.drive));
     // g.OI.DRIVER_TEST_BB_BACK.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive));
