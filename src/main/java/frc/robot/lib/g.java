@@ -292,8 +292,8 @@ public class g {
   }
 
   public static class DRIVETRAIN {
-    public static final double TURN_KP = 1;
-    public static final double TURN_KI = 0.50;
+    public static final double TURN_KP = .55;
+    public static final double TURN_KI = 0.250;
     public static final double TURN_KD = 0.0;
     public static final double TURN_DEADBAND_rad = 0.02;
     public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.2; // 1 inches
@@ -318,7 +318,7 @@ public class g {
   public static class LIFT {
   }
   public static class VISION {
-    public static volatile AprilTagAlignState aprilTagAlignState = AprilTagAlignState.CENTER;
+    public static volatile AprilTagAlignState aprilTagAlignState = AprilTagAlignState.NONE;
     public static volatile int aprilTagRequestedID = 0;
     public static volatile double aprilTagAngle_deg = 0;
     public static volatile double aprilTagDistance_m = 0;

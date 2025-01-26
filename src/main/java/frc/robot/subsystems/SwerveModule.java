@@ -176,7 +176,7 @@ public class SwerveModule implements IUpdateDashboard {
     // TODO: Cosine compensation needs testing
     // _state.speedMetersPerSecond *=
     // _state.angle.minus(g.ROBOT.angleActual_Rot2d).getCos();
-    if (g.DRIVETRAIN.playingMarch) {
+    //if (!g.DRIVETRAIN.playingMarch) {
       /*-------------------- Steer---------------------*/
       if (g.SWERVE.isEnabled) {
         double steerVolts = m_steerPID.calculate(m_position.angle.getDegrees(), _state.angle.getDegrees());
@@ -196,7 +196,7 @@ public class SwerveModule implements IUpdateDashboard {
       } else {
         m_driveMotor.setControl(m_driveVoltageOut.withOutput(0));
       }
-    }
+    //}
   }
 
   public double getDriveCurrent() {

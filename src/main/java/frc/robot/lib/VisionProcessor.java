@@ -30,13 +30,13 @@ public class VisionProcessor implements IUpdateDashboard{
     PhotonTrackedTarget m_target;
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     PhotonPoseEstimator m_poseEstimator;
-    EstimatedRobotPose m_estimatedRobotPose;
+    Optional<EstimatedRobotPose> m_estimatedRobotPose;
     public VisionProcessor(){
         camera = new PhotonCamera("leftArducam");
         camera.setPipelineIndex(0);
         camera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_cameraLocation = new Transform3d(new Translation3d(0,0,0), new Rotation3d(0,0,0));
+        Transform3d m_cameraLocation = new Transform3d(new Translation3d(0.33,0,0.33), new Rotation3d(0,0,0));
         m_poseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, m_cameraLocation);
 
         g.DASHBOARD.updates.add(this);
@@ -45,7 +45,7 @@ public class VisionProcessor implements IUpdateDashboard{
     public void setAprilTagData(){
 
         List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-        g.VISION.isAprilTagFound = false;
+       
         if (!results.isEmpty()) {
             PhotonPipelineResult result = results.get(results.size() - 1);
             if (result.hasTargets()) {
@@ -54,13 +54,19 @@ public class VisionProcessor implements IUpdateDashboard{
                     double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
                     double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
                     g.VISION.aprilTagDistance_m = Math.sqrt(a * a + b * b);
-                    m_estimatedRobotPose = getEstimatedGlobalPose(g.ROBOT.pose2d, result).get();
-                    g.ROBOT.drive.resetOdometry(m_estimatedRobotPose.estimatedPose.toPose2d());
-                    g.VISION.isAprilTagFound = false;
+                    m_estimatedRobotPose = getEstimatedGlobalPose(g.ROBOT.pose2d,result);
+                    if(m_estimatedRobotPose.isPresent()){           
+                        g.ROBOT.drive.resetOdometry(m_estimatedRobotPose.get().estimatedPose.toPose2d());
+                    }
+
                     if (target.getFiducialId() == getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get())) {
                         g.VISION.isAprilTagFound = true;
+                    }else {
+                        g.VISION.isAprilTagFound = false;
                     }
                 }
+            }else {
+                g.VISION.isAprilTagFound = false;
             }
         }
     }

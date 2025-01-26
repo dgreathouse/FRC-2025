@@ -52,6 +52,7 @@ public class DrivetrainDefaultCommand extends Command {
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
       //g.ROBOT.vision.setAprilTagData();
       if(g.VISION.isAprilTagFound){ // Target is found use the new angle from vision to drive at.
+        g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
         g.ROBOT.drive.driveAngleFieldCentric(leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.VISION.aprilTagAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
       }else { // If target not found drive at typical DriveAngleFieldCentric mode.
         g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);

@@ -97,16 +97,16 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_marchTimer.restart();
-    g.SWERVE.modules[2].playImperialMarch();
+    // m_marchTimer.restart();
+    // g.SWERVE.modules[2].playImperialMarch();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if(m_marchTimer.hasElapsed(2)){
-      g.DRIVETRAIN.playingMarch = false;
-    }
+    // if(m_marchTimer.hasElapsed(2)){
+    //   g.DRIVETRAIN.playingMarch = false;
+    // }
   }
 
   @Override
