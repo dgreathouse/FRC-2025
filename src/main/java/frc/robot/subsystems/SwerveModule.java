@@ -177,25 +177,28 @@ public class SwerveModule implements IUpdateDashboard {
   public void setDesiredState(SwerveModuleState _state) {
     _state.optimize(m_position.angle);
     // TODO: Cosine compensation needs testing
-    //_state.speedMetersPerSecond *= _state.angle.minus(g.ROBOT.angleActual_Rot2d).getCos();
-    /*-------------------- Steer---------------------*/
-    if (g.SWERVE.isEnabled) {
-      double steerVolts = m_steerPID.calculate(m_position.angle.getDegrees(), _state.angle.getDegrees());
-      m_steerMotor.setControl(m_steerVoltageOut.withOutput(steerVolts));
-    } else {
-      m_steerMotor.setControl(m_steerVoltageOut.withOutput(0));
-    }
-    /*-------------------- Drive---------------------*/
-    if (g.SWERVE.isEnabled) {
+    // _state.speedMetersPerSecond *=
+    // _state.angle.minus(g.ROBOT.angleActual_Rot2d).getCos();
+    if (g.DRIVETRAIN.playingMarch) {
+      /*-------------------- Steer---------------------*/
+      if (g.SWERVE.isEnabled) {
+        double steerVolts = m_steerPID.calculate(m_position.angle.getDegrees(), _state.angle.getDegrees());
+        m_steerMotor.setControl(m_steerVoltageOut.withOutput(steerVolts));
+      } else {
+        m_steerMotor.setControl(m_steerVoltageOut.withOutput(0));
+      }
+      /*-------------------- Drive---------------------*/
+      if (g.SWERVE.isEnabled) {
 
-      double driveSetVelocity_mps = _state.speedMetersPerSecond * g.DRIVETRAIN.speedMultiplier;
-      double driveVolts = m_drivePID.calculate( m_driveMotor.getVelocity().getValueAsDouble()/ g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
-      driveVolts = MathUtil.clamp(driveVolts, -6, 6);
+        double driveSetVelocity_mps = _state.speedMetersPerSecond * g.DRIVETRAIN.speedMultiplier;
+        double driveVolts = m_drivePID.calculate(m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
+        driveVolts = MathUtil.clamp(driveVolts, -6, 6);
 
-      driveVolts = driveVolts + m_driveFF.calculate(driveSetVelocity_mps, 0.0);
-      m_driveMotor.setControl(m_driveVoltageOut.withOutput(driveVolts));
-    } else {
-      m_driveMotor.setControl(m_driveVoltageOut.withOutput(0));
+        driveVolts = driveVolts + m_driveFF.calculate(driveSetVelocity_mps, 0.0);
+        m_driveMotor.setControl(m_driveVoltageOut.withOutput(driveVolts));
+      } else {
+        m_driveMotor.setControl(m_driveVoltageOut.withOutput(0));
+      }
     }
   }
 
@@ -210,14 +213,12 @@ public class SwerveModule implements IUpdateDashboard {
     m_musicEnabled = !m_musicEnabled;
   }
   public void playImperialMarch(){
- //  if(m_musicEnabled){
       Orchestra march = new Orchestra();
       StatusCode status = march.loadMusic("march.chrp");
       march.addInstrument(m_driveMotor);
       System.out.println(m_name + " Music Status =" + status.toString());
       march.play();
-     // march.close();
- //   }
+      march.close();
   }
   
 }

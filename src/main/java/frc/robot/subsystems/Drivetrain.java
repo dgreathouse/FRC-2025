@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,10 +25,10 @@ import frc.robot.lib.g;
 
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private SwerveDriveKinematics m_kinematics;
-  private SwerveDriveOdometry m_odometry;
+  private volatile SwerveDriveOdometry m_odometry;
   private OdometryThread m_odometryThread;
-  private StatusSignal<Angle> m_yawStatusPrimary;
-  private StatusSignal<AngularVelocity> m_angularVelocityZStatusPrimary;
+  private StatusSignal<Angle> m_yawStatusPigeon2;
+  private StatusSignal<AngularVelocity> m_angularVelocityZStatusPigeon2;
   private double m_yawPrimary;
   private double m_angularVelocityZPrimary;
   private double m_yawSecondary = 0;
@@ -40,10 +41,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   /** Creates a new Drivetrain. */
   @SuppressWarnings("unused")
   public Drivetrain() {
-    m_yawStatusPrimary = g.ROBOT.gyro_pigeon2.getYaw();
-    m_yawStatusPrimary.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
-    m_angularVelocityZStatusPrimary = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
-    m_angularVelocityZStatusPrimary.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
+    m_yawStatusPigeon2 = g.ROBOT.gyro_pigeon2.getYaw();
+    m_yawStatusPigeon2.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
+    m_angularVelocityZStatusPigeon2 = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
+    m_angularVelocityZStatusPigeon2.setUpdateFrequency(g.SWERVE.CAN_UPDATE_FREQ_hz);
 
     g.SWERVE.modules[0] = new SwerveModule(
         "BR",
@@ -221,7 +222,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     double hyp = Math.hypot(x, y); // Always positive
     double joystickAngle = Math.toDegrees(Math.atan2(y, x));
 
-    if (Math.abs(hyp) > g.OI.ANGLE_TARGET_DEADBAND) {
+    if (Math.abs(hyp) > g.OI.THUMBSTICK_AXIS_ANGLE_DEADBAND) {
       if (joystickAngle >= -22.5 && joystickAngle <= 22.5) { // North
         g.ROBOT.angleRobotTarget_deg = 0.0;
       } else if (joystickAngle >= -67.5 && joystickAngle < -22.5) { // North East
@@ -320,6 +321,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
     }
   }
+  public void resetOdometry(Pose2d _pose){
+    m_odometry.resetPose(_pose);
+  }
   private class OdometryThread extends Thread {
     public OdometryThread() {
       super();
@@ -331,13 +335,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       while (true) {
         /* Now update odometry */
         updatePositions();
-        m_yawStatusPrimary = g.ROBOT.gyro_pigeon2.getYaw();
-        m_angularVelocityZStatusPrimary = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
-        m_yawPrimary = m_yawStatusPrimary.getValueAsDouble();
-        m_angularVelocityZPrimary = m_angularVelocityZStatusPrimary.getValueAsDouble();
+        m_yawStatusPigeon2 = g.ROBOT.gyro_pigeon2.getYaw();
+        m_angularVelocityZStatusPigeon2 = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
+        m_yawSecondary = m_yawStatusPigeon2.getValueAsDouble();
+        m_angularVelocityZSecondary = m_angularVelocityZStatusPigeon2.getValueAsDouble();
         
-        m_yawSecondary = -g.ROBOT.gyro_navx.getAngle();
-        m_angularVelocityZSecondary = -g.ROBOT.gyro_navx.getVelocityZ();
+        m_yawPrimary = -g.ROBOT.gyro_navx.getAngle();
+        m_angularVelocityZPrimary = -g.ROBOT.gyro_navx.getVelocityZ();
 
         g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
