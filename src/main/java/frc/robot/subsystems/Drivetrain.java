@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.StartLocation;
@@ -288,12 +289,14 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
     SmartDashboard.putNumber("Robot/Pose X", g.ROBOT.pose2d.getX());
     SmartDashboard.putNumber("Robot/Pose Y", g.ROBOT.pose2d.getY());
+    SmartDashboard.putNumber("Robot/Pose ANgle", g.ROBOT.pose2d.getRotation().getDegrees());
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
 
     SmartDashboard.putNumber("Robot/GyroPrimary_deg", m_yawPrimary);
     SmartDashboard.putNumber("Robot/GyroSecondary_deg", m_yawSecondary);
     SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());
+    SmartDashboard.putBoolean("Robot/Is AprilTag Active", g.ROBOT.vision.getIsAutoAprilTagActive());
 
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
@@ -332,6 +335,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
   public void resetOdometry(Pose2d _pose){
     m_odometry.resetPose(_pose);
+  }
+  public void setAprilTagAlignment(AprilTagAlignState _alignState){
+    g.DRIVETRAIN.isAutoToAprilTagDone = false;
+    g.VISION.aprilTagAlignState = _alignState;
   }
   private class OdometryThread extends Thread {
     public OdometryThread() {

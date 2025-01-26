@@ -111,6 +111,7 @@ public class AutoDriveToPose extends Command {
        && Math.abs((g.ROBOT.pose2d.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
        && g.ROBOT.drive.isRotateAtTarget())
     {
+      g.DRIVETRAIN.isAutoToAprilTagDone = true;
       return true;
     }
     if(m_timer.hasElapsed(m_timeOut_sec)){

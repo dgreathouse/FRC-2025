@@ -2,7 +2,10 @@ package frc.robot.defaultCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.drive.AutoDriveToPose;
 import frc.robot.lib.g;
 
 public class DrivetrainDefaultCommand extends Command {
@@ -49,15 +52,23 @@ public class DrivetrainDefaultCommand extends Command {
     rightXFiltered = m_stickLimiterRX.calculate(rightXFiltered);
     rightYFiltered = m_stickLimiterRY.calculate(rightYFiltered);
 
-    if(g.ROBOT.vision.getIsAutoAprilTagActive()){
-      //g.ROBOT.vision.setAprilTagData();
-      if(g.VISION.isAprilTagFound){ // Target is found use the new angle from vision to drive at.
-        g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
-        g.ROBOT.drive.driveAngleFieldCentric(leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.VISION.aprilTagAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
-      }else { // If target not found drive at typical DriveAngleFieldCentric mode.
-        g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
-        g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
-      }
+    if(g.ROBOT.vision.getIsAutoAprilTagActive() && !g.DRIVETRAIN.isAutoToAprilTagDone){
+      Pose2d newPose = g.VISION.aprilTagRequestedPose.get().toPose2d();
+      newPose = new Pose2d(newPose.getX()+1, newPose.getY(), g.ROBOT.pose2d.getRotation());
+      SmartDashboard.putNumber("New Pose X", newPose.getX());
+      SmartDashboard.putNumber("New Pose Y", newPose.getY());
+      SmartDashboard.putNumber("New Pose Ang", newPose.getRotation().getDegrees());
+      AutoDriveToPose autoPose = new AutoDriveToPose(newPose, 0.35, 3);
+      
+      autoPose.schedule();
+      // //g.ROBOT.vision.setAprilTagData();
+      // if(g.VISION.isAprilTagFound){ // Target is found use the new angle from vision to drive at.
+      //   g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
+      //   g.ROBOT.drive.driveAngleFieldCentric(leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.VISION.aprilTagAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+      // }else { // If target not found drive at typical DriveAngleFieldCentric mode.
+      //   g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
+      //   g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+      // }
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:

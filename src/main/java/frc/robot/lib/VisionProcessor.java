@@ -14,6 +14,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -58,9 +59,14 @@ public class VisionProcessor implements IUpdateDashboard{
                     if(m_estimatedRobotPose.isPresent()){           
                         g.ROBOT.drive.resetOdometry(m_estimatedRobotPose.get().estimatedPose.toPose2d());
                     }
-
-                    if (target.getFiducialId() == getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get())) {
+                    int id = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
+                    if (target.getFiducialId() == id) {
                         g.VISION.isAprilTagFound = true;
+                        Optional<Pose3d> ps = m_apriltagFieldLayout.getTagPose(id);
+                        if(ps.isPresent()){
+                            g.VISION.aprilTagRequestedPose = ps;
+                        }
+
                     }else {
                         g.VISION.isAprilTagFound = false;
                     }
@@ -155,5 +161,9 @@ public class VisionProcessor implements IUpdateDashboard{
         SmartDashboard.putNumber("Vision/AprilTagYaw_deg", g.VISION.aprilTagAngle_deg);
         SmartDashboard.putNumber("Vision/AprilTagDistance_m", g.VISION.aprilTagDistance_m);
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
+        if(g.VISION.aprilTagRequestedPose.isPresent()){
+            SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.get().getX());
+            SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.get().getY());
+        }
     }
 }

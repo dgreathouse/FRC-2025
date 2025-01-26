@@ -23,6 +23,7 @@ import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.SwerveModule;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * g.java contains all of our "static" java classes.
@@ -160,8 +161,9 @@ public class g {
 
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
 
-    public static final Trigger DRIVER_MARCH = driverController.triangle();
+   // public static final Trigger DRIVER_MARCH = driverController.triangle();
     public static final Trigger DRIVER_TEST_BB_FRONT = driverController.cross();
+    public static final Trigger DRIVER_TEST_BB_NONE = driverController.triangle();
     
     public static final Trigger DRIVER_STATION_RIGHT = driverController.circle();
     public static final Trigger DRIVER_STATION_LEFT = driverController.square();
@@ -303,7 +305,7 @@ public class g {
     public static final Translation2d ZERO_CENTER_OF_ROTATION_m = new Translation2d();
     public static volatile Translation2d centerOfRotation_m = new Translation2d();
     public static volatile boolean playingMarch = true;
-    
+    public static boolean isAutoToAprilTagDone = false;
 
   }
 
@@ -323,7 +325,7 @@ public class g {
     public static volatile double aprilTagAngle_deg = 0;
     public static volatile double aprilTagDistance_m = 0;
     public static volatile boolean isAprilTagFound = false;
-    
+    public static volatile Optional<Pose3d> aprilTagRequestedPose = Optional.empty();
   }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;
