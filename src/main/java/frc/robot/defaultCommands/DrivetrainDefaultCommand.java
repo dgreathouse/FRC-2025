@@ -3,6 +3,8 @@ package frc.robot.defaultCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.AutoDriveToPose;
@@ -54,7 +56,8 @@ public class DrivetrainDefaultCommand extends Command {
 
     if(g.ROBOT.vision.getIsAutoAprilTagActive() && !g.DRIVETRAIN.isAutoToAprilTagDone){
       Pose2d newPose = g.VISION.aprilTagRequestedPose.get().toPose2d();
-      newPose = new Pose2d(newPose.getX()+1, newPose.getY(), g.ROBOT.pose2d.getRotation());
+      //newPose = new Pose2d(rightXFiltered, rightYFiltered, null)
+      newPose = new Pose2d(newPose.getX()-1, newPose.getY(), new Rotation2d(0));
       SmartDashboard.putNumber("New Pose X", newPose.getX());
       SmartDashboard.putNumber("New Pose Y", newPose.getY());
       SmartDashboard.putNumber("New Pose Ang", newPose.getRotation().getDegrees());

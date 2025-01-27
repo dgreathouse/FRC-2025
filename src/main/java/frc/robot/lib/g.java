@@ -163,7 +163,7 @@ public class g {
 
    // public static final Trigger DRIVER_MARCH = driverController.triangle();
     public static final Trigger DRIVER_TEST_BB_FRONT = driverController.cross();
-    public static final Trigger DRIVER_TEST_BB_NONE = driverController.triangle();
+    public static final Trigger DRIVER_RESET_START_POSE = driverController.triangle();
     
     public static final Trigger DRIVER_STATION_RIGHT = driverController.circle();
     public static final Trigger DRIVER_STATION_LEFT = driverController.square();

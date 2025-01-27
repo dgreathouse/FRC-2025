@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -22,6 +23,7 @@ import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
+import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
@@ -143,7 +145,7 @@ public class Robot extends TimedRobot {
     //g.OI.DRIVER_MARCH.onTrue(new InstantCommand(() -> g.SWERVE.modules[0].playImperialMarch()));
     // Test driver controls
      g.OI.DRIVER_TEST_BB_FRONT.onTrue(new InstantCommand(() -> { g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.LEFT);}, g.ROBOT.drive));
-     g.OI.DRIVER_TEST_BB_NONE.onTrue(new InstantCommand(() -> { g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.NONE); }, g.ROBOT.drive));
+     g.OI.DRIVER_RESET_START_POSE.onTrue(new InstantCommand(() -> { g.ROBOT.drive.setOdometry(StartLocation.LEFT);}, g.ROBOT.drive));
     // g.OI.DRIVER_TEST_BB_BACK.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive));
 
     g.OI.DRIVER_STATION_LEFT.onTrue(new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(-36);}, g.ROBOT.drive));
