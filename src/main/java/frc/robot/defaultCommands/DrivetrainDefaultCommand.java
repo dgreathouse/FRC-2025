@@ -5,6 +5,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.AutoDriveToPose;
@@ -69,13 +70,15 @@ public class DrivetrainDefaultCommand extends Command {
       
       //autoPose.schedule();
       // //g.ROBOT.vision.setAprilTagData();
-      // if(g.VISION.isAprilTagFound){ // Target is found use the new angle from vision to drive at.
+       if(g.VISION.isAprilTagFound){ // Target is found use the new angle from vision to drive at.
+        g.OI.driverController.setRumble(RumbleType.kBothRumble, 0.5);
       //   g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
       //   g.ROBOT.drive.driveAngleFieldCentric(leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.VISION.aprilTagAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
-      // }else { // If target not found drive at typical DriveAngleFieldCentric mode.
+       }else { // If target not found drive at typical DriveAngleFieldCentric mode.
+        g.OI.driverController.setRumble(RumbleType.kBothRumble, 0.0);
       //   g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
       //   g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
-      // }
+       }
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:
