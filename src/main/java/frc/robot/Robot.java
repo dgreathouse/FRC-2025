@@ -68,12 +68,13 @@ public class Robot extends TimedRobot {
     for (IUpdateDashboard updates : g.DASHBOARD.updates) {
       updates.updateDashboard();
     }
-    g.MATCH.alliance = DriverStation.getAlliance().get();
+    
   }
 
   /** */
   @Override
   public void robotPeriodic() {
+    g.MATCH.alliance = DriverStation.getAlliance().get();
     CommandScheduler.getInstance().run();
   }
 
@@ -151,7 +152,11 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_STATION_LEFT.onTrue(new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(-36);}, g.ROBOT.drive));
     g.OI.DRIVER_STATION_RIGHT.onTrue(new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(36);}, g.ROBOT.drive));
 
-    //Button board
+    // Operator controls
+    g.OI.OPERATOR_ALIGN_CENTER.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.CENTER);}, g.ROBOT.drive));
+    g.OI.OPERATOR_ALIGN_LEFT.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.LEFT);}, g.ROBOT.drive));
+    g.OI.OPERATOR_ALIGN_RIGHT.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.RIGHT);}, g.ROBOT.drive));
+        //Button board
     // g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
   
     // g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L4; }, g.ROBOT.coral ));

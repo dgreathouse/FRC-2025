@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import org.photonvision.PhotonUtils;
+
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -112,7 +114,17 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   public void periodic() {
     // This method will be called once per scheduler run
   }
-
+  // Use the AprilTagAlignState, AprilTagPose, RobotAngle and RobotPose to get and new Pose2d to drive to
+  Pose2d getApriltagDriveToPose(Pose2d _aprilTagPose){
+    //g.MATCH.alliance periodically created
+    //g.VISION.aprilTagRequestedPose the Pose of the apriltag. Updated in vision when ID is found
+    // g.ROBOT.angleActual_deg Robot angle
+    // g.ROBOT.alignmentState the part of the reef the robot should be pointed to.
+    // 
+    // PhotonUtils some static methods that might help
+    // Look it up in a table for ID and alignment and get the pose.
+    return null;
+  }
   /** Drive in old fashion mode. Forward on thumb stick makes the robot go forward with reference to the front of the robot.
    * 
    * @param _xSpeed The X speed in +/- 1.0 Forward +

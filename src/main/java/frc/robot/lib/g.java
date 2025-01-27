@@ -72,6 +72,10 @@ public class g {
   public static class MATCH {
     public static Alliance alliance = Alliance.Blue;
   }
+  public static class AprilTagLocations{
+    public static List<ApriltagPose> pose = new ArrayList<ApriltagPose>(  );
+    
+  }
   /** ROBOT class contains the static data associated with Robot.java
    *  The ROBOT represents the robot as a whole and not one subsystem.
    *  Therefore the ROBOT class holds data like the subsystem instances, gyro, field,
@@ -171,6 +175,9 @@ public class g {
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;
     public static CommandPS5Controller operatorController = new CommandPS5Controller(OPERATOR_CONTROLLER_PORT);
+    public static final Trigger OPERATOR_ALIGN_LEFT = operatorController.square();
+    public static final Trigger OPERATOR_ALIGN_RIGHT = operatorController.circle();
+    public static final Trigger OPERATOR_ALIGN_CENTER = operatorController.cross();
 
     // Button Board
     public static final int BUTTON_BOARD_PORT = 2;

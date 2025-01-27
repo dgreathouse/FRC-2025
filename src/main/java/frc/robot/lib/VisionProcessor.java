@@ -41,7 +41,42 @@ public class VisionProcessor implements IUpdateDashboard{
         m_poseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, m_cameraLocation);
 
         g.DASHBOARD.updates.add(this);
+        createApriltagLocations();
         
+    }
+    private void createApriltagLocations(){
+        // Every triangle is a 30:60:90. This follows the 1:sqrt(3):2 rule. The short end is 1, hypotenuse is 2 times the short end and the other side is sqrt(3) times the short end.
+        // Example: Hypotenuse is 164.28mm, therfore the short end is 1/2 the hypontenuse or 82.14mm. The other side is sqrt(3)=1.723 or 1.732*82.14 = 142.27
+        // Every coral post is 163.28mm from the center of the apriltag.
+        // These numbers are to represent the pose our robot must be at to interact correctly with the field object like the coral posts. 
+        // We want to use these numbers directly as the pose our robot must go to. This calculation being done now just stores the pose of the apriltag on the field, not our needed robot pose.
+        // A pose for our robot represents where the center of our robot should go to. Therefore we will need to calculate that and add that in through a calculation or change these numbers.
+        // The nose of our robot is 535mm from the center of the robot. The nose will always be pointing at the coral posts.
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 0 which does not exist on the map
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 1 red left station. Only care about center at this point
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 2 red right station. Only care about center at this point
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 3 red processor. Only care about center at this point
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 4
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 5
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 6
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 7
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 8
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 9
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 10
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 11
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 12
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 13
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 14
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 15
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 16
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 17
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 18
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 19
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 20
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 21
+        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 22
+
+
     }
     public void setAprilTagData(){
 
@@ -51,20 +86,20 @@ public class VisionProcessor implements IUpdateDashboard{
             PhotonPipelineResult result = results.get(results.size() - 1);
             if (result.hasTargets()) {
                 for (PhotonTrackedTarget target : result.getTargets()) {
-                    g.VISION.aprilTagAngle_deg = getYawFromCamera(target.getYaw());
+                    g.VISION.aprilTagAngle_deg = target.getYaw();
                     double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
                     double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
                     g.VISION.aprilTagDistance_m = Math.sqrt(a * a + b * b);
                     m_estimatedRobotPose = getEstimatedGlobalPose(g.ROBOT.pose2d,result);
-                    if(m_estimatedRobotPose.isPresent()){           
+                    if(m_estimatedRobotPose.isPresent()){
                         g.ROBOT.drive.resetOdometry(m_estimatedRobotPose.get().estimatedPose.toPose2d());
                     }
                     int id = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
                     if (target.getFiducialId() == id) {
                         g.VISION.isAprilTagFound = true;
-                        Optional<Pose3d> ps = m_apriltagFieldLayout.getTagPose(id);
-                        if(ps.isPresent()){
-                            g.VISION.aprilTagRequestedPose = ps;
+                        Optional<Pose3d> requestedPose = m_apriltagFieldLayout.getTagPose(id);
+                        if(requestedPose.isPresent()){
+                            g.VISION.aprilTagRequestedPose = requestedPose;
                         }
 
                     }else {
@@ -80,24 +115,7 @@ public class VisionProcessor implements IUpdateDashboard{
         m_poseEstimator.setReferencePose(_prevEstimatedRobotPose);
         return m_poseEstimator.update(_result);
     }
-    private double getYawFromCamera(double _yaw){
-        // Determine which camera is being used.
-        // 
-        double rtn = _yaw;
-        switch (g.VISION.aprilTagAlignState) {
-            case CENTER:
-                // TODO: adjust the yaw to compensate for the use of the right camera
-                rtn = _yaw;
-                break;
-            case RIGHT:
-            case LEFT:
-            case NONE:
-            default:
 
-                break;
-        }
-        return rtn;
-    }
     public boolean getIsAutoAprilTagActive(){
         if(g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.VISION.isAprilTagFound){
             return true;
