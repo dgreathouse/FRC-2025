@@ -45,6 +45,7 @@ public class VisionProcessor implements IUpdateDashboard{
         
     }
     private void createApriltagLocations(){
+        double x,y,cx,cy;
         // Every triangle is a 30:60:90. This follows the 1:sqrt(3):2 rule. The short end is 1, hypotenuse is 2 times the short end and the other side is sqrt(3) times the short end.
         // Example: Hypotenuse is 164.28mm, therfore the short end is 1/2 the hypontenuse or 82.14mm. The other side is sqrt(3)=1.723 or 1.732*82.14 = 142.27
         // Every coral post is 163.28mm from the center of the apriltag.
@@ -69,7 +70,11 @@ public class VisionProcessor implements IUpdateDashboard{
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 14
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 15
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 16
-        g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 17
+        x = m_apriltagFieldLayout.getTagPose(17).get().getX();
+        y = m_apriltagFieldLayout.getTagPose(17).get().getY();
+        cx = x-g.ROBOT.centerDistanceToFrontBumper_mm/2;
+        cy = y-cx*1.732;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx-(g.FIELD.TAG_TO_POST_mm*0.866), cy+g.FIELD.TAG_TO_POST_mm/2, 0, 0, cx, cy, 0));  // ID 17
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 18
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 19
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 20
