@@ -76,10 +76,11 @@ public class AutoDriveToPose extends Command {
     double driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
     m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
     // Overwrite the angle and distance if looking for apriltag
-    if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) {
-      driveAngle_deg = g.VISION.aprilTagAngle_deg;
-      m_driveDistance_m = g.VISION.aprilTagDistance_m;
-    }
+    /// No reason to do this anymore. The pose will be reset by vision when it sees the apriltag
+    // if (g.ROBOT.alignmentState != RobotAlignStates.UNKNOWN && g.VISION.isAprilTagFound) {
+    //   driveAngle_deg = g.VISION.aprilTagAngle_deg;
+    //   m_driveDistance_m = g.VISION.aprilTagDistance_m;
+    // }
 
     // PID the speed based on distance
     double speed = m_drivePID.calculate(0,m_driveDistance_m);
@@ -111,7 +112,8 @@ public class AutoDriveToPose extends Command {
        && Math.abs((g.ROBOT.pose2d.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
        && g.ROBOT.drive.isRotateAtTarget())
     {
-      g.DRIVETRAIN.isAutoToAprilTagDone = true;
+     // g.DRIVETRAIN.isAutoToAprilTagDone = true;
+      g.VISION.aprilTagAlignState = AprilTagAlignState.NONE;
       return true;
     }
     if(m_timer.hasElapsed(m_timeOut_sec)){

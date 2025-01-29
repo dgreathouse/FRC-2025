@@ -1,10 +1,8 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,11 +16,9 @@ import frc.robot.commandGroups.AutoDriveToFront;
 import frc.robot.commandGroups.AutoDriveToPoseTest;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
-import frc.robot.lib.AlgaeIntakeStates;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
-import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 

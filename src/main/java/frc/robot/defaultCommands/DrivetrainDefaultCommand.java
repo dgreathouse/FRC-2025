@@ -2,11 +2,6 @@ package frc.robot.defaultCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.AutoDriveToPose;
 import frc.robot.lib.g;
@@ -59,26 +54,9 @@ public class DrivetrainDefaultCommand extends Command {
     rightXFiltered_Driver = m_stickLimiterRX.calculate(rightXFiltered_Driver);
     rightYFiltered_Driver = m_stickLimiterRY.calculate(rightYFiltered_Driver);
 
-    if(g.ROBOT.vision.getIsAutoAprilTagActive() && !g.DRIVETRAIN.isAutoToAprilTagDone){
-      Pose2d aprilTagPose = g.VISION.aprilTagRequestedPose.get().toPose2d();
-      //newPose = new Pose2d(rightXFiltered, rightYFiltered, null)
-      Pose2d driveToPose = new Pose2d(aprilTagPose.getX()-1, aprilTagPose.getY(), new Rotation2d(0));
-      SmartDashboard.putNumber("New Pose X", driveToPose.getX());
-      SmartDashboard.putNumber("New Pose Y", driveToPose.getY());
-      SmartDashboard.putNumber("New Pose Ang", driveToPose.getRotation().getDegrees());
-     // AutoDriveToPose autoPose = new AutoDriveToPose(driveToPose, 0.35, 3);
-      
-      //autoPose.schedule();
-      // //g.ROBOT.vision.setAprilTagData();
-       if(g.VISION.isAprilTagFound){ // Target is found use the new angle from vision to drive at.
-        g.OI.driverController.setRumble(RumbleType.kBothRumble, 0.5);
-      //   g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
-      //   g.ROBOT.drive.driveAngleFieldCentric(leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.VISION.aprilTagAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
-       }else { // If target not found drive at typical DriveAngleFieldCentric mode.
-        g.OI.driverController.setRumble(RumbleType.kBothRumble, 0.0);
-      //   g.ROBOT.drive.setTargetRobotAngle(rightXFiltered, rightYFiltered);
-      //   g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
-       }
+    if(g.ROBOT.vision.getIsAutoAprilTagActive()){
+      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.35, 3);
+      autoPose.schedule();
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:

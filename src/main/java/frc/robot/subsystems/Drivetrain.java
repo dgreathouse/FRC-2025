@@ -1,9 +1,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-
-import org.photonvision.PhotonUtils;
-
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -349,7 +346,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_odometry.resetPose(_pose);
   }
   public void setAprilTagAlignment(AprilTagAlignState _alignState){
-    g.DRIVETRAIN.isAutoToAprilTagDone = false;
+    //g.DRIVETRAIN.isAutoToAprilTagDone = false;
     g.VISION.aprilTagAlignState = _alignState;
   }
   private class OdometryThread extends Thread {
