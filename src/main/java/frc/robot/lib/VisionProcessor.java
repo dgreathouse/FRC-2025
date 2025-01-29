@@ -88,7 +88,7 @@ public class VisionProcessor implements IUpdateDashboard{
         y = m_apriltagFieldLayout.getTagPose(7).get().getY();
         cx = x + g.ROBOT.centerDistanceToFrontBumper_mm;
         cy = y;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy - g.FIELD.TAG_TO_POST_mm, cx, cy + g.FIELD.TAG_TO_POST_mm, cx, cy, 180));  // ID 7
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy - g.FIELD.TAG_TO_POST_mm, cx, cy + g.FIELD.TAG_TO_POST_mm, cx, cy, 0));  // ID 7
         x = m_apriltagFieldLayout.getTagPose(8).get().getX();
         y = m_apriltagFieldLayout.getTagPose(8).get().getY();
         cx = x + g.ROBOT.centerDistanceToFrontBumper_mm/2;
@@ -103,7 +103,7 @@ public class VisionProcessor implements IUpdateDashboard{
         y = m_apriltagFieldLayout.getTagPose(10).get().getY();
         cx = x-g.ROBOT.centerDistanceToFrontBumper_mm;
         cy = y;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy+g.FIELD.TAG_TO_POST_mm, cx, cy - g.FIELD.TAG_TO_POST_mm, cx, cy, 0));  // ID 10
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy+g.FIELD.TAG_TO_POST_mm, cx, cy - g.FIELD.TAG_TO_POST_mm, cx, cy, 180));  // ID 10
         x = m_apriltagFieldLayout.getTagPose(11).get().getX();
         y = m_apriltagFieldLayout.getTagPose(11).get().getY();
         cx = x - g.ROBOT.centerDistanceToFrontBumper_mm/2;
@@ -144,8 +144,6 @@ public class VisionProcessor implements IUpdateDashboard{
         cx = x + g.ROBOT.centerDistanceToFrontBumper_mm/2;
         cy = y - g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
         g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx + g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx, cy, 120)); // ID 22
-
-
     }
     public void setAprilTagData(){
         List<PhotonPipelineResult> results = camera.getAllUnreadResults();
@@ -185,7 +183,7 @@ public class VisionProcessor implements IUpdateDashboard{
      * @return
      */
     public boolean getIsAutoAprilTagActive(){
-        if(g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.VISION.isAprilTagFound){
+        if(g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.VISION.isAprilTagFound && g.DRIVETRAIN.isAutoDriveEnabled){
             return true;
         }
         return false;

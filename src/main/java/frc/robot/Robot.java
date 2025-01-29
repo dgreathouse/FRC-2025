@@ -138,21 +138,15 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_MODE_SPEED_HI.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.speedMultiplier = 1.0; }, g.ROBOT.drive));
     g.OI.DRIVER_MODE_SPEED_LOW.onTrue( new InstantCommand( () -> { g.DRIVETRAIN.speedMultiplier = 0.5; }, g.ROBOT.drive));
     g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue( new InstantCommand( () -> { g.SWERVE.isEnabled = !g.SWERVE.isEnabled; }, g.ROBOT.drive));
-
-    //g.OI.DRIVER_MARCH.onTrue(new InstantCommand(() -> g.SWERVE.modules[0].playImperialMarch()));
-    // Test driver controls
-     g.OI.DRIVER_TEST_BB_FRONT.onTrue(new InstantCommand(() -> { g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.LEFT);}, g.ROBOT.drive));
-     g.OI.DRIVER_RESET_START_POSE.onTrue(new InstantCommand(() -> { g.ROBOT.drive.setOdometry(StartLocation.LEFT);}, g.ROBOT.drive));
-    // g.OI.DRIVER_TEST_BB_BACK.onTrue(new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive));
-
-    g.OI.DRIVER_STATION_LEFT.onTrue(new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(-36);}, g.ROBOT.drive));
-    g.OI.DRIVER_STATION_RIGHT.onTrue(new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(36);}, g.ROBOT.drive));
+    g.OI.DRIVER_TOGGLE_AUTO_DRIVE.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.isAutoDriveEnabled = !g.DRIVETRAIN.isAutoDriveEnabled;},g.ROBOT.drive));
 
     // Operator controls
     g.OI.OPERATOR_ALIGN_CENTER.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.CENTER);}, g.ROBOT.drive));
     g.OI.OPERATOR_ALIGN_LEFT.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.LEFT);}, g.ROBOT.drive));
     g.OI.OPERATOR_ALIGN_RIGHT.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.RIGHT);}, g.ROBOT.drive));
-        //Button board
+
+
+    //Button board
     // g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
   
     // g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L4; }, g.ROBOT.coral ));

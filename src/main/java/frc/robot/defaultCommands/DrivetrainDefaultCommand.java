@@ -45,8 +45,8 @@ public class DrivetrainDefaultCommand extends Command {
     // Limit the inputs for a deadband related to the joystick
     double leftYFiltered_Driver = MathUtil.applyDeadband(leftYRaw_Driver, 0.08, 1.0);
     double leftXFiltered_Driver = MathUtil.applyDeadband(leftXRaw_Driver, 0.08, 1.0);
-    double rightXFiltered_Driver = MathUtil.applyDeadband(rightXRaw_Driver, 0.15, 1.0);
-    double rightYFiltered_Driver = MathUtil.applyDeadband(rightYRaw_Driver, 0.15, 1.0);
+    double rightXFiltered_Driver = MathUtil.applyDeadband(rightXRaw_Driver, 0.1, 1.0);
+    double rightYFiltered_Driver = MathUtil.applyDeadband(rightYRaw_Driver, 0.1, 1.0);
 
     // Limit the speed of change to reduce the acceleration
     leftXFiltered_Driver = m_stickLimiterLX.calculate(leftXFiltered_Driver);

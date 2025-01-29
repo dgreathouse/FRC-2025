@@ -151,19 +151,17 @@ public class g {
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static CommandPS5Controller driverController = new CommandPS5Controller(DRIVER_CONTROLLER_PORT);
 
-    public static final double THUMBSTICK_AXIS_ANGLE_DEADBAND = 0.8; 
+    public static final double THUMBSTICK_AXIS_ANGLE_DEADBAND = 0.7; 
     public static final Trigger DRIVER_MODE_FIELDCENTRIC = driverController.povLeft();
     public static final Trigger DRIVER_MODE_ROBOTCENTRIC = driverController.povRight();
     public static final Trigger DRIVER_MODE_ANGLEFIELDCENTRIC = driverController.povDown();
-    public static final Trigger DRIVER_MODE_ANGLEFIELDCENTRIC_REEF = driverController.povUp();
-    public static boolean driverControllerSignInverted = false;
+    public static final Trigger DRIVER_TOGGLE_AUTO_DRIVE = driverController.povUp();
     public static final Trigger DRIVER_MODE_SPEED_HI = driverController.R1();
     public static final Trigger DRIVER_MODE_SPEED_LOW = driverController.L1();
-
     public static final Trigger DRIVER_RESET_YAW = driverController.create();
-
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
 
+    public static boolean driverControllerSignInverted = false;
    // public static final Trigger DRIVER_MARCH = driverController.triangle();
     public static final Trigger DRIVER_TEST_BB_FRONT = driverController.cross();
     public static final Trigger DRIVER_RESET_START_POSE = driverController.triangle();
@@ -311,6 +309,7 @@ public class g {
     public static final Translation2d ZERO_CENTER_OF_ROTATION_m = new Translation2d();
     public static volatile Translation2d centerOfRotation_m = new Translation2d();
     public static volatile boolean playingMarch = true;
+    public static boolean isAutoDriveEnabled = true;
     //public static boolean isAutoToAprilTagDone = false;
 
   }
