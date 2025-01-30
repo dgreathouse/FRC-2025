@@ -55,7 +55,7 @@ public class DrivetrainDefaultCommand extends Command {
     rightYFiltered_Driver = m_stickLimiterRY.calculate(rightYFiltered_Driver);
 
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
-      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.35, 3);
+      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.35, 2);
       autoPose.schedule();
     }else {
       switch (g.DRIVETRAIN.driveMode) {

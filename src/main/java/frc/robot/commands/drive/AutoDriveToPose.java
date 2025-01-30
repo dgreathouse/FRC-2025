@@ -3,7 +3,9 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.RobotAlignStates;
@@ -37,6 +39,7 @@ public class AutoDriveToPose extends Command {
     m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
     m_alignState = RobotAlignStates.UNKNOWN;
     m_apriltagAlignState = AprilTagAlignState.NONE;
+
   }
   /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
    * 
@@ -72,15 +75,18 @@ public class AutoDriveToPose extends Command {
   public void execute() {
 
     // Calculate the angle and distance to the pose
-    Pose2d trajectory = m_desiredPose.relativeTo(g.ROBOT.pose2d);
+    Pose2d trajectory = m_desiredPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), new Rotation2d()));
+    SmartDashboard.putNumber("Vision/trajectory X", trajectory.getX());
+    SmartDashboard.putNumber("Vision/trajectory Y", trajectory.getY());
     double driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
+    SmartDashboard.putNumber("Vision/driveAngle_deg", driveAngle_deg);
     m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
     // PID the speed based on distance
     double speed = m_drivePID.calculate(0,m_driveDistance_m);
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, -m_speed, m_speed);
     // Drive the robot in Polar mode since we have a speed and angle.
-    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_desiredPose.getRotation().getDegrees(),driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, g.ROBOT.angleActual_deg,driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
   }
 
   private double rampUpValue(double _val, double _rampTime_sec) {

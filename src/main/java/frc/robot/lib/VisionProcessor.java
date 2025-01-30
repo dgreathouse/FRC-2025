@@ -47,19 +47,19 @@ public class VisionProcessor implements IUpdateDashboard{
 
         switch (_apriltagAlignState) {
             case LEFT:
-                rtn = new Pose2d(pose.x_left,pose.y_left , new Rotation2d(Math.toRadians(pose.angle)));
+                rtn = new Pose2d(pose.x_left,pose.y_left , new Rotation2d());
                 break;
             case RIGHT:
-                rtn = new Pose2d(pose.x_right,pose.y_right , new Rotation2d(Math.toRadians(pose.angle)));
+                rtn = new Pose2d(pose.x_right,pose.y_right , new Rotation2d());
                 break;
             case CENTER:
-                rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d(Math.toRadians(pose.angle)));
+                rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d());
                 break;
             case NONE:
-                 rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d(Math.toRadians(pose.angle)));
+                 rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d());
                 break;
             default:
-                rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d(Math.toRadians(pose.angle)));
+                rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d());
                 break;
         }
         return rtn;
@@ -81,34 +81,34 @@ public class VisionProcessor implements IUpdateDashboard{
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 5
         x = m_apriltagFieldLayout.getTagPose(6).get().getX();
         y = m_apriltagFieldLayout.getTagPose(6).get().getY();
-        cx = x + g.ROBOT.centerDistanceToFrontBumper_mm/2;
-        cy = y - g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx + g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx, cy, -60));  // ID 6
+        cx = x + g.ROBOT.centerDistanceToFrontBumper_m/2;
+        cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0));  // ID 6
         x = m_apriltagFieldLayout.getTagPose(7).get().getX();
         y = m_apriltagFieldLayout.getTagPose(7).get().getY();
-        cx = x + g.ROBOT.centerDistanceToFrontBumper_mm;
+        cx = x + g.ROBOT.centerDistanceToFrontBumper_m;
         cy = y;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy - g.FIELD.TAG_TO_POST_mm, cx, cy + g.FIELD.TAG_TO_POST_mm, cx, cy, 0));  // ID 7
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy - g.FIELD.TAG_TO_POST_m, cx, cy + g.FIELD.TAG_TO_POST_m, cx, cy, 0));  // ID 7
         x = m_apriltagFieldLayout.getTagPose(8).get().getX();
         y = m_apriltagFieldLayout.getTagPose(8).get().getY();
-        cx = x + g.ROBOT.centerDistanceToFrontBumper_mm/2;
-        cy = y + g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_mm * 0.866, cy + g.FIELD.TAG_TO_POST_mm / 2, cx - g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx, cy, 60));  // ID 8
+        cx = x + g.ROBOT.centerDistanceToFrontBumper_m/2;
+        cy = y + g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0));  // ID 8
         x = m_apriltagFieldLayout.getTagPose(9).get().getX();
         y = m_apriltagFieldLayout.getTagPose(9).get().getY();
-        cx = x - g.ROBOT.centerDistanceToFrontBumper_mm/2;
-        cy = y + g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx - g.FIELD.TAG_TO_POST_mm * 0.866, cy + g.FIELD.TAG_TO_POST_mm / 2, cx, cy, 120));  // ID 9
+        cx = x - g.ROBOT.centerDistanceToFrontBumper_m/2;
+        cy = y + g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0));  // ID 9
         x = m_apriltagFieldLayout.getTagPose(10).get().getX();
         y = m_apriltagFieldLayout.getTagPose(10).get().getY();
-        cx = x-g.ROBOT.centerDistanceToFrontBumper_mm;
+        cx = x-g.ROBOT.centerDistanceToFrontBumper_m;
         cy = y;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy+g.FIELD.TAG_TO_POST_mm, cx, cy - g.FIELD.TAG_TO_POST_mm, cx, cy, 180));  // ID 10
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy+g.FIELD.TAG_TO_POST_m, cx, cy - g.FIELD.TAG_TO_POST_m, cx, cy, 180));  // ID 10
         x = m_apriltagFieldLayout.getTagPose(11).get().getX();
         y = m_apriltagFieldLayout.getTagPose(11).get().getY();
-        cx = x - g.ROBOT.centerDistanceToFrontBumper_mm/2;
-        cy = y - g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx-(g.FIELD.TAG_TO_POST_mm*0.866), cy+g.FIELD.TAG_TO_POST_mm/2, cx + g.FIELD.TAG_TO_POST_mm*0.866,cy - g.FIELD.TAG_TO_POST_mm/2, cx, cy, -120));   // ID 11
+        cx = x - g.ROBOT.centerDistanceToFrontBumper_m/2;
+        cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx-(g.FIELD.TAG_TO_POST_m*0.866), cy+g.FIELD.TAG_TO_POST_m/2, cx + g.FIELD.TAG_TO_POST_m*0.866,cy - g.FIELD.TAG_TO_POST_m/2, cx, cy, 0));   // ID 11
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 12
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 13
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 14
@@ -116,34 +116,34 @@ public class VisionProcessor implements IUpdateDashboard{
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 16
         x = m_apriltagFieldLayout.getTagPose(17).get().getX();
         y = m_apriltagFieldLayout.getTagPose(17).get().getY();
-        cx = x - g.ROBOT.centerDistanceToFrontBumper_mm/2;
-        cy = y - g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx-(g.FIELD.TAG_TO_POST_mm*0.866), cy+g.FIELD.TAG_TO_POST_mm/2, cx + g.FIELD.TAG_TO_POST_mm*0.866,cy - g.FIELD.TAG_TO_POST_mm/2, cx, cy, 60));  // ID 17
+        cx = x - g.ROBOT.centerDistanceToFrontBumper_m/2;
+        cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx-(g.FIELD.TAG_TO_POST_m*0.866), cy+g.FIELD.TAG_TO_POST_m/2, cx + g.FIELD.TAG_TO_POST_m*0.866,cy - g.FIELD.TAG_TO_POST_m/2, cx, cy, 0));  // ID 17
         x = m_apriltagFieldLayout.getTagPose(18).get().getX();
         y = m_apriltagFieldLayout.getTagPose(18).get().getY();
-        cx = x-g.ROBOT.centerDistanceToFrontBumper_mm;
+        cx = x-g.ROBOT.centerDistanceToFrontBumper_m;
         cy = y;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy+g.FIELD.TAG_TO_POST_mm, cx, cy - g.FIELD.TAG_TO_POST_mm, cx, cy, 0));  // ID 18
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy+g.FIELD.TAG_TO_POST_m, cx, cy - g.FIELD.TAG_TO_POST_m, cx, cy, 0));  // ID 18
         x = m_apriltagFieldLayout.getTagPose(19).get().getX();
         y = m_apriltagFieldLayout.getTagPose(19).get().getY();
-        cx = x - g.ROBOT.centerDistanceToFrontBumper_mm/2;
-        cy = y + g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx - g.FIELD.TAG_TO_POST_mm * 0.866, cy + g.FIELD.TAG_TO_POST_mm / 2, cx, cy, -60));  // ID 19
+        cx = x - g.ROBOT.centerDistanceToFrontBumper_m/2;
+        cy = y + g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0));  // ID 19
         x = m_apriltagFieldLayout.getTagPose(20).get().getX();
         y = m_apriltagFieldLayout.getTagPose(20).get().getY();
-        cx = x + g.ROBOT.centerDistanceToFrontBumper_mm/2;
-        cy = y + g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_mm * 0.866, cy + g.FIELD.TAG_TO_POST_mm / 2, cx - g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx, cy, -120));  // ID 20
+        cx = x + g.ROBOT.centerDistanceToFrontBumper_m/2;
+        cy = y + g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0));  // ID 20
         x = m_apriltagFieldLayout.getTagPose(21).get().getX();
         y = m_apriltagFieldLayout.getTagPose(21).get().getY();
-        cx = x + g.ROBOT.centerDistanceToFrontBumper_mm;
+        cx = x + g.ROBOT.centerDistanceToFrontBumper_m;
         cy = y;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy - g.FIELD.TAG_TO_POST_mm, cx, cy + g.FIELD.TAG_TO_POST_mm, cx, cy, 180));  // ID 21
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy - g.FIELD.TAG_TO_POST_m, cx, cy + g.FIELD.TAG_TO_POST_m, cx, cy, 0));  // ID 21
         x = m_apriltagFieldLayout.getTagPose(22).get().getX();
         y = m_apriltagFieldLayout.getTagPose(22).get().getY();
-        cx = x + g.ROBOT.centerDistanceToFrontBumper_mm/2;
-        cy = y - g.ROBOT.centerDistanceToFrontBumper_mm * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx + g.FIELD.TAG_TO_POST_mm * 0.866, cy - g.FIELD.TAG_TO_POST_mm / 2, cx, cy, 120)); // ID 22
+        cx = x + g.ROBOT.centerDistanceToFrontBumper_m/2;
+        cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0)); // ID 22
     }
     public void setAprilTagData(){
         List<PhotonPipelineResult> results = camera.getAllUnreadResults();
