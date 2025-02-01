@@ -101,7 +101,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     
     m_odometryThread = new OdometryThread();
     m_odometryThread.start();
-    SmartDashboard.putBoolean("Robot/IsGyroPrimaryActive", true);
+  
     resetYaw(0);
     g.DASHBOARD.updates.add(this);
     
@@ -296,12 +296,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     }
     SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
+    SmartDashboard.putData("Drive/TurnPID", m_turnPID);
     SmartDashboard.putNumber("Robot/Pose X", g.ROBOT.pose2d.getX());
     SmartDashboard.putNumber("Robot/Pose Y", g.ROBOT.pose2d.getY());
-    SmartDashboard.putNumber("Robot/Pose ANgle", g.ROBOT.pose2d.getRotation().getDegrees());
+    SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2d.getRotation().getDegrees());
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
-
+    SmartDashboard.putBoolean("Drive/IsRotateAtTarget", isRotateAtTarget());
     SmartDashboard.putNumber("Robot/GyroPrimary_deg", m_yawPrimary);
     SmartDashboard.putNumber("Robot/GyroSecondary_deg", m_yawSecondary);
     SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());

@@ -21,7 +21,7 @@ public class AutoDriveToPose extends Command {
   double m_driveAngle_deg = 0;
   double m_rampuUpTime_sec = 0.25;
   Rotation2d m_zeroRotation = new Rotation2d();
-  PIDController m_drivePID = new PIDController(1, 0  , 0);
+  PIDController m_drivePID = new PIDController(1, 0.5  , 0);
   Timer m_timer = new Timer();
   RobotAlignStates m_alignState = RobotAlignStates.UNKNOWN;
   AprilTagAlignState m_apriltagAlignState = AprilTagAlignState.NONE;
@@ -37,7 +37,7 @@ public class AutoDriveToPose extends Command {
     m_desiredPose = _desiredPose;
     m_speed = _speed;
     m_timeOut_sec = _timeOut_sec;
-    m_drivePID.setTolerance(0.05);
+    m_drivePID.setTolerance(0.01);
     m_drivePID.setIZone(0.5);
     m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
     m_alignState = RobotAlignStates.UNKNOWN;
@@ -53,7 +53,7 @@ public class AutoDriveToPose extends Command {
     // Set the global varables so the vision processor works on them
     g.ROBOT.alignmentState = m_alignState;
     g.VISION.aprilTagAlignState = m_apriltagAlignState;
-    
+    SmartDashboard.putData("Drive/AutoDrivePID", m_drivePID);
   }
 
   // TODO: Test this class. Possible issues.
@@ -69,8 +69,10 @@ public class AutoDriveToPose extends Command {
     m_driveAngle_deg = g.MATCH.alliance == Alliance.Blue ? m_driveAngle_deg : m_driveAngle_deg + 180.0;
     
     m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
+    SmartDashboard.putNumber("Drive/AutoDrive Distance m", m_driveDistance_m);
+    SmartDashboard.putNumber("Drive/AutoDrive Angle", m_driveAngle_deg);
     // PID the speed based on distance
-    double speed = m_drivePID.calculate(0,m_driveDistance_m);
+    double speed = Math.abs(m_drivePID.calculate(m_driveDistance_m,0));
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, 0, m_speed);
     // Drive the robot in Polar mode since we have a speed and angle.
@@ -92,11 +94,14 @@ public class AutoDriveToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(m_driveDistance_m) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-      //  && Math.abs((g.ROBOT.pose2d.getX()) - m_desiredPose.getX()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-      //  && Math.abs((g.ROBOT.pose2d.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-       && g.ROBOT.drive.isRotateAtTarget())
-    {
+    if(m_drivePID.atSetpoint()){
+
+    //}
+    // if(Math.abs(m_driveDistance_m) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+    //   //  && Math.abs((g.ROBOT.pose2d.getX()) - m_desiredPose.getX()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+    //   //  && Math.abs((g.ROBOT.pose2d.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+    //    && g.ROBOT.drive.isRotateAtTarget())
+    // {
      // g.DRIVETRAIN.isAutoToAprilTagDone = true;
       g.VISION.aprilTagAlignState = AprilTagAlignState.NONE;
       return true;

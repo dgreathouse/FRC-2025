@@ -2,6 +2,9 @@ package frc.robot.defaultCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.AutoDriveToPose;
 import frc.robot.lib.g;
@@ -55,8 +58,16 @@ public class DrivetrainDefaultCommand extends Command {
     rightYFiltered_Driver = m_stickLimiterRY.calculate(rightYFiltered_Driver);
 
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
-      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.35, 2);
-      autoPose.schedule();
+      Pose2d trajectory = g.VISION.aprilTagRequestedPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), new Rotation2d()));
+      double angle = Math.abs(trajectory.getTranslation().getAngle().getDegrees());
+      SmartDashboard.putNumber("Drive/AutonAngle Condition", angle);
+
+
+        AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.3, 5);
+        autoPose.schedule();
+
+      // AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.45, 5);
+      // autoPose.schedule();
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:

@@ -1,13 +1,17 @@
 package frc.robot.lib;
 
+import static edu.wpi.first.units.Units.Meter;
+
 import java.util.List;
 import java.util.Optional;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -34,7 +38,7 @@ public class VisionProcessor implements IUpdateDashboard{
         camera.setPipelineIndex(0);
         camera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_cameraLocation = new Transform3d(new Translation3d(0.33,0,0.33), new Rotation3d(0,0,0));
+        Transform3d m_cameraLocation = new Transform3d(new Translation3d(0.203,0,0.33), new Rotation3d(0,0,0));
         m_poseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, m_cameraLocation);
 
         g.DASHBOARD.updates.add(this);
@@ -157,8 +161,14 @@ public class VisionProcessor implements IUpdateDashboard{
                     }
                     int id = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
                     if (target.getFiducialId() == id) {
+                        double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
+                        double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
+                        g.VISION.aprilTagDistance_m = Math.sqrt(a*a + b*b);
+               
                         g.VISION.isAprilTagFound = true;
                         g.VISION.aprilTagRequestedPose = getRobotLocationToAprilTag(id, g.VISION.aprilTagAlignState);
+                        g.VISION.aprilTagX_m = a;
+                        g.VISION.aprilTagY_m = b;
                     }else {
                         g.VISION.isAprilTagFound = false;
                     }
@@ -249,5 +259,8 @@ public class VisionProcessor implements IUpdateDashboard{
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
         SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());
         SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.getY());
+        SmartDashboard.putString("Vision/Apriltag AlignState", g.VISION.aprilTagAlignState.toString());
+        SmartDashboard.putNumber("aprilTagX_m", g.VISION.aprilTagX_m);
+        SmartDashboard.putNumber("aprilTagY_m", g.VISION.aprilTagY_m);
     }
 }

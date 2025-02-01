@@ -134,8 +134,8 @@ public class SwerveModule implements IUpdateDashboard {
 
     m_steerPID.enableContinuousInput(-180.0, 180.0);
     m_steerPID.setIZone(20);
-    m_steerPID.setTolerance(1);
-    m_steerPID.setIntegratorRange(-2, 2);
+    m_steerPID.setTolerance(0.1);
+    m_steerPID.setIntegratorRange(-5, 5);
 
  
   }

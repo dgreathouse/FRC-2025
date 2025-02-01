@@ -257,7 +257,7 @@ public class g {
       public static final double MAX_ANGULAR_VELOCITY_radPsec = MAX_VELOCITY_mPsec * (1 / CHASSIS.WHEELBASE_mPrad);
 
       public static double PID_KP = 1.0;
-      public static double PID_KI = 0.0;
+      public static double PID_KI = 0.20;
       public static double PID_KV = g.ROBOT.MAX_BATTERY_SUPPLY_volts / MAX_VELOCITY_mPsec; // 2.8256;
       public static double PID_KS = 0.0;
 
@@ -268,8 +268,8 @@ public class g {
     }
     /** The data for the SWERVE Steer motors */
     public static class STEER {
-      public static double PID_KP = 0.1;
-      public static double PID_KI = 0.0;
+      public static double PID_KP = 0.12;
+      public static double PID_KI = 0.10;
 
       private static final double MOTOR_PINION_TEETH = 8.0;
       private static final double MOTOR_DRIVE_GEAR_TEETH = 24.0;
@@ -332,6 +332,8 @@ public class g {
     public static volatile boolean isAprilTagFound = false;
     public static volatile Pose2d aprilTagRequestedPose = new Pose2d();
     public static volatile boolean isGlobalPoseResetActive = true; // Not implemented
+    public static volatile double aprilTagX_m = 0;
+    public static volatile double aprilTagY_m = 0;
 
   }
   public static class SIM {
