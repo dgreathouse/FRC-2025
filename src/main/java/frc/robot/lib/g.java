@@ -302,7 +302,7 @@ public class g {
     public static final double TURN_KI = 0.250;
     public static final double TURN_KD = 0.0;
     public static final double TURN_DEADBAND_rad = 0.02;
-    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.2; // 1 inches
+    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.0254; // 1 inches
     public static final double AUTO_DRIVE_POSE_ANGLE_TOLERANCE_deg = 1.0; 
     public static volatile DriveMode driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
     public static volatile double speedMultiplier = 1.0;
@@ -331,6 +331,8 @@ public class g {
     public static volatile double aprilTagDistance_m = 0;
     public static volatile boolean isAprilTagFound = false;
     public static volatile Pose2d aprilTagRequestedPose = new Pose2d();
+    public static volatile boolean isGlobalPoseResetActive = true; // Not implemented
+
   }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;
