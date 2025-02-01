@@ -18,6 +18,7 @@ public class AutoDriveToPose extends Command {
   double m_speed;
   double m_timeOut_sec;
   double m_driveDistance_m = 0;
+  double m_driveAngle_deg = 0;
   double m_rampuUpTime_sec = 0.25;
   Rotation2d m_zeroRotation = new Rotation2d();
   PIDController m_drivePID = new PIDController(1, 0  , 0);
@@ -43,20 +44,7 @@ public class AutoDriveToPose extends Command {
     m_apriltagAlignState = AprilTagAlignState.NONE;
 
   }
-  // /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
-  //  * 
-  //  * @param _newPose The Pose to drive to
-  //  * @param _startPose The field releative pose position
-  //  * @param _speed The max speed on a scale from 0.0 to 1.0. This is always positive
-  //  * @param _timeOut_sec The time to end if pose not reached
-  //  * @param _alingState The alignment state of the robot
-  //   */
-  // public AutoDriveToPose(Pose2d _newPose, double _speed, double _timeOut_sec, RobotAlignStates _alingState, AprilTagAlignState _apriltagLocation) {
-  //   this(_newPose, _speed, _timeOut_sec);
-  //   m_alignState = _alingState;
-  //   m_apriltagAlignState = _apriltagLocation;
 
-  // }
 
   // Called when the command is initially scheduled.
   @Override
@@ -77,7 +65,8 @@ public class AutoDriveToPose extends Command {
   public void execute() {
     // Calculate the angle and distance to the pose
     Pose2d trajectory = m_desiredPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), m_zeroRotation));
-    double driveAngle_deg = getAngleBasedOnAlliance(trajectory);
+    m_driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
+    m_driveAngle_deg = g.MATCH.alliance == Alliance.Blue ? m_driveAngle_deg : m_driveAngle_deg + 180.0;
     
     m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
     // PID the speed based on distance
@@ -85,18 +74,9 @@ public class AutoDriveToPose extends Command {
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, 0, m_speed);
     // Drive the robot in Polar mode since we have a speed and angle.
-    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg,driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg,m_driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
   }
 
-  private double  getAngleBasedOnAlliance(Pose2d _pose){
-    double angle = _pose.getTranslation().getAngle().getDegrees();
-    if(g.MATCH.alliance == Alliance.Blue){
-      return angle;
-    }else {
-      return angle + 180;
-    }
-    
-  }
   private double rampUpValue(double _val, double _rampTime_sec) {
     double currentTime_sec = m_timer.get();
     if (currentTime_sec < _rampTime_sec) {
