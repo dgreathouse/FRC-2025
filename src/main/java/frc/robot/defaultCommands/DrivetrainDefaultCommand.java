@@ -61,7 +61,7 @@ public class DrivetrainDefaultCommand extends Command {
       Pose2d trajectory = g.VISION.aprilTagRequestedPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), new Rotation2d()));
       double angle = Math.abs(trajectory.getTranslation().getAngle().getDegrees());
       SmartDashboard.putNumber("Drive/AutonAngle Condition", angle);
-
+      
 
         AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.3, 5);
         autoPose.schedule();

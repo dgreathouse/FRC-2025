@@ -27,19 +27,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**  */
 public class VisionProcessor implements IUpdateDashboard{
 
-    PhotonCamera camera;
+    PhotonCamera m_leftCamera;
+    PhotonCamera m_rightCamera;
     List<PhotonTrackedTarget> m_targets;
     PhotonTrackedTarget m_target;
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-    PhotonPoseEstimator m_poseEstimator;
+    PhotonPoseEstimator m_leftPoseEstimator;
+    PhotonPoseEstimator m_rightPoseEstimator;
     Optional<EstimatedRobotPose> m_estimatedRobotPose;
     public VisionProcessor(){
-        camera = new PhotonCamera("leftArducam");
-        camera.setPipelineIndex(0);
-        camera.setDriverMode(false);
+        m_leftCamera = new PhotonCamera("leftArducam");
+        m_leftCamera.setPipelineIndex(0);
+        m_leftCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_cameraLocation = new Transform3d(new Translation3d(0.203,0,0.33), new Rotation3d(0,0,0));
-        m_poseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, m_cameraLocation);
+        Transform3d m_leftCameraLocation = new Transform3d(new Translation3d(0.203,0.146,0.33), new Rotation3d(0,0,0));
+        m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, m_leftCameraLocation);
+        m_rightCamera = new PhotonCamera("leftArducam");
+        m_rightCamera.setPipelineIndex(0);
+        m_rightCamera.setDriverMode(false);
+        // TODO: update cameral location on robot. x forward, y left, z up
+        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.203,-0.146,0.33), new Rotation3d(0,0,0));
+        m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, m_rightCameraLocation);
 
         g.DASHBOARD.updates.add(this);
         createApriltagLocations();
@@ -150,13 +158,13 @@ public class VisionProcessor implements IUpdateDashboard{
         g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0)); // ID 22
     }
     public void setAprilTagData(){
-        List<PhotonPipelineResult> results = camera.getAllUnreadResults();
+        List<PhotonPipelineResult> results = getSelectedCamera().getAllUnreadResults();
         if (!results.isEmpty()) {
             PhotonPipelineResult result = results.get(results.size() - 1);
             if (result.hasTargets()) {
                 for (PhotonTrackedTarget target : result.getTargets()) {
-                    m_estimatedRobotPose = getEstimatedGlobalPose(g.ROBOT.pose2d,result);
-                    if(m_estimatedRobotPose.isPresent()){
+                         m_estimatedRobotPose = getEstimatedGlobalPose(g.ROBOT.pose2d,result);
+                    if(m_estimatedRobotPose.isPresent()) {
                         g.ROBOT.drive.resetOdometry(m_estimatedRobotPose.get().estimatedPose.toPose2d());
                     }
                     int id = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
@@ -180,12 +188,25 @@ public class VisionProcessor implements IUpdateDashboard{
             g.VISION.isAprilTagFound = false;
         }
     }
-    
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d _prevEstimatedRobotPose, PhotonPipelineResult _result){
-        m_poseEstimator.setReferencePose(_prevEstimatedRobotPose);
-        return m_poseEstimator.update(_result);
+    public PhotonCamera getSelectedCamera(){
+        return g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT ? m_rightCamera : m_leftCamera;
     }
 
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d _prevEstimatedRobotPose, PhotonPipelineResult _result){
+        Optional<EstimatedRobotPose> estimatedRobotPose;
+        if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT) {
+            m_rightPoseEstimator.setReferencePose(_prevEstimatedRobotPose);
+            estimatedRobotPose = m_rightPoseEstimator.update(_result);
+        }else {
+            m_leftPoseEstimator.setReferencePose(_prevEstimatedRobotPose);
+            estimatedRobotPose = m_leftPoseEstimator.update(_result);
+        }
+        return estimatedRobotPose;
+    }
+    public Optional<EstimatedRobotPose> getRightEstimatedGlobalPose(Pose2d _prevEstimatedRobotPose, PhotonPipelineResult _result){
+        m_rightPoseEstimator.setReferencePose(_prevEstimatedRobotPose);
+        return m_rightPoseEstimator.update(_result);
+    }
     /**
      * Based on the apriltag alignment, which is LEFT,CENTER,RIGHT or NONE.
      * Also if the Apriltag is found by vision. The vision only reports true if the RobotAlignment has been set

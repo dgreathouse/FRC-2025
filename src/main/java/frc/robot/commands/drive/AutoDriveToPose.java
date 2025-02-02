@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,10 +65,10 @@ public class AutoDriveToPose extends Command {
   @Override
   public void execute() {
     // Calculate the angle and distance to the pose
+    
     Pose2d trajectory = m_desiredPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), m_zeroRotation));
     m_driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
     m_driveAngle_deg = g.MATCH.alliance == Alliance.Blue ? m_driveAngle_deg : m_driveAngle_deg + 180.0;
-    
     m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
     SmartDashboard.putNumber("Drive/AutoDrive Distance m", m_driveDistance_m);
     SmartDashboard.putNumber("Drive/AutoDrive Angle", m_driveAngle_deg);

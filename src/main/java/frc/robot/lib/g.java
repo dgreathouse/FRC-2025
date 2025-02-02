@@ -93,6 +93,7 @@ public class g {
     public static volatile double angleDriveTarget_deg;
     public static volatile double speedDriveTarget_mPsec;
     public static volatile Pose2d pose2d = new Pose2d();
+    public static volatile Pose2d pose2dDrivetrain = new Pose2d();
     public static volatile Pose3d pose3d = new Pose3d();
     public static volatile Field2d field2d = new Field2d();
     public static final Pose2d POSE_START_ZERO = new Pose2d(0, 0, new Rotation2d());
