@@ -58,7 +58,7 @@ public class DrivetrainDefaultCommand extends Command {
     rightYFiltered_Driver = m_stickLimiterRY.calculate(rightYFiltered_Driver);
 
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
-      Pose2d trajectory = g.VISION.aprilTagRequestedPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), new Rotation2d()));
+      Pose2d trajectory = g.VISION.aprilTagRequestedPose.relativeTo(new Pose2d(g.ROBOT.pose2dDrive.getX(), g.ROBOT.pose2dDrive.getY(), new Rotation2d()));
       double angle = Math.abs(trajectory.getTranslation().getAngle().getDegrees());
       SmartDashboard.putNumber("Drive/AutonAngle Condition", angle);
       

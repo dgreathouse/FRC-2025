@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,6 +28,9 @@ import frc.robot.lib.g;
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private SwerveDriveKinematics m_kinematics;
   private volatile SwerveDriveOdometry m_odometry;
+
+  private volatile SwerveDrivePoseEstimator m_poseEstimator;
+  private OdometryEstimatorThread m_odometryEstimatorThread;
   private OdometryThread m_odometryThread;
   private StatusSignal<Angle> m_yawStatusPigeon2;
   private StatusSignal<AngularVelocity> m_angularVelocityZStatusPigeon2;
@@ -34,6 +38,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private double m_angularVelocityZPrimary;
   private double m_yawSecondary = 0;
   private double m_angularVelocityZSecondary = 0;
+  private Rotation2d m_gyroPrimaryRotation;
+  private Rotation2d m_gyroSecondaryRotation;
   // TODO: Tune KP,KI,KD max output should be +/-1 Start around 1/3.14 for Kp
   private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
 
@@ -99,9 +105,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_turnPID.setIZone(Math.toRadians(30));
     m_turnPID.setIntegratorRange(-0.5, 0.5);
     
-    m_odometryThread = new OdometryThread();
-    m_odometryThread.start();
+    m_odometryEstimatorThread = new OdometryEstimatorThread();
+    m_odometryEstimatorThread.start();
+    // m_odometryThread = new OdometryThread();
+    // m_odometryThread.start();
   
+    m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics, g.ROBOT.angleActual_Rot2d, g.SWERVE.positions, new Pose2d());
+
     resetYaw(0);
     g.DASHBOARD.updates.add(this);
     
@@ -297,9 +307,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
     SmartDashboard.putData("Drive/TurnPID", m_turnPID);
-    SmartDashboard.putNumber("Robot/Pose X", g.ROBOT.pose2d.getX());
-    SmartDashboard.putNumber("Robot/Pose Y", g.ROBOT.pose2d.getY());
-    SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2d.getRotation().getDegrees());
+    SmartDashboard.putNumber("Robot/Pose X", g.ROBOT.pose2dDrive.getX());
+    SmartDashboard.putNumber("Robot/Pose Y", g.ROBOT.pose2dDrive.getY());
+    SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2dDrive.getRotation().getDegrees());
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
     SmartDashboard.putBoolean("Drive/IsRotateAtTarget", isRotateAtTarget());
@@ -317,6 +327,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
     }
   }
+
   public double getYaw(){
     return g.ROBOT.isPrimaryGyroActive ? m_yawPrimary : m_yawSecondary;
   }
@@ -350,6 +361,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     //g.DRIVETRAIN.isAutoToAprilTagDone = false;
     g.VISION.aprilTagAlignState = _alignState;
   }
+
   private class OdometryThread extends Thread {
     public OdometryThread() {
       super();
@@ -367,14 +379,15 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         m_angularVelocityZSecondary = m_angularVelocityZStatusPigeon2.getValueAsDouble();
         
         m_yawPrimary = -g.ROBOT.gyro_navx.getAngle();
+        
         m_angularVelocityZPrimary = -g.ROBOT.gyro_navx.getVelocityZ();
 
         g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
 
-        g.ROBOT.pose2d = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
-        g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
-        g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
+        g.ROBOT.pose2dDrive = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
+        g.ROBOT.pose3dDrive = new Pose3d(g.ROBOT.pose2dDrive);
+        g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2dDrive);
         g.ROBOT.vision.calculate();
         try {
           Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
@@ -383,5 +396,42 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         }
       }
     }
+  }
+  private class OdometryEstimatorThread extends Thread{
+    public OdometryEstimatorThread(){
+      super();
+    }
+    @Override
+    public void run(){
+      while(true){
+        updatePositions();
+        
+        m_yawStatusPigeon2 = g.ROBOT.gyro_pigeon2.getYaw();
+        m_angularVelocityZStatusPigeon2 = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
+        m_yawSecondary = m_yawStatusPigeon2.getValueAsDouble();
+        m_angularVelocityZSecondary = m_angularVelocityZStatusPigeon2.getValueAsDouble();
+
+        m_yawPrimary = -g.ROBOT.gyro_navx.getAngle();
+        m_angularVelocityZPrimary = -g.ROBOT.gyro_navx.getVelocityZ();
+
+        g.ROBOT.angleActual_deg = getYaw();
+        g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
+
+        g.ROBOT.vision.calculatePose();
+
+        g.ROBOT.pose2dDrive = m_poseEstimator.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
+        
+        g.ROBOT.pose3dDrive = new Pose3d(g.ROBOT.pose2dDrive);
+        
+        try {
+          Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
+        } catch (InterruptedException e) {
+          System.out.println(e.getMessage());
+        }
+      }
+    }
+  }
+  public void addVisionMeasurement(Pose2d _estPose, double _timeStamp){
+    m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp);
   }
 }
