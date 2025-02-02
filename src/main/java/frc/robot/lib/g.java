@@ -305,7 +305,7 @@ public class g {
     public static final double TURN_KI = 0.250;
     public static final double TURN_KD = 0.0;
     public static final double TURN_DEADBAND_rad = 0.02;
-    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.0254; // 1 inches
+    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.00254; // 1 inches
     public static final double AUTO_DRIVE_POSE_ANGLE_TOLERANCE_deg = 1.0; 
     public static volatile DriveMode driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
     public static volatile double speedMultiplier = 1.0;
@@ -337,6 +337,9 @@ public class g {
     public static volatile boolean isGlobalPoseResetActive = true; // Not implemented
     public static volatile double aprilTagX_m = 0;
     public static volatile double aprilTagY_m = 0;
+    public static volatile double leftAmbiguity = 0;
+    public static volatile double rightAmbiguity = 0;
+    
 
   }
   public static class SIM {

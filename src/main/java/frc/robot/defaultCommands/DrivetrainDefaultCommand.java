@@ -62,12 +62,9 @@ public class DrivetrainDefaultCommand extends Command {
       double angle = Math.abs(trajectory.getTranslation().getAngle().getDegrees());
       SmartDashboard.putNumber("Drive/AutonAngle Condition", angle);
       
+      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.3, 10);
+      autoPose.schedule();
 
-        AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.3, 5);
-        autoPose.schedule();
-
-      // AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.45, 5);
-      // autoPose.schedule();
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:

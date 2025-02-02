@@ -52,9 +52,9 @@ public class AutoDriveToPose extends Command {
   public void initialize() {
     m_timer.restart();
     // Set the global varables so the vision processor works on them
-    g.ROBOT.alignmentState = m_alignState;
-    g.VISION.aprilTagAlignState = m_apriltagAlignState;
-    SmartDashboard.putData("Drive/AutoDrivePID", m_drivePID);
+    //g.ROBOT.alignmentState = m_alignState;
+    //g.VISION.aprilTagAlignState = m_apriltagAlignState;
+   // SmartDashboard.putData("Drive/AutoDrivePID", m_drivePID);
   }
 
   // TODO: Test this class. Possible issues.
@@ -67,9 +67,12 @@ public class AutoDriveToPose extends Command {
     // Calculate the angle and distance to the pose
     
     Pose2d trajectory = m_desiredPose.relativeTo(new Pose2d(g.ROBOT.pose2dDrive.getX(), g.ROBOT.pose2dDrive.getY(), m_zeroRotation));
+
     m_driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
     m_driveAngle_deg = g.MATCH.alliance == Alliance.Blue ? m_driveAngle_deg : m_driveAngle_deg + 180.0;
+
     m_driveDistance_m = g.ROBOT.pose2dDrive.getTranslation().getDistance(m_desiredPose.getTranslation());
+
     SmartDashboard.putNumber("Drive/AutoDrive Distance m", m_driveDistance_m);
     SmartDashboard.putNumber("Drive/AutoDrive Angle", m_driveAngle_deg);
     // PID the speed based on distance
@@ -95,14 +98,14 @@ public class AutoDriveToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_drivePID.atSetpoint()){
+   // if(m_drivePID.atSetpoint()){
 
     //}
-    // if(Math.abs(m_driveDistance_m) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-    //   //  && Math.abs((g.ROBOT.pose2d.getX()) - m_desiredPose.getX()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-    //   //  && Math.abs((g.ROBOT.pose2d.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-    //    && g.ROBOT.drive.isRotateAtTarget())
-    // {
+    if(Math.abs(m_driveDistance_m) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+        // && Math.abs((g.ROBOT.pose2dDrive.getX()) - m_desiredPose.getX()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+        // && Math.abs((g.ROBOT.pose2dDrive.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+       && g.ROBOT.drive.isRotateAtTarget())
+    {
      // g.DRIVETRAIN.isAutoToAprilTagDone = true;
       g.VISION.aprilTagAlignState = AprilTagAlignState.NONE;
       return true;

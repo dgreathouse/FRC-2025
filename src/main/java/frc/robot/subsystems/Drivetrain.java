@@ -304,9 +304,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
           + Math.abs(swerveModule.getSteerCurrent());
     }
-    SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
+  //  SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
-    SmartDashboard.putData("Drive/TurnPID", m_turnPID);
+   // SmartDashboard.putData("Drive/TurnPID", m_turnPID);
     SmartDashboard.putNumber("Robot/Pose X", g.ROBOT.pose2dDrive.getX());
     SmartDashboard.putNumber("Robot/Pose Y", g.ROBOT.pose2dDrive.getY());
     SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2dDrive.getRotation().getDegrees());
@@ -315,8 +315,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putBoolean("Drive/IsRotateAtTarget", isRotateAtTarget());
     SmartDashboard.putNumber("Robot/GyroPrimary_deg", m_yawPrimary);
     SmartDashboard.putNumber("Robot/GyroSecondary_deg", m_yawSecondary);
-    SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());
+  //  SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());
     SmartDashboard.putBoolean("Robot/Is AprilTag Active", g.ROBOT.vision.getIsAutoAprilTagActive());
+    SmartDashboard.putString("Robot/AlignState", g.ROBOT.alignmentState.toString());
+    SmartDashboard.putString("Robot/ApriltagAlignState", g.VISION.aprilTagAlignState.toString());
 
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
@@ -420,7 +422,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.vision.calculatePose();
 
         g.ROBOT.pose2dDrive = m_poseEstimator.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
-        
+        g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2dDrive);
         g.ROBOT.pose3dDrive = new Pose3d(g.ROBOT.pose2dDrive);
         
         try {

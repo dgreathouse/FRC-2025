@@ -49,14 +49,14 @@ public class VisionProcessor implements IUpdateDashboard{
         m_leftCamera.setPipelineIndex(0);
         m_leftCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_leftCameraLocation = new Transform3d(new Translation3d(0.203,0.146,0.33), new Rotation3d(0,0,0));
+        Transform3d m_leftCameraLocation = new Transform3d(new Translation3d(0.254,0.254,0.292), new Rotation3d(0,0,0));
         m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_leftCameraLocation);
 
         m_rightCamera = new PhotonCamera("rightArducam");
         m_rightCamera.setPipelineIndex(0);
         m_rightCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.203,-0.146,0.33), new Rotation3d(0,0,0));
+        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2254,-0.254,0.292), new Rotation3d(0,0,0));
         m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
 
         g.DASHBOARD.updates.add(this);
@@ -168,64 +168,101 @@ public class VisionProcessor implements IUpdateDashboard{
         g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0)); // ID 22
     }
     public void setAprilTagData(){
-        List<PhotonPipelineResult> results = getSelectedCamera().getAllUnreadResults();
-        if (!results.isEmpty()) {
-            PhotonPipelineResult result = results.get(results.size() - 1);
-            if (result.hasTargets()) {
-                for (PhotonTrackedTarget target : result.getTargets()) {
-                         m_leftEstimatedRobotPoseCurrent = getEstimatedGlobalPose(g.ROBOT.pose2dDrive,result);
+        // List<PhotonPipelineResult> results = getSelectedCamera().getAllUnreadResults();
+        // if (!results.isEmpty()) {
+        //     PhotonPipelineResult result = results.get(results.size() - 1);
+        //     if (result.hasTargets()) {
+        //         for (PhotonTrackedTarget target : result.getTargets()) {
+        //                  m_leftEstimatedRobotPoseCurrent = getEstimatedGlobalPose(g.ROBOT.pose2dDrive,result);
                          
-                    if(m_leftEstimatedRobotPoseCurrent.isPresent()) {
-                        g.ROBOT.drive.resetOdometry(m_leftEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d());
-                    }
-                    int id = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
-                    if (target.getFiducialId() == id) {
-                        double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
-                        double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
-                        g.VISION.aprilTagDistance_m = Math.sqrt(a*a + b*b);
+        //             if(m_leftEstimatedRobotPoseCurrent.isPresent()) {
+        //                 g.ROBOT.drive.resetOdometry(m_leftEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d());
+        //             }
+        //             int id = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
+        //             if (target.getFiducialId() == id) {
+        //                 double a = target.getBestCameraToTarget().getMeasureX().in(Meter);
+        //                 double b = target.getBestCameraToTarget().getMeasureY().in(Meter);
+        //                 g.VISION.aprilTagDistance_m = Math.sqrt(a*a + b*b);
                
-                        g.VISION.isAprilTagFound = true;
-                        g.VISION.aprilTagRequestedPose = getRobotLocationToAprilTag(id, g.VISION.aprilTagAlignState);
-                        g.VISION.aprilTagX_m = a;
-                        g.VISION.aprilTagY_m = b;
-                    }else {
-                        g.VISION.isAprilTagFound = false;
-                    }
-                }
-            }else {
-                g.VISION.isAprilTagFound = false;
-            }
-        }else {
-            g.VISION.isAprilTagFound = false;
-        }
+        //                 g.VISION.isAprilTagFound = true;
+        //                 g.VISION.aprilTagRequestedPose = getRobotLocationToAprilTag(id, g.VISION.aprilTagAlignState);
+        //                 g.VISION.aprilTagX_m = a;
+        //                 g.VISION.aprilTagY_m = b;
+        //             }else {
+        //                 g.VISION.isAprilTagFound = false;
+        //             }
+        //         }
+        //     }else {
+        //         g.VISION.isAprilTagFound = false;
+        //     }
+        // }else {
+        //     g.VISION.isAprilTagFound = false;
+        // }
     }
     double leftAmbiguity = 1;
     double rightAmbiguity = 1;
+    boolean isLeftAprilTagFound = false;
+    boolean isRightAprilTagFound = false;
     public void calculatePose(){
-
+        g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
+        g.VISION.aprilTagRequestedPose = getRobotLocationToAprilTag(g.VISION.aprilTagRequestedID, g.VISION.aprilTagAlignState);
         List<PhotonPipelineResult> leftResults = m_leftCamera.getAllUnreadResults();
         if (!leftResults.isEmpty()) {
             PhotonPipelineResult leftResult = leftResults.get(leftResults.size() - 1);
             m_leftEstimatedRobotPoseCurrent = m_leftPoseEstimator.update(leftResult);
             if(leftResult.hasTargets()){
                 leftAmbiguity = leftResult.getBestTarget().getPoseAmbiguity();
+                g.VISION.leftAmbiguity = leftAmbiguity;
+                for (PhotonTrackedTarget target : leftResult.getTargets()) {
+                    if(target.getFiducialId() == g.VISION.aprilTagRequestedID){
+                        isLeftAprilTagFound = true;
+                    }else {
+                        isLeftAprilTagFound= false;
+                    }
+                }
+            }else {
+                isLeftAprilTagFound= false;
             }
+        }else {
+            isLeftAprilTagFound= false;
         }
 
-        List<PhotonPipelineResult> rightResults = m_leftCamera.getAllUnreadResults();
+        List<PhotonPipelineResult> rightResults = m_rightCamera.getAllUnreadResults();
         if(!rightResults.isEmpty()) {
             PhotonPipelineResult rightResult = rightResults.get(rightResults.size() - 1);
             m_rightEstimatedRobotPoseCurrent = m_rightPoseEstimator.update(rightResult);
             if(rightResult.hasTargets()){
                 rightAmbiguity = rightResult.getBestTarget().getPoseAmbiguity();
+                g.VISION.rightAmbiguity = rightAmbiguity;
+                for (PhotonTrackedTarget target : rightResult.getTargets()) {
+                    if(target.getFiducialId() == g.VISION.aprilTagRequestedID){
+                        isRightAprilTagFound = true;
+                    }
+                    else{
+                        isRightAprilTagFound = false;
+                    }
+                }
+            }else {
+                isRightAprilTagFound = false;
             }
+        }else {
+            isRightAprilTagFound = false;
         }
-        if(leftAmbiguity > 0 && leftAmbiguity < rightAmbiguity){// left
-            g.ROBOT.drive.addVisionMeasurement(m_leftEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d(), m_leftEstimatedRobotPoseCurrent.get().timestampSeconds);
-        }else if(rightAmbiguity > 0 && rightAmbiguity < leftAmbiguity){// right
-            g.ROBOT.drive.addVisionMeasurement(m_rightEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d(), m_rightEstimatedRobotPoseCurrent.get().timestampSeconds);
+        if(leftAmbiguity >= 0 && leftAmbiguity <= rightAmbiguity && leftAmbiguity < 0.1){// left
+            if(m_leftEstimatedRobotPoseCurrent.isPresent()){
+                g.ROBOT.drive.addVisionMeasurement(m_leftEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d(), m_leftEstimatedRobotPoseCurrent.get().timestampSeconds);
+            }
+        }else if(rightAmbiguity >= 0 && rightAmbiguity <= leftAmbiguity && rightAmbiguity < 0.1){// right
+            if(m_rightEstimatedRobotPoseCurrent.isPresent()){
+                g.ROBOT.drive.addVisionMeasurement(m_rightEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d(), m_rightEstimatedRobotPoseCurrent.get().timestampSeconds);
+            }
         }else {// don't update drivetrain
             
+        }
+        if(isLeftAprilTagFound || isRightAprilTagFound){
+            g.VISION.isAprilTagFound = true;
+        }else {
+            g.VISION.isAprilTagFound = false;
         }
     }
     public PhotonCamera getSelectedCamera(){
@@ -317,16 +354,19 @@ public class VisionProcessor implements IUpdateDashboard{
 
     }
     public void calculate(){
-        setAprilTagData();
+        calculatePose();
     }
 
     @Override
     public void updateDashboard() {
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
+        SmartDashboard.putNumber("Vision/Apriltag Requested ID", g.VISION.aprilTagRequestedID);
         SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());
         SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.getY());
         SmartDashboard.putString("Vision/Apriltag AlignState", g.VISION.aprilTagAlignState.toString());
         SmartDashboard.putNumber("aprilTagX_m", g.VISION.aprilTagX_m);
         SmartDashboard.putNumber("aprilTagY_m", g.VISION.aprilTagY_m);
+        SmartDashboard.putNumber("leftAbiguity", g.VISION.leftAmbiguity);
+        SmartDashboard.putNumber("rightAbiguity", g.VISION.rightAmbiguity);
     }
 }
