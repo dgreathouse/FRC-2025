@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import com.ctre.phoenix6.StatusSignal;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -30,6 +29,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private volatile SwerveDriveOdometry m_odometry;
 
   private volatile SwerveDrivePoseEstimator m_poseEstimator;
+  
   private OdometryEstimatorThread m_odometryEstimatorThread;
   private OdometryThread m_odometryThread;
   private StatusSignal<Angle> m_yawStatusPigeon2;

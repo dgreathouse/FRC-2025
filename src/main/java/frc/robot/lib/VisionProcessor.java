@@ -37,11 +37,18 @@ public class VisionProcessor implements IUpdateDashboard{
     PhotonTrackedTarget m_rightTarget;
     PhotonPoseEstimator m_rightPoseEstimator;
 
+    PhotonCamera m_backCamera;
+    List<PhotonTrackedTarget> m_backTargets;
+    PhotonTrackedTarget m_backTarget;
+    PhotonPoseEstimator m_backPoseEstimator;
+
     Optional<EstimatedRobotPose> m_leftEstimatedRobotPoseCurrent;
     Optional<EstimatedRobotPose> m_leftEstimatedRobotPosePrevious;
 
     Optional<EstimatedRobotPose> m_rightEstimatedRobotPoseCurrent;
     Optional<EstimatedRobotPose> m_rightEstimatedRobotPosePrevious;
+
+    Optional<EstimatedRobotPose> m_backEstimatedRobotPoseCurrent;
     
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     public VisionProcessor(){
@@ -58,6 +65,14 @@ public class VisionProcessor implements IUpdateDashboard{
         // TODO: update cameral location on robot. x forward, y left, z up
         Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2254,-0.254,0.292), new Rotation3d(0,0,0));
         m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
+
+        
+        m_backCamera = new PhotonCamera("backArducam");
+        m_backCamera.setPipelineIndex(0);
+        m_backCamera.setDriverMode(false);
+        // TODO: update cameral location on robot. x forward, y left, z up
+        Transform3d m_backCameraLocation = new Transform3d(new Translation3d(-0.2254,0,0.292), new Rotation3d(0,0,180));
+        m_backPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
 
         g.DASHBOARD.updates.add(this);
         createApriltagLocations();
@@ -201,8 +216,10 @@ public class VisionProcessor implements IUpdateDashboard{
     }
     double leftAmbiguity = 1;
     double rightAmbiguity = 1;
+    double backAmbiguity = 1;
     boolean isLeftAprilTagFound = false;
     boolean isRightAprilTagFound = false;
+    boolean isBackAprilTagFound = false;
     public void calculatePose(){
         g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
         g.VISION.aprilTagRequestedPose = getRobotLocationToAprilTag(g.VISION.aprilTagRequestedID, g.VISION.aprilTagAlignState);
@@ -248,15 +265,41 @@ public class VisionProcessor implements IUpdateDashboard{
         }else {
             isRightAprilTagFound = false;
         }
-        if(leftAmbiguity >= 0 && leftAmbiguity <= rightAmbiguity && leftAmbiguity < 0.1){// left
+
+        g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
+        g.VISION.aprilTagRequestedPose = getRobotLocationToAprilTag(g.VISION.aprilTagRequestedID, g.VISION.aprilTagAlignState);
+        List<PhotonPipelineResult> backResults = m_leftCamera.getAllUnreadResults();
+        if (!backResults.isEmpty()) {
+            PhotonPipelineResult backResult = backResults.get(backResults.size() - 1);
+            m_backEstimatedRobotPoseCurrent = m_backPoseEstimator.update(backResult);
+            if(backResult.hasTargets()){
+                backAmbiguity = backResult.getBestTarget().getPoseAmbiguity();
+                g.VISION.backAmbiguity = backAmbiguity;
+                for (PhotonTrackedTarget target : backResult.getTargets()) {
+                    if(target.getFiducialId() == g.VISION.aprilTagRequestedID){
+                        isLeftAprilTagFound = true;
+                    }else {
+                        isLeftAprilTagFound= false;
+                    }
+                }
+            }else {
+                isLeftAprilTagFound= false;
+            }
+        }else {
+            isLeftAprilTagFound= false;
+        }
+        if(leftAmbiguity >= 0 && leftAmbiguity < 0.1){// left
             if(m_leftEstimatedRobotPoseCurrent.isPresent()){
                 g.ROBOT.drive.addVisionMeasurement(m_leftEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d(), m_leftEstimatedRobotPoseCurrent.get().timestampSeconds);
             }
-        }else if(rightAmbiguity >= 0 && rightAmbiguity <= leftAmbiguity && rightAmbiguity < 0.1){// right
+        }else if(rightAmbiguity >= 0 && rightAmbiguity < 0.1){// right
             if(m_rightEstimatedRobotPoseCurrent.isPresent()){
                 g.ROBOT.drive.addVisionMeasurement(m_rightEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d(), m_rightEstimatedRobotPoseCurrent.get().timestampSeconds);
             }
-        }else {// don't update drivetrain
+        }else if(backAmbiguity >= 0 && backAmbiguity < 0.1){// right
+            if(m_backEstimatedRobotPoseCurrent.isPresent()){
+                g.ROBOT.drive.addVisionMeasurement(m_backEstimatedRobotPoseCurrent.get().estimatedPose.toPose2d(), m_backEstimatedRobotPoseCurrent.get().timestampSeconds);
+            }// don't update drivetrain
             
         }
         if(isLeftAprilTagFound || isRightAprilTagFound){
