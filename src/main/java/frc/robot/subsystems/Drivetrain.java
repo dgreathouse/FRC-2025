@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import com.ctre.phoenix6.StatusSignal;
+
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,19 +29,15 @@ import frc.robot.lib.g;
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private SwerveDriveKinematics m_kinematics;
   private volatile SwerveDriveOdometry m_odometry;
-
   private volatile SwerveDrivePoseEstimator m_poseEstimator;
-  
   private OdometryEstimatorThread m_odometryEstimatorThread;
-  private OdometryThread m_odometryThread;
   private StatusSignal<Angle> m_yawStatusPigeon2;
   private StatusSignal<AngularVelocity> m_angularVelocityZStatusPigeon2;
   private double m_yawPrimary;
   private double m_angularVelocityZPrimary;
   private double m_yawSecondary = 0;
   private double m_angularVelocityZSecondary = 0;
-  private Rotation2d m_gyroPrimaryRotation;
-  private Rotation2d m_gyroSecondaryRotation;
+
   // TODO: Tune KP,KI,KD max output should be +/-1 Start around 1/3.14 for Kp
   private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
 
@@ -110,7 +108,11 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     // m_odometryThread = new OdometryThread();
     // m_odometryThread.start();
   
-    m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics, g.ROBOT.angleActual_Rot2d, g.SWERVE.positions, new Pose2d());
+    m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics, 
+                                                  g.ROBOT.angleActual_Rot2d, 
+                                                  g.SWERVE.positions, new Pose2d(),
+                                                  VecBuilder.fill(0.1,0.1,0.1), 
+                                                  VecBuilder.fill(0.9,0.9,0.9));
 
     resetYaw(0);
     g.DASHBOARD.updates.add(this);
@@ -121,17 +123,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   public void periodic() {
     // This method will be called once per scheduler run
   }
-  // Use the AprilTagAlignState, AprilTagPose, RobotAngle and RobotPose to get and new Pose2d to drive to
-  Pose2d getApriltagDriveToPose(Pose2d _aprilTagPose){
-    //g.MATCH.alliance periodically created
-    //g.VISION.aprilTagRequestedPose the Pose of the apriltag. Updated in vision when ID is found
-    // g.ROBOT.angleActual_deg Robot angle
-    // g.ROBOT.alignmentState the part of the reef the robot should be pointed to.
-    // 
-    // PhotonUtils some static methods that might help
-    // Look it up in a table for ID and alignment and get the pose.
-    return null;
-  }
+
   /** Drive in old fashion mode. Forward on thumb stick makes the robot go forward with reference to the front of the robot.
    * 
    * @param _xSpeed The X speed in +/- 1.0 Forward +
@@ -298,32 +290,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     g.ROBOT.gyro_navx.reset();
   }
 
-  public void updateDashboard() {
-    g.SWERVE.totalSwerveCurrent_amps = 0;
-    for (SwerveModule swerveModule : g.SWERVE.modules) {
-      g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
-          + Math.abs(swerveModule.getSteerCurrent());
-    }
-  //  SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
-    SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
-   // SmartDashboard.putData("Drive/TurnPID", m_turnPID);
-    SmartDashboard.putNumber("Robot/Pose X", g.ROBOT.pose2dDrive.getX());
-    SmartDashboard.putNumber("Robot/Pose Y", g.ROBOT.pose2dDrive.getY());
-    SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2dDrive.getRotation().getDegrees());
-    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
-    SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
-    SmartDashboard.putBoolean("Drive/IsRotateAtTarget", isRotateAtTarget());
-    SmartDashboard.putNumber("Robot/GyroPrimary_deg", m_yawPrimary);
-    SmartDashboard.putNumber("Robot/GyroSecondary_deg", m_yawSecondary);
-  //  SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());
-    SmartDashboard.putBoolean("Robot/Is AprilTag Active", g.ROBOT.vision.getIsAutoAprilTagActive());
-    SmartDashboard.putString("Robot/AlignState", g.ROBOT.alignmentState.toString());
-    SmartDashboard.putString("Robot/ApriltagAlignState", g.VISION.aprilTagAlignState.toString());
-
-    // Get from Dashboard
-    g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
-    
-  }
+  
   private void updatePositions() {
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
@@ -364,41 +331,41 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     g.VISION.aprilTagAlignState = _alignState;
   }
 
-  private class OdometryThread extends Thread {
-    public OdometryThread() {
-      super();
-    }
+  // private class OdometryThread extends Thread {
+  //   public OdometryThread() {
+  //     super();
+  //   }
   
-    @Override
-    public void run() {
+  //   @Override
+  //   public void run() {
 
-      while (true) {
-        /* Now update odometry */
-        updatePositions();
-        m_yawStatusPigeon2 = g.ROBOT.gyro_pigeon2.getYaw();
-        m_angularVelocityZStatusPigeon2 = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
-        m_yawSecondary = m_yawStatusPigeon2.getValueAsDouble();
-        m_angularVelocityZSecondary = m_angularVelocityZStatusPigeon2.getValueAsDouble();
+  //     while (true) {
+  //       /* Now update odometry */
+  //       updatePositions();
+  //       m_yawStatusPigeon2 = g.ROBOT.gyro_pigeon2.getYaw();
+  //       m_angularVelocityZStatusPigeon2 = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
+  //       m_yawSecondary = m_yawStatusPigeon2.getValueAsDouble();
+  //       m_angularVelocityZSecondary = m_angularVelocityZStatusPigeon2.getValueAsDouble();
         
-        m_yawPrimary = -g.ROBOT.gyro_navx.getAngle();
+  //       m_yawPrimary = -g.ROBOT.gyro_navx.getAngle();
         
-        m_angularVelocityZPrimary = -g.ROBOT.gyro_navx.getVelocityZ();
+  //       m_angularVelocityZPrimary = -g.ROBOT.gyro_navx.getVelocityZ();
 
-        g.ROBOT.angleActual_deg = getYaw();
-        g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
-
-        g.ROBOT.pose2dDrive = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
-        g.ROBOT.pose3dDrive = new Pose3d(g.ROBOT.pose2dDrive);
-        g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2dDrive);
-        g.ROBOT.vision.calculate();
-        try {
-          Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
-        } catch (InterruptedException e) {
-          System.out.println(e.getMessage());
-        }
-      }
-    }
-  }
+  //       g.ROBOT.angleActual_deg = getYaw();
+  //       g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
+  //       g.ROBOT.vision.calculate();
+  //       g.ROBOT.pose2dDrive = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
+  //       g.ROBOT.pose3dDrive = new Pose3d(g.ROBOT.pose2dDrive);
+  //       g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2dDrive);
+        
+  //       try {
+  //         Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
+  //       } catch (InterruptedException e) {
+  //         System.out.println(e.getMessage());
+  //       }
+  //     }
+  //   }
+  // }
   private class OdometryEstimatorThread extends Thread{
     public OdometryEstimatorThread(){
       super();
@@ -421,9 +388,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
         g.ROBOT.vision.calculatePose();
 
-        g.ROBOT.pose2dDrive = m_poseEstimator.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
-        g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2dDrive);
-        g.ROBOT.pose3dDrive = new Pose3d(g.ROBOT.pose2dDrive);
+        g.ROBOT.pose2d = m_poseEstimator.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
+        g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
+        
+        g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
         
         try {
           Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
@@ -435,5 +403,32 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
   public void addVisionMeasurement(Pose2d _estPose, double _timeStamp){
     m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp);
+  }
+  public void updateDashboard() {
+    // g.SWERVE.totalSwerveCurrent_amps = 0;
+    // for (SwerveModule swerveModule : g.SWERVE.modules) {
+    //   g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
+    //       + Math.abs(swerveModule.getSteerCurrent());
+    // }
+  //  SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
+    SmartDashboard.putData("Robot/Drive Field2d", g.ROBOT.field2d);
+    
+   // SmartDashboard.putData("Drive/TurnPID", m_turnPID);
+    SmartDashboard.putNumber("Robot/Pose Drive X", g.ROBOT.pose2d.getX());
+    SmartDashboard.putNumber("Robot/Pose Drive Y", g.ROBOT.pose2d.getY());
+    SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2d.getRotation().getDegrees());
+    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
+    SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
+    //SmartDashboard.putBoolean("Drive/IsRotateAtTarget", isRotateAtTarget());
+    SmartDashboard.putNumber("Robot/GyroPrimary_deg", m_yawPrimary);
+    SmartDashboard.putNumber("Robot/GyroSecondary_deg", m_yawSecondary);
+  //  SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());
+    SmartDashboard.putBoolean("Robot/Is AprilTag Active", g.ROBOT.vision.getIsAutoAprilTagActive());
+    SmartDashboard.putString("Robot/AlignState", g.ROBOT.alignmentState.toString());
+    SmartDashboard.putString("Robot/ApriltagAlignState", g.VISION.aprilTagAlignState.toString());
+
+    // Get from Dashboard
+    g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
+    
   }
 }

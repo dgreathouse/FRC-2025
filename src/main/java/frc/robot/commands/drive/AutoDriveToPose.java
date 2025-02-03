@@ -66,12 +66,12 @@ public class AutoDriveToPose extends Command {
   public void execute() {
     // Calculate the angle and distance to the pose
     
-    Pose2d trajectory = m_desiredPose.relativeTo(new Pose2d(g.ROBOT.pose2dDrive.getX(), g.ROBOT.pose2dDrive.getY(), m_zeroRotation));
+    Pose2d trajectory = m_desiredPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), m_zeroRotation));
 
     m_driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
     m_driveAngle_deg = g.MATCH.alliance == Alliance.Blue ? m_driveAngle_deg : m_driveAngle_deg + 180.0;
 
-    m_driveDistance_m = g.ROBOT.pose2dDrive.getTranslation().getDistance(m_desiredPose.getTranslation());
+    m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
 
     SmartDashboard.putNumber("Drive/AutoDrive Distance m", m_driveDistance_m);
     SmartDashboard.putNumber("Drive/AutoDrive Angle", m_driveAngle_deg);

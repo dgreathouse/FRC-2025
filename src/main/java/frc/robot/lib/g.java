@@ -94,10 +94,11 @@ public class g {
     public static volatile double angleRobotTarget_deg;
     public static volatile double angleDriveTarget_deg;
     public static volatile double speedDriveTarget_mPsec;
-    public static volatile Pose2d pose2dDrive = new Pose2d();
-    public static volatile Pose2d pose2dVision = new Pose2d();
-    public static volatile Pose3d pose3dDrive = new Pose3d();
+    public static volatile Pose2d pose2d = new Pose2d();
+    
+    public static volatile Pose3d pose3d = new Pose3d();
     public static volatile Field2d field2d = new Field2d();
+    
     public static final Pose2d POSE_START_ZERO = new Pose2d(0, 0, new Rotation2d());
     public static final Pose2d POSE_START_LEFT = new Pose2d(7.1374, 6.9088, new Rotation2d());
     public static final Pose2d POSE_START_RIGHT = new Pose2d(7.1374, 1.2192, new Rotation2d());
@@ -335,13 +336,11 @@ public class g {
     public static volatile boolean isAprilTagFound = false;
     public static volatile Pose2d aprilTagRequestedPose = new Pose2d();
     public static volatile boolean isGlobalPoseResetActive = true; // Not implemented
-    public static volatile double aprilTagX_m = 0;
-    public static volatile double aprilTagY_m = 0;
     public static volatile double leftAmbiguity = 0;
     public static volatile double rightAmbiguity = 0;
     public static volatile double backAmbiguity = 0;
-    
-
+    public static volatile Field2d field2d = new Field2d();
+    public static volatile Pose2d pose2d = new Pose2d();
   }
   public static class SIM {
     public static boolean IS_GYRO_DISABLED = false;

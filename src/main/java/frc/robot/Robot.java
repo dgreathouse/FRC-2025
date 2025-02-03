@@ -19,7 +19,6 @@ import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
-import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
