@@ -4,11 +4,14 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -247,7 +250,7 @@ public class g {
       public static final double GEAR_RATIO = (GEAR_1_TEETH / MOTOR_PINION_TEETH)
           * (GEAR_2_DRIVEN_TEETH / GEAR_2_DRIVE_TEETH)
           * (GEAR_BEVEL_DRIVEN_TEETH / GEAR_BEVEL_DRIVE_TEETH);
-      public static final double WHEEL_DIAMETER_m = .1015; // .10287
+      public static final double WHEEL_DIAMETER_m = 0.1016; // .10287
       private static final double WHEEL_CIRCUMFERENCE_m = Math.PI * WHEEL_DIAMETER_m;
       public static final double MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm = GEAR_RATIO / WHEEL_CIRCUMFERENCE_m;
       private static final double MOTOR_MAX_VELOCITY_rotPmin = 5800.0;
@@ -264,6 +267,7 @@ public class g {
       public static double PID_KI = 0.20;
       public static double PID_KV = g.ROBOT.MAX_BATTERY_SUPPLY_volts / MAX_VELOCITY_mPsec; // 2.8256;
       public static double PID_KS = 0.0;
+
 
       public static final double STATOR_CURRENT_LIMIT_amps = 80;
       public static final double SUPPLY_CURRENT_LIMIT_amps = 60;
@@ -314,6 +318,10 @@ public class g {
     public static volatile Translation2d centerOfRotation_m = new Translation2d();
     public static volatile boolean playingMarch = true;
     public static boolean isAutoDriveEnabled = true;
+    public static volatile double driveSpeedActual_mps = 0.0;
+    public static volatile double driveSpeedRequested_mps = 0.0;
+    public static final Vector<N3> STD_DEV_HIGH = VecBuilder.fill(0.1,0.1,0.1);
+    public static final Vector<N3> STD_DEV_LOW = VecBuilder.fill(0.9,0.9,0.9);
     //public static boolean isAutoToAprilTagDone = false;
 
   }

@@ -49,6 +49,7 @@ public class SwerveModule implements IUpdateDashboard {
   private StatusSignal<Angle> m_steerPosition;
   private StatusSignal<AngularVelocity> m_steerVelocity;
 
+
   public SwerveModule(
       String _name,
       int _driveCanId,
@@ -140,21 +141,7 @@ public class SwerveModule implements IUpdateDashboard {
  
   }
 
-  /**
-   * Called by separate thread to put stuff to the dashboard at a slower rate than the main periodic
-   */
-  public void updateDashboard() {
-    SmartDashboard.putNumber(
-        "Swerve/" + this.m_name + "/Vel(ftPsec)",
-        (m_driveMotor.getVelocity().getValueAsDouble()
-                / // Rot/sec /
-                g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm) // Rot/m
-            * g.CV.MPS_TO_FEETPERSEC); // ft/s
-    SmartDashboard.putNumber("Swerve/" + this.m_name + "/Drive Current", getDriveCurrent());
-    SmartDashboard.putNumber("Swerve/" + this.m_name + "/Steer Current", getSteerCurrent());
-    SmartDashboard.putData("Swerve/" + this.m_name + "/Steer PID", m_steerPID);
-    SmartDashboard.putData("Swerve/" + this.m_name + "/Drive PID", m_drivePID);
-  }
+
 
   public SwerveModulePosition updatePosition() {
     double drive_rot = m_driveMotor.getPosition().getValueAsDouble();
@@ -221,5 +208,26 @@ public class SwerveModule implements IUpdateDashboard {
       march.play();
       march.close();
   }
-  
+  /**
+   * 
+   * @return Drive speed in MPS
+   */
+  public double getDriveSpeed(){
+    return m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm;
+  }
+    /**
+   * Called by separate thread to put stuff to the dashboard at a slower rate than the main periodic
+   */
+  public void updateDashboard() {
+    SmartDashboard.putNumber(
+        "Swerve/" + this.m_name + "/Vel(ftPsec)",
+        (m_driveMotor.getVelocity().getValueAsDouble()
+                / // Rot/sec /
+                g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm) // Rot/m
+            * g.CV.MPS_TO_FEETPERSEC); // ft/s
+    SmartDashboard.putNumber("Swerve/" + this.m_name + "/Drive Current", getDriveCurrent());
+    SmartDashboard.putNumber("Swerve/" + this.m_name + "/Steer Current", getSteerCurrent());
+    SmartDashboard.putData("Swerve/" + this.m_name + "/Steer PID", m_steerPID);
+    SmartDashboard.putData("Swerve/" + this.m_name + "/Drive PID", m_drivePID);
+  }
 }

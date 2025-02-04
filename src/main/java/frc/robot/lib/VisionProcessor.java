@@ -183,7 +183,6 @@ public class VisionProcessor implements IUpdateDashboard{
                     if(Math.sqrt(t2d.getX()*t2d.getX() + t2d.getY() * t2d.getY()) < 3.0){ // Is the current drive pose close to the vision estimated pose
                         g.ROBOT.drive.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds);
                         g.VISION.pose2d = estimatedRobotPose.get().estimatedPose.toPose2d();
-                        g.VISION.field2d.setRobotPose(g.VISION.pose2d);
                     }
                 }
                 for (PhotonTrackedTarget target : result.getTargets()) {
@@ -202,6 +201,16 @@ public class VisionProcessor implements IUpdateDashboard{
         calculatePose(m_backCamera, m_backPoseEstimator, false);
         g.VISION.isAprilTagFound = isTartgetFound;
     }
+    /* Notes for trusting vision pose.
+     * Things we know:
+     * 1. Wheel slip will happen
+     * 2. Drive wheels will become inaccurate.
+     * 3. Drive is better if no tags are visible
+     * 4. Vision is very accurate
+     * 5. Driving to target pose from short distance should be done without rotation of modules
+     *    No slippage, 
+     * 
+     */
    
     /**
      * Based on the apriltag alignment, which is LEFT,CENTER,RIGHT or NONE.
@@ -264,6 +273,7 @@ public class VisionProcessor implements IUpdateDashboard{
 
     @Override
     public void updateDashboard() {
+        g.VISION.field2d.setRobotPose(g.VISION.pose2d);
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
         SmartDashboard.putNumber("Vision/Apriltag Requested ID", g.VISION.aprilTagRequestedID);
         SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());

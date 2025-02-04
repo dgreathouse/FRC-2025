@@ -38,7 +38,7 @@ public class AutoDriveToPose extends Command {
     m_desiredPose = _desiredPose;
     m_speed = _speed;
     m_timeOut_sec = _timeOut_sec;
-    m_drivePID.setTolerance(0.01);
+    m_drivePID.setTolerance(0.0254);
     m_drivePID.setIZone(0.5);
     m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
     m_alignState = RobotAlignStates.UNKNOWN;

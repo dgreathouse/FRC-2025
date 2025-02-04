@@ -35,8 +35,8 @@ public class DrivetrainDefaultCommand extends Command {
     double rightYRaw_Driver = -g.OI.driverController.getRightX(); // 2
     double rightXRaw_Driver = -g.OI.driverController.getRightY(); // 5
     
-    double rightYRaw_Operator = -g.OI.driverController.getRightX(); // 2
-    double rightXRaw_Operator = -g.OI.driverController.getRightY(); // 5
+    double rightYRaw_Operator = -g.OI.operatorController.getRightX(); // 2
+    double rightXRaw_Operator = -g.OI.operatorController.getRightY(); // 5
 
 
     if(g.OI.driverControllerSignInverted){
@@ -59,11 +59,11 @@ public class DrivetrainDefaultCommand extends Command {
 
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
       g.VISION.aprilTagRequestedPose = g.ROBOT.vision.getRobotLocationToAprilTag(g.VISION.aprilTagRequestedID, g.VISION.aprilTagAlignState);
-      Pose2d trajectory = g.VISION.aprilTagRequestedPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), new Rotation2d()));
-      double angle = Math.abs(trajectory.getTranslation().getAngle().getDegrees());
-      SmartDashboard.putNumber("Drive/AutonAngle Condition", angle);
+   //   Pose2d trajectory = g.VISION.aprilTagRequestedPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), new Rotation2d()));
+    //  double angle = Math.abs(trajectory.getTranslation().getAngle().getDegrees());
+
       
-      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.3, 10);
+      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.3, 5);
       autoPose.schedule();
 
     }else {
