@@ -180,7 +180,7 @@ public class VisionProcessor implements IUpdateDashboard{
                 double ambiguity = result.getBestTarget().getPoseAmbiguity(); // Get the ambiguity of the best target
                 if (ambiguity >= 0.0 && ambiguity < 0.075 && estimatedRobotPose.isPresent()) { // Update the drivetrain pose estimator with vision support
                     Transform2d t2d  = g.ROBOT.pose2d.minus(estimatedRobotPose.get().estimatedPose.toPose2d());
-                    if(Math.sqrt(t2d.getX()*t2d.getX() + t2d.getY() * t2d.getY()) < 1.0){ // Is the current drive pose close to the vision estimated pose
+                    if(Math.sqrt(t2d.getX()*t2d.getX() + t2d.getY() * t2d.getY()) < 3.0){ // Is the current drive pose close to the vision estimated pose
                         g.ROBOT.drive.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds);
                         g.VISION.pose2d = estimatedRobotPose.get().estimatedPose.toPose2d();
                         g.VISION.field2d.setRobotPose(g.VISION.pose2d);
@@ -188,7 +188,6 @@ public class VisionProcessor implements IUpdateDashboard{
                 }
                 for (PhotonTrackedTarget target : result.getTargets()) {
                     if (target.getFiducialId() == g.VISION.aprilTagRequestedID && _findTarget) {
-                        
                         isTartgetFound = true;
                     }
                 }

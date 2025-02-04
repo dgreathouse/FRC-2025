@@ -28,7 +28,7 @@ import frc.robot.lib.g;
 
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private SwerveDriveKinematics m_kinematics;
-  private volatile SwerveDriveOdometry m_odometry;
+  //private volatile SwerveDriveOdometry m_odometry;
   private volatile SwerveDrivePoseEstimator m_poseEstimator;
   private OdometryEstimatorThread m_odometryEstimatorThread;
   private StatusSignal<Angle> m_yawStatusPigeon2;
@@ -95,7 +95,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.SWERVE.modules[0].m_location,
         g.SWERVE.modules[1].m_location,
         g.SWERVE.modules[2].m_location);
-    m_odometry = new SwerveDriveOdometry(m_kinematics, g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
+        
+   // m_odometry = new SwerveDriveOdometry(m_kinematics, g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
 
     m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
     // TODO set Derivative tolerance so atSetPoint only returns true at low speeds
@@ -107,7 +108,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_odometryEstimatorThread.start();
     // m_odometryThread = new OdometryThread();
     // m_odometryThread.start();
-  
+    
     m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics, 
                                                   g.ROBOT.angleActual_Rot2d, 
                                                   g.SWERVE.positions, new Pose2d(),
@@ -307,24 +308,24 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   public void setOdometry(StartLocation _start) {
     switch (_start) {
       case LEFT:
-        m_odometry.resetPose(g.ROBOT.POSE_START_LEFT);
+      m_poseEstimator.resetPose(g.ROBOT.POSE_START_LEFT);
         break;
       case RIGHT:
-        m_odometry.resetPose(g.ROBOT.POSE_START_RIGHT);
+      m_poseEstimator.resetPose(g.ROBOT.POSE_START_RIGHT);
         break;
       case CENTER:
-        m_odometry.resetPose(g.ROBOT.POSE_START_CENTER);
+      m_poseEstimator.resetPose(g.ROBOT.POSE_START_CENTER);
         break;
       case ZERO:
-        m_odometry.resetPose(g.ROBOT.POSE_START_ZERO);
+      m_poseEstimator.resetPose(g.ROBOT.POSE_START_ZERO);
         break;
       default:
-        m_odometry.resetPose(g.ROBOT.POSE_START_LEFT);
+      m_poseEstimator.resetPose(g.ROBOT.POSE_START_LEFT);
         break;
     }
   }
   public void resetOdometry(Pose2d _pose){
-    m_odometry.resetPose(_pose);
+    m_poseEstimator.resetPose(_pose);
   }
   public void setAprilTagAlignment(AprilTagAlignState _alignState){
     //g.DRIVETRAIN.isAutoToAprilTagDone = false;

@@ -9,7 +9,7 @@ public class Algae extends SubsystemBase implements IUpdateDashboard{
   /** Creates a new AlgaeArm. */
   public Algae() {
 
-    g.DASHBOARD.updates.add(this);
+    //g.DASHBOARD.updates.add(this);
   }
 
   @Override
@@ -19,7 +19,7 @@ public class Algae extends SubsystemBase implements IUpdateDashboard{
 
   @Override
   public void updateDashboard() {
-    SmartDashboard.putString("Algae/Intake State", g.ALGAE.intakeState.toString());
+   // SmartDashboard.putString("Algae/Intake State", g.ALGAE.intakeState.toString());
 
   }
 }

@@ -19,6 +19,7 @@ import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
+import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
@@ -98,6 +99,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    g.ROBOT.drive.setOdometry(StartLocation.LEFT);
     // m_marchTimer.restart();
     // g.SWERVE.modules[2].playImperialMarch();
   }
