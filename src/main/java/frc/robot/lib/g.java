@@ -214,12 +214,9 @@ public class g {
     public static final Trigger BB_ROBOT_STATION_RIGHT = buttonBoard.button(20);
     public static final Trigger BB_ROBOT_STATION_LEFT = buttonBoard.button(21);
 
-    public static final int BB_APRIL_LEFT_ID = 22;
-    public static final int BB_APRIL_RIGHT_ID = 23;
-    public static final int BB_APRIL_CENTER_ID = 24;
-    public static final Trigger BB_APRIL_RIGHT = buttonBoard.button(BB_APRIL_LEFT_ID);
-    public static final Trigger BB_APRIL_LEFT = buttonBoard.button(BB_APRIL_RIGHT_ID);
-    public static final Trigger BB_APRIL_CENTER = buttonBoard.button(BB_APRIL_CENTER_ID);
+    public static final Trigger BB_APRIL_RIGHT = buttonBoard.button(22);
+    public static final Trigger BB_APRIL_LEFT = buttonBoard.button(33);
+    public static final Trigger BB_APRIL_CENTER = buttonBoard.button(34);
 
     // Smartdashboard buttons that are on the screen
     public static boolean isGyroPrimaryActive = true;

@@ -16,7 +16,9 @@ import frc.robot.commandGroups.AutoDriveToFront;
 import frc.robot.commandGroups.AutoDriveToPoseTest;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
+import frc.robot.lib.AlgaeArmState;
 import frc.robot.lib.AprilTagAlignState;
+import frc.robot.lib.CoralArmState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
@@ -150,18 +152,38 @@ public class Robot extends TimedRobot {
 
 
     //Button board
-     //g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
-  
-    // g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L4; }, g.ROBOT.coral ));
+     g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
+     g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.HIGH; }, g.ROBOT.algae ));
+     g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.LOW; }, g.ROBOT.algae ));
+     g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.PROCESSOR; }, g.ROBOT.algae ));
+     g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.FLORAL; }, g.ROBOT.algae ));
+     g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.FLOOR; }, g.ROBOT.algae ));
+     g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.START; }, g.ROBOT.algae ));
 
-    // g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive ));
+     g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L4; }, g.ROBOT.coral ));
+     g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L3; }, g.ROBOT.coral ));
+     g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L2; }, g.ROBOT.coral ));
+     g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L1; }, g.ROBOT.coral ));
+     g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.FLOOR_HORZ; }, g.ROBOT.coral ));
+     g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.FLOOR_VERT; }, g.ROBOT.coral ));
+     g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.START; }, g.ROBOT.coral ));
 
-    // g.OI.BB_APRIL_LEFT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.LEFT; }, g.ROBOT.drive));
-    // g.OI.BB_APRIL_RIGHT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.RIGHT; }, g.ROBOT.drive));
-    // g.OI.BB_APRIL_CENTER.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.CENTER; }, g.ROBOT.drive));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.BACK; }, g.ROBOT.drive ));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.BACK_RIGHT; }, g.ROBOT.drive ));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.BACK_LEFT; }, g.ROBOT.drive ));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.FRONT; }, g.ROBOT.drive ));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.FRONT_RIGHT; }, g.ROBOT.drive ));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.FRONT_LEFT; }, g.ROBOT.drive ));
 
-    // g.OI.BB_APRIL_LEFT.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
-    // g.OI.BB_APRIL_RIGHT.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
-    // g.OI.BB_APRIL_CENTER.onFalse(new InstantCommand(() ->{ g.VISION.aprilTagButtonState = AprilTagButtonState.NONE; }, g.ROBOT.drive));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.STATION_LEFT; }, g.ROBOT.drive ));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.STATION_RIGHT; }, g.ROBOT.drive ));
+
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.RIGHT; }, g.ROBOT.drive ));
+     g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.alignmentState = RobotAlignStates.LEFT; }, g.ROBOT.drive ));
+
+     g.OI.BB_APRIL_LEFT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagAlignState = AprilTagAlignState.LEFT; }, g.ROBOT.drive));
+     g.OI.BB_APRIL_RIGHT.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagAlignState = AprilTagAlignState.RIGHT; }, g.ROBOT.drive));
+     g.OI.BB_APRIL_CENTER.onTrue(new InstantCommand(() ->{ g.VISION.aprilTagAlignState = AprilTagAlignState.CENTER; }, g.ROBOT.drive));
+
   }
 }
