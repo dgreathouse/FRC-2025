@@ -19,6 +19,7 @@ import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
+import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 
@@ -139,8 +140,9 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_MODE_SPEED_HI.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.speedMultiplier = 1.0; }, g.ROBOT.drive));
     g.OI.DRIVER_MODE_SPEED_LOW.onTrue( new InstantCommand( () -> { g.DRIVETRAIN.speedMultiplier = 0.5; }, g.ROBOT.drive));
     g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue( new InstantCommand( () -> { g.SWERVE.isEnabled = !g.SWERVE.isEnabled; }, g.ROBOT.drive));
-    g.OI.DRIVER_TOGGLE_AUTO_DRIVE.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.isAutoDriveEnabled = !g.DRIVETRAIN.isAutoDriveEnabled;},g.ROBOT.drive));
-
+    g.OI.DRIVER_STATION_RIGHT.onTrue( new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.STATION_RIGHT; }, g.ROBOT.drive));
+    g.OI.DRIVER_STATION_LEFT.onTrue( new InstantCommand(() -> { g.ROBOT.alignmentState = RobotAlignStates.STATION_LEFT; }, g.ROBOT.drive));
+   
     // Operator controls
     g.OI.OPERATOR_ALIGN_CENTER.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.CENTER);}, g.ROBOT.drive));
     g.OI.OPERATOR_ALIGN_LEFT.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.LEFT);}, g.ROBOT.drive));
@@ -148,7 +150,7 @@ public class Robot extends TimedRobot {
 
 
     //Button board
-    // g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
+     //g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
   
     // g.OI.BB_CORAL_L4.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L4; }, g.ROBOT.coral ));
 
