@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,7 +37,7 @@ public class AutoDriveToPose extends Command {
     m_desiredPose = _desiredPose;
     m_speed = _speed;
     m_timeOut_sec = _timeOut_sec;
-    m_drivePID.setTolerance(0.0254);
+    m_drivePID.setTolerance(g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m);
     m_drivePID.setIZone(0.5);
     m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
     m_alignState = RobotAlignStates.UNKNOWN;
@@ -98,17 +97,17 @@ public class AutoDriveToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   // if(m_drivePID.atSetpoint()){
-
-    //}
-    if(Math.abs(m_driveDistance_m) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-        // && Math.abs((g.ROBOT.pose2dDrive.getX()) - m_desiredPose.getX()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-        // && Math.abs((g.ROBOT.pose2dDrive.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
-       && g.ROBOT.drive.isRotateAtTarget())
-    {
-     // g.DRIVETRAIN.isAutoToAprilTagDone = true;
+    if(m_drivePID.atSetpoint()){
       g.VISION.aprilTagAlignState = AprilTagAlignState.NONE;
       return true;
+    //}
+    // if(Math.abs(m_driveDistance_m) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+    //     // && Math.abs((g.ROBOT.pose2dDrive.getX()) - m_desiredPose.getX()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+    //     // && Math.abs((g.ROBOT.pose2dDrive.getY()) - m_desiredPose.getY()) < g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m
+    //    && g.ROBOT.drive.isRotateAtTarget())
+    // {
+     // g.DRIVETRAIN.isAutoToAprilTagDone = true;
+      
     }
     if(m_timer.hasElapsed(m_timeOut_sec)){
       return true;

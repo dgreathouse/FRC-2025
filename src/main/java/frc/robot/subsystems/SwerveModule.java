@@ -21,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.SimplerMotorFeedforward;
 import frc.robot.lib.g;
@@ -219,15 +218,15 @@ public class SwerveModule implements IUpdateDashboard {
    * Called by separate thread to put stuff to the dashboard at a slower rate than the main periodic
    */
   public void updateDashboard() {
-    SmartDashboard.putNumber(
-        "Swerve/" + this.m_name + "/Vel(ftPsec)",
-        (m_driveMotor.getVelocity().getValueAsDouble()
-                / // Rot/sec /
-                g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm) // Rot/m
-            * g.CV.MPS_TO_FEETPERSEC); // ft/s
-    SmartDashboard.putNumber("Swerve/" + this.m_name + "/Drive Current", getDriveCurrent());
-    SmartDashboard.putNumber("Swerve/" + this.m_name + "/Steer Current", getSteerCurrent());
-    SmartDashboard.putData("Swerve/" + this.m_name + "/Steer PID", m_steerPID);
-    SmartDashboard.putData("Swerve/" + this.m_name + "/Drive PID", m_drivePID);
+    // SmartDashboard.putNumber(
+    //     "Swerve/" + this.m_name + "/Vel(ftPsec)",
+    //     (m_driveMotor.getVelocity().getValueAsDouble()
+    //             / // Rot/sec /
+    //             g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm) // Rot/m
+    //         * g.CV.MPS_TO_FEETPERSEC); // ft/s
+    // SmartDashboard.putNumber("Swerve/" + this.m_name + "/Drive Current", getDriveCurrent());
+    // SmartDashboard.putNumber("Swerve/" + this.m_name + "/Steer Current", getSteerCurrent());
+    // SmartDashboard.putData("Swerve/" + this.m_name + "/Steer PID", m_steerPID);
+    // SmartDashboard.putData("Swerve/" + this.m_name + "/Drive PID", m_drivePID);
   }
 }

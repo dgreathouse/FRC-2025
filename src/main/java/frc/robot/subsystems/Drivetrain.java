@@ -397,9 +397,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putData("Robot/Drive Field2d", g.ROBOT.field2d);
     
    // SmartDashboard.putData("Drive/TurnPID", m_turnPID);
-    SmartDashboard.putNumber("Robot/Pose Drive X", g.ROBOT.pose2d.getX());
-    SmartDashboard.putNumber("Robot/Pose Drive Y", g.ROBOT.pose2d.getY());
-    SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2d.getRotation().getDegrees());
+    //SmartDashboard.putNumber("Robot/Pose Drive X", g.ROBOT.pose2d.getX());
+    //SmartDashboard.putNumber("Robot/Pose Drive Y", g.ROBOT.pose2d.getY());
+    //SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2d.getRotation().getDegrees());
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
     //SmartDashboard.putBoolean("Drive/IsRotateAtTarget", isRotateAtTarget());
@@ -408,7 +408,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   //  SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());
     SmartDashboard.putBoolean("Robot/Is AprilTag Active", g.ROBOT.vision.getIsAutoAprilTagActive());
     SmartDashboard.putString("Robot/AlignState", g.ROBOT.alignmentState.toString());
-    SmartDashboard.putString("Robot/ApriltagAlignState", g.VISION.aprilTagAlignState.toString());
+    //SmartDashboard.putString("Robot/ApriltagAlignState", g.VISION.aprilTagAlignState.toString());
     SmartDashboard.putNumber("Drive Speed Actual", g.DRIVETRAIN.driveSpeedActual_mps);
     SmartDashboard.putNumber("Drive Speed Requested", g.DRIVETRAIN.driveSpeedRequested_mps);
     // Get from Dashboard

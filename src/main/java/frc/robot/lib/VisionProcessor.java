@@ -20,7 +20,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -276,12 +275,12 @@ public class VisionProcessor implements IUpdateDashboard{
         g.VISION.field2d.setRobotPose(g.VISION.pose2d);
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
         SmartDashboard.putNumber("Vision/Apriltag Requested ID", g.VISION.aprilTagRequestedID);
-        SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());
-        SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.getY());
+        //SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());
+        //SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.getY());
         SmartDashboard.putString("Vision/Apriltag AlignState", g.VISION.aprilTagAlignState.toString());
         SmartDashboard.putData("Vision/Vision Field2d", g.VISION.field2d);
-        SmartDashboard.putNumber("Vision/Pose Vision X", g.VISION.pose2d.getX());
-        SmartDashboard.putNumber("Vision/Pose Vision Y", g.VISION.pose2d.getY());
+        //SmartDashboard.putNumber("Vision/Pose Vision X", g.VISION.pose2d.getX());
+        //SmartDashboard.putNumber("Vision/Pose Vision Y", g.VISION.pose2d.getY());
 
     }
 }
