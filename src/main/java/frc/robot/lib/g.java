@@ -187,36 +187,36 @@ public class g {
     public static final int BUTTON_BOARD_PORT = 2;
     public static CommandJoystick buttonBoard = new CommandJoystick(BUTTON_BOARD_PORT);
 
-    public static final Trigger BB_ALGAE_BARGE = buttonBoard.button(1);
-    public static final Trigger BB_ALGAE_HI = buttonBoard.button(1);
-    public static final Trigger BB_ALGAE_LOW = buttonBoard.button(2);
-    public static final Trigger BB_ALGAE_PROCESSOR = buttonBoard.button(3);
-    public static final Trigger BB_ALGAE_FLOOR = buttonBoard.button(4);
-    public static final Trigger BB_ALGAE_FLORAL = buttonBoard.button(4);
-    public static final Trigger BB_ALGAE_START = buttonBoard.button(4);
+    public static final Trigger BB_ALGAE_BARGE = buttonBoard.button(18);
+    public static final Trigger BB_ALGAE_HIGH = buttonBoard.button(17);
+    public static final Trigger BB_ALGAE_LOW = buttonBoard.button(16);
+    public static final Trigger BB_ALGAE_PROCESSOR = buttonBoard.button(15);
+    public static final Trigger BB_ALGAE_FLOOR = buttonBoard.button(13);
+    public static final Trigger BB_ALGAE_FLORAL = buttonBoard.button(14);
+    public static final Trigger BB_ALGAE_START = buttonBoard.button(25);
 
-    public static final Trigger BB_CORAL_L4 = buttonBoard.button(5);
-    public static final Trigger BB_CORAL_L3 = buttonBoard.button(6);
-    public static final Trigger BB_CORAL_L2 = buttonBoard.button(7);
-    public static final Trigger BB_CORAL_L1 = buttonBoard.button(8);
-    public static final Trigger BB_CORAL_FLOOR_VERT = buttonBoard.button(9);
-    public static final Trigger BB_CORAL_FLOOR_HORZ = buttonBoard.button(10);
-    public static final Trigger BB_CORAL_START = buttonBoard.button(11);
+    public static final Trigger BB_CORAL_L4 = buttonBoard.button(12);
+    public static final Trigger BB_CORAL_L3 = buttonBoard.button(11);
+    public static final Trigger BB_CORAL_L2 = buttonBoard.button(10);
+    public static final Trigger BB_CORAL_L1 = buttonBoard.button(9);
+    public static final Trigger BB_CORAL_FLOOR_VERT = buttonBoard.button(7);
+    public static final Trigger BB_CORAL_FLOOR_HORZ = buttonBoard.button(8);
+    public static final Trigger BB_CORAL_START = buttonBoard.button(30);
 
-    public static final Trigger BB_ROBOT_BACK = buttonBoard.button(12);
-    public static final Trigger BB_ROBOT_FRONT = buttonBoard.button(13);
-    public static final Trigger BB_ROBOT_RIGHT = buttonBoard.button(14);
-    public static final Trigger BB_ROBOT_LEFT = buttonBoard.button(15);
-    public static final Trigger BB_ROBOT_BACK_RIGHT = buttonBoard.button(16);
-    public static final Trigger BB_ROBOT_BACK_LEFT = buttonBoard.button(17);
-    public static final Trigger BB_ROBOT_FRONT_RIGHT = buttonBoard.button(18);
-    public static final Trigger BB_ROBOT_FRONT_LEFT = buttonBoard.button(19);
-    public static final Trigger BB_ROBOT_STATION_RIGHT = buttonBoard.button(20);
-    public static final Trigger BB_ROBOT_STATION_LEFT = buttonBoard.button(21);
+    public static final Trigger BB_ROBOT_BACK = buttonBoard.button(3);
+    public static final Trigger BB_ROBOT_FRONT = buttonBoard.button(2);
+    public static final Trigger BB_ROBOT_RIGHT = buttonBoard.button(20);
+    public static final Trigger BB_ROBOT_LEFT = buttonBoard.button(23);
+    public static final Trigger BB_ROBOT_BACK_RIGHT = buttonBoard.button(21);
+    public static final Trigger BB_ROBOT_BACK_LEFT = buttonBoard.button(24);
+    public static final Trigger BB_ROBOT_FRONT_RIGHT = buttonBoard.button(19);
+    public static final Trigger BB_ROBOT_FRONT_LEFT = buttonBoard.button(22);
+    public static final Trigger BB_ROBOT_STATION_RIGHT = buttonBoard.button(26);
+    public static final Trigger BB_ROBOT_STATION_LEFT = buttonBoard.button(29);
 
-    public static final Trigger BB_APRIL_RIGHT = buttonBoard.button(22);
-    public static final Trigger BB_APRIL_LEFT = buttonBoard.button(33);
-    public static final Trigger BB_APRIL_CENTER = buttonBoard.button(34);
+    public static final Trigger BB_APRIL_RIGHT = buttonBoard.button(27);
+    public static final Trigger BB_APRIL_LEFT = buttonBoard.button(28);
+    public static final Trigger BB_APRIL_CENTER = buttonBoard.button(1);
 
     // Smartdashboard buttons that are on the screen
     public static boolean isGyroPrimaryActive = true;
