@@ -167,14 +167,14 @@ public class g {
     public static final Trigger DRIVER_MODE_SPEED_LOW = driverController.L1();
     public static final Trigger DRIVER_RESET_YAW = driverController.create();
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
-
-    public static boolean driverControllerSignInverted = false;
-   // public static final Trigger DRIVER_MARCH = driverController.triangle();
-    public static final Trigger DRIVER_TEST_BB_FRONT = driverController.cross();
-    public static final Trigger DRIVER_RESET_START_POSE = driverController.triangle();
-    
     public static final Trigger DRIVER_STATION_RIGHT = driverController.circle();
     public static final Trigger DRIVER_STATION_LEFT = driverController.square();
+    public static boolean driverControllerSignInverted = false;
+
+
+
+    
+
     
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;
