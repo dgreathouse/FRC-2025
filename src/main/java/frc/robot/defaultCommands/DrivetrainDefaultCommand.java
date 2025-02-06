@@ -35,13 +35,6 @@ public class DrivetrainDefaultCommand extends Command {
     double rightYRaw_Operator = -g.OI.operatorController.getRightX(); // 2
     double rightXRaw_Operator = -g.OI.operatorController.getRightY(); // 5
 
-
-    if(g.OI.driverControllerSignInverted){
-      leftYRaw_Driver = -leftYRaw_Driver;
-      leftXRaw_Driver = -leftXRaw_Driver;
-      rightXRaw_Driver = -rightXRaw_Driver;
-      rightYRaw_Driver = -rightYRaw_Driver;
-    }
     // Limit the inputs for a deadband related to the joystick
     double leftYFiltered_Driver = MathUtil.applyDeadband(leftYRaw_Driver, 0.08, 1.0);
     double leftXFiltered_Driver = MathUtil.applyDeadband(leftXRaw_Driver, 0.08, 1.0);
@@ -56,13 +49,8 @@ public class DrivetrainDefaultCommand extends Command {
 
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
       g.VISION.aprilTagRequestedPose = g.ROBOT.vision.getRobotLocationToAprilTag(g.VISION.aprilTagRequestedID, g.VISION.aprilTagAlignState);
-   //   Pose2d trajectory = g.VISION.aprilTagRequestedPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), new Rotation2d()));
-    //  double angle = Math.abs(trajectory.getTranslation().getAngle().getDegrees());
-
-      
       AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.3, 5);
       autoPose.schedule();
-
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:

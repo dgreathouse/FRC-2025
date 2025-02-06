@@ -267,7 +267,59 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       }
     }
   }
+  public void setTargetRobotAngle(RobotAlignStates _state){
+    switch (_state) {
+      case BACK:
+      g.ROBOT.alignmentState = RobotAlignStates.BACK;
+      g.ROBOT.angleRobotTarget_deg = 180.0;
+        break;
+      case BACK_LEFT:
+      g.ROBOT.alignmentState = RobotAlignStates.BACK_LEFT;
+      g.ROBOT.angleRobotTarget_deg = -120.0;
+        break;
+      case BACK_RIGHT:
+      g.ROBOT.alignmentState = RobotAlignStates.BACK_RIGHT;
+      g.ROBOT.angleRobotTarget_deg = 120.0;
+        break;
+      case FRONT:
+      g.ROBOT.alignmentState = RobotAlignStates.FRONT;
+      g.ROBOT.angleRobotTarget_deg = 0.0;
+        break;
+      case FRONT_LEFT:
+      g.ROBOT.alignmentState = RobotAlignStates.FRONT_LEFT;
+      g.ROBOT.angleRobotTarget_deg = -60.0;
+        break;
+      case FRONT_RIGHT:
+      g.ROBOT.alignmentState = RobotAlignStates.FRONT_RIGHT;
+      g.ROBOT.angleRobotTarget_deg = 60.0;
+        break;
+      case LEFT:
+      g.ROBOT.alignmentState = RobotAlignStates.LEFT;
+      g.ROBOT.angleRobotTarget_deg = 90.0;
+        break;
+      case RIGHT:
+      g.ROBOT.alignmentState = RobotAlignStates.RIGHT;
+      g.ROBOT.angleRobotTarget_deg = -90.0;
+        break;
+      case STATION_LEFT:
+      g.ROBOT.alignmentState = RobotAlignStates.STATION_LEFT;
+      g.ROBOT.angleRobotTarget_deg = -54.0;
+        break;
+      case STATION_RIGHT:
+      g.ROBOT.alignmentState = RobotAlignStates.STATION_RIGHT;
+      g.ROBOT.angleRobotTarget_deg = 54.0;
+        break;
+      case UNKNOWN:
+      g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
+      g.ROBOT.angleRobotTarget_deg = 0.0;
+        break;
+      default:
+      g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
+      g.ROBOT.angleRobotTarget_deg = 0.0;
+        break;
 
+    }
+  }
   /**
    * Directly set the g.ROBOT.angleTarget_deg to a angle. Generally this is used
    * in autonomous or by a button.

@@ -109,6 +109,8 @@ public class g {
     public static final double TELEMETRY_RATE_sec = 0.02;
     public static final long ODOMETRY_RATE_ms = 5;
     public static volatile double centerDistanceToFrontBumper_m = 0.535;
+    public static volatile double centerDistanceToBackBumper_m = 0.42211;
+    public static volatile double centerDistanceToStationSide_m = 0.609;
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
     
     public static VisionProcessor vision = new VisionProcessor();
@@ -169,13 +171,7 @@ public class g {
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
     public static final Trigger DRIVER_STATION_RIGHT = driverController.circle();
     public static final Trigger DRIVER_STATION_LEFT = driverController.square();
-    public static boolean driverControllerSignInverted = false;
-
-
-
-    
-
-    
+     
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;
     public static CommandPS5Controller operatorController = new CommandPS5Controller(OPERATOR_CONTROLLER_PORT);
