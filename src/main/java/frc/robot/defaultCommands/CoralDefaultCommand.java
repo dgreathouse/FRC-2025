@@ -17,8 +17,14 @@ public class CoralDefaultCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // int val = (int)SmartDashboard.getNumber("Servo", 2500);
-    // g.ROBOT.coral.setServo(val);
+    if(g.OI.DRIVER_CORAL_IN.getAsBoolean()){
+
+    }else if(g.OI.DRIVER_CORAL_OUT.getAsBoolean()){
+
+    }else { // OFF
+
+    }
+
   }
 
   // Called once the command ends or is interrupted.

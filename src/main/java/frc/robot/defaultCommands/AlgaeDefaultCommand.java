@@ -1,6 +1,7 @@
 package frc.robot.defaultCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.lib.g;
 
 public class AlgaeDefaultCommand extends Command {
   /** Creates a new AlgaeArmDefaultCommand. */
@@ -14,7 +15,15 @@ public class AlgaeDefaultCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if(g.OI.DRIVER_ALGAE_IN.getAsBoolean()){
+
+    }else if(g.OI.DRIVER_ALGAE_OUT.getAsBoolean()){
+
+    }else { // OFF
+
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

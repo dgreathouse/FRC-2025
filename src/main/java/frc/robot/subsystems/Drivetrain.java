@@ -379,6 +379,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
     }
   }
+  public void toggleSpeed(){
+    if(g.DRIVETRAIN.speedMultiplier < 0.75){
+      g.DRIVETRAIN.speedMultiplier = 1.0;
+    }else {
+      g.DRIVETRAIN.speedMultiplier = 0.5;
+    }
+  }
   public void resetOdometry(Pose2d _pose){
     m_poseEstimator.resetPose(_pose);
   }

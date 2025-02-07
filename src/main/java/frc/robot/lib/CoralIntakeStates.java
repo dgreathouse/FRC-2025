@@ -5,7 +5,8 @@
 package frc.robot.lib;
 
 /** Add your docs here. */
-public enum CoralClawStates {
-    OPEN,
-    CLOSED
+public enum CoralIntakeStates {
+    IN,
+    OUT,
+    OFF
 }

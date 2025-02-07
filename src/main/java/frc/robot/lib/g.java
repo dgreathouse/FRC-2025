@@ -72,7 +72,7 @@ import java.util.List;
  */
 public class g {
   public static class MATCH {
-    public static Alliance alliance = Alliance.Blue;
+   // public static Alliance alliance = Alliance.Blue;
   }
   public static class AprilTagLocations{
     public static List<ApriltagPose> pose = new ArrayList<ApriltagPose>(  );
@@ -329,7 +329,7 @@ public class g {
   }
   public static class CORAL {
     public static volatile CoralArmState armState = CoralArmState.START;
-    public static volatile CoralClawStates clawState = CoralClawStates.OPEN;
+    public static volatile CoralIntakeStates clawState = CoralIntakeStates.OFF;
   }
   public static class LIFT {
   }
