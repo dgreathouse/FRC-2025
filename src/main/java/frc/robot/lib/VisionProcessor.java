@@ -7,6 +7,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -25,7 +26,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**  */
 public class VisionProcessor implements IUpdateDashboard{
-
+    
+    VisionPoseEstimatorThread m_poseEstimatorThread;
     PhotonCamera m_leftCamera;
     PhotonPoseEstimator m_leftPoseEstimator;
 
@@ -63,6 +65,10 @@ public class VisionProcessor implements IUpdateDashboard{
 
         g.DASHBOARD.updates.add(this);
         createApriltagLocations();
+
+        m_poseEstimatorThread = new VisionPoseEstimatorThread();
+        m_poseEstimatorThread.start();
+
         
     }
     public Pose2d getRobotLocationToAprilTag(int _id, AprilTagAlignState _apriltagAlignState ){
@@ -173,53 +179,61 @@ public class VisionProcessor implements IUpdateDashboard{
         cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
         g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0)); // ID 22
     }
-    double cnt = 0;
-    double cnt2 = 0;
-    public boolean calculatePose(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor, boolean _findTarget) {
-        boolean found = false;
-        List<PhotonPipelineResult> results = _camera.getAllUnreadResults();
-        if (!results.isEmpty()) {
-            PhotonPipelineResult result = results.get(results.size() - 1);// Just get the latest, in time, result from the camera.    
-            if (result.hasTargets()) { // Does the result have a target. It should since we are doing a Apriltag pipeline
-                Optional<EstimatedRobotPose> estimatedRobotPose = _poseEstimtor.update(result); // update the camera pose estimator
-                double ambiguity = result.getBestTarget().getPoseAmbiguity(); // Get the ambiguity of the best target
-                if (ambiguity >= 0.0 && ambiguity < 0.075 && estimatedRobotPose.isPresent()) { // Update the drivetrain pose estimator with vision support
-                    Transform2d t2d  = g.ROBOT.pose2d.minus(estimatedRobotPose.get().estimatedPose.toPose2d());
-                  //  if(Math.sqrt(t2d.getX()*t2d.getX() + t2d.getY() * t2d.getY()) < 3.0){ // Is the current drive pose close to the vision estimated pose
-                        g.ROBOT.drive.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds);
-                        g.VISION.pose2d = estimatedRobotPose.get().estimatedPose.toPose2d();
-                        
-
-                  //  }
-                  for (PhotonTrackedTarget target : result.getTargets()) {
-                    if (target.getFiducialId() == g.VISION.aprilTagRequestedID && _findTarget) {
-                        isTartgetFound = true;
-                        found = true;
+    double emptyCnt = 0;
+    public TagFoundState calculatePose(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor) {
+        double ambiguity = 0;
+        g.VISION.tagState = TagFoundState.EMPTY;
+        List<PhotonPipelineResult> results = _camera.getAllUnreadResults(); // Get all results from the apriltag pipeline.
+        if (!results.isEmpty()) { // If there are no results from the pipeline the results is empty. This happens 2 times. 1. No tag found, 2. Pipeline flushed to often with no new results
+            for (PhotonPipelineResult photonPipelineResult : results) {
+                if(photonPipelineResult.hasTargets()){
+                    List<PhotonTrackedTarget> targets = photonPipelineResult.getTargets();
+                    if(!targets.isEmpty()){
+                        for (PhotonTrackedTarget target : targets) {
+                            ambiguity = target.poseAmbiguity;
+                            if(ambiguity >= 0 && ambiguity < g.VISION.ambiguitySetPoint){
+                                g.VISION.tagState = TagFoundState.TAG_FOUND;
+                                Optional<EstimatedRobotPose> estimatedRobotPose = _poseEstimtor.update(photonPipelineResult);
+                                if(estimatedRobotPose.isPresent()){
+                                    g.ROBOT.drive.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds);
+                                    g.VISION.pose2d = estimatedRobotPose.get().estimatedPose.toPose2d();
+                                }
+                                if(target.getFiducialId() == g.VISION.aprilTagRequestedID){
+                                    g.VISION.tagState = TagFoundState.TARGET_ID_FOUND;
+                                }
+                            }
+                        }
                     }
                 }
-                }
-  
             }
-        }else {
-            found = false;
         }
-        return found;
+        return g.VISION.tagState;
     }
+    /*
+     * Even if the tag is seen a lot of results are empty. 
+     * Options:
+     * 1. deal iwth the tagfound flickering.
+     * 2. Ignore empty for a certain amount of time. 
+     * 3. Figure out a way to limit it in backend
+     * 4. Ignore is tag found as an indicator, still set it and the autopose will happen eventually
+     * 5. We can assume empty results are where there are no values left in FIFO because we are calling it at a 5ms rate.
+     *    Therefore we can ignore the Empty results because results are a camera capture not just a apriltag. Even 
+     *    if it is a april tag we don't care about empty. But if it is empty because no tags we have to deal with something else.
+     * 6. Doing vision at 5ms means it is asking for results at a 200hz rate. The camera only does at most 50FPS. Therefore this should not be done at 200Hz.
+     */
+
     public void calculatePose(){
-        isTartgetFound = false;
         g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
-        if (calculatePose(m_leftCamera, m_leftPoseEstimator, true)){
+        TagFoundState leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
+        TagFoundState rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
+        TagFoundState backCamState = calculatePose(m_backCamera, m_backPoseEstimator);
 
-        }else if(calculatePose(m_rightCamera, m_rightPoseEstimator, true)){
-
+        if(leftCamState == TagFoundState.TARGET_ID_FOUND || rightCamState == TagFoundState.TARGET_ID_FOUND || backCamState == TagFoundState.TARGET_ID_FOUND){
+            g.VISION.isAprilTagFound = true;
+        }else if (leftCamState == TagFoundState.EMPTY && rightCamState == TagFoundState.EMPTY && backCamState == TagFoundState.EMPTY){
+            g.VISION.isAprilTagFound = false;
+            emptyCnt++;
         }
-        else if (calculatePose(m_backCamera, m_backPoseEstimator, true)){
-            
-        }
-        if(!isTartgetFound){
-            cnt2++;
-        }
-        g.VISION.isAprilTagFound = isTartgetFound;
     }
     /* Notes for trusting vision pose.
      * Things we know:
@@ -287,17 +301,29 @@ public class VisionProcessor implements IUpdateDashboard{
         return rtn;
 
     }
-    public void calculate(){
-        calculatePose();
-    }
 
+    private class VisionPoseEstimatorThread extends Thread{
+        public VisionPoseEstimatorThread(){
+            super();
+        }
+        @Override
+        public void run(){
+            while(true){
+                calculatePose();
+                try{
+                    Thread.sleep(10);
+                }catch(InterruptedException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+    }
     @Override
     public void updateDashboard() {
         g.VISION.field2d.setRobotPose(g.VISION.pose2d);
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
         SmartDashboard.putNumber("Vision/Apriltag Requested ID", g.VISION.aprilTagRequestedID);
-        SmartDashboard.putNumber("Vision/SetStdDev", cnt);
-        SmartDashboard.putNumber("Vision/SetStdDev2", cnt2);
+        SmartDashboard.putNumber("Vision/SetStdDev", emptyCnt);
         //SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());
         //SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.getY());
         SmartDashboard.putString("Vision/Apriltag AlignState", g.VISION.aprilTagAlignState.toString());

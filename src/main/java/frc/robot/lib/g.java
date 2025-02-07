@@ -335,11 +335,10 @@ public class g {
     public static volatile double aprilTagAngle_deg = 0;
     public static volatile double aprilTagDistance_m = 0;
     public static volatile boolean isAprilTagFound = false;
+    public static volatile TagFoundState tagState = TagFoundState.EMPTY;
     public static volatile Pose2d aprilTagRequestedPose = new Pose2d();
     public static volatile boolean isGlobalPoseResetActive = true; // Not implemented
-    public static volatile double leftAmbiguity = 0;
-    public static volatile double rightAmbiguity = 0;
-    public static volatile double backAmbiguity = 0;
+    public static volatile double ambiguitySetPoint = 0.075;
     public static volatile Field2d field2d = new Field2d();
     public static volatile Pose2d pose2d = new Pose2d();
   }

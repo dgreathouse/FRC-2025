@@ -23,6 +23,7 @@ import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.StartLocation;
+import frc.robot.lib.TagFoundState;
 import frc.robot.lib.g;
 
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
@@ -415,7 +416,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
 
         g.ROBOT.vision.calculatePose();
-        if(g.VISION.isAprilTagFound){
+        if(g.VISION.isAprilTagFound || g.VISION.tagState == TagFoundState.TAG_FOUND){
           cnt++;
           m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH);
         }else {
@@ -425,11 +426,6 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
         
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
-        // Pose estimator decision for StdDev settings
-        // Criteria for vision:
-        // TagIsFound, Slow speed,
-        // Criteria for Drive:
-        // No Target 
         try {
           Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
         } catch (InterruptedException e) {
