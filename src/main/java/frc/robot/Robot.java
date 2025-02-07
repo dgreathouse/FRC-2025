@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    g.ROBOT.drive.setOdometry(StartLocation.LEFT);
+    g.ROBOT.drive.setOdometry(StartLocation.RIGHT);
     // m_marchTimer.restart();
     // g.SWERVE.modules[2].playImperialMarch();
   }

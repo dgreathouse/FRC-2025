@@ -173,8 +173,10 @@ public class VisionProcessor implements IUpdateDashboard{
         cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
         g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0)); // ID 22
     }
-
-    public void calculatePose(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor, boolean _findTarget) {
+    double cnt = 0;
+    double cnt2 = 0;
+    public boolean calculatePose(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor, boolean _findTarget) {
+        boolean found = false;
         List<PhotonPipelineResult> results = _camera.getAllUnreadResults();
         if (!results.isEmpty()) {
             PhotonPipelineResult result = results.get(results.size() - 1);// Just get the latest, in time, result from the camera.    
@@ -183,25 +185,40 @@ public class VisionProcessor implements IUpdateDashboard{
                 double ambiguity = result.getBestTarget().getPoseAmbiguity(); // Get the ambiguity of the best target
                 if (ambiguity >= 0.0 && ambiguity < 0.075 && estimatedRobotPose.isPresent()) { // Update the drivetrain pose estimator with vision support
                     Transform2d t2d  = g.ROBOT.pose2d.minus(estimatedRobotPose.get().estimatedPose.toPose2d());
-                    if(Math.sqrt(t2d.getX()*t2d.getX() + t2d.getY() * t2d.getY()) < 3.0){ // Is the current drive pose close to the vision estimated pose
+                  //  if(Math.sqrt(t2d.getX()*t2d.getX() + t2d.getY() * t2d.getY()) < 3.0){ // Is the current drive pose close to the vision estimated pose
                         g.ROBOT.drive.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds);
                         g.VISION.pose2d = estimatedRobotPose.get().estimatedPose.toPose2d();
-                    }
-                }
-                for (PhotonTrackedTarget target : result.getTargets()) {
+                        
+
+                  //  }
+                  for (PhotonTrackedTarget target : result.getTargets()) {
                     if (target.getFiducialId() == g.VISION.aprilTagRequestedID && _findTarget) {
                         isTartgetFound = true;
+                        found = true;
                     }
                 }
+                }
+  
             }
+        }else {
+            found = false;
         }
+        return found;
     }
     public void calculatePose(){
         isTartgetFound = false;
         g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
-        calculatePose(m_leftCamera, m_leftPoseEstimator, true);
-        calculatePose(m_rightCamera, m_rightPoseEstimator, true);
-        calculatePose(m_backCamera, m_backPoseEstimator, false);
+        if (calculatePose(m_leftCamera, m_leftPoseEstimator, true)){
+
+        }else if(calculatePose(m_rightCamera, m_rightPoseEstimator, true)){
+
+        }
+        else if (calculatePose(m_backCamera, m_backPoseEstimator, true)){
+            
+        }
+        if(!isTartgetFound){
+            cnt2++;
+        }
         g.VISION.isAprilTagFound = isTartgetFound;
     }
     /* Notes for trusting vision pose.
@@ -279,6 +296,8 @@ public class VisionProcessor implements IUpdateDashboard{
         g.VISION.field2d.setRobotPose(g.VISION.pose2d);
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
         SmartDashboard.putNumber("Vision/Apriltag Requested ID", g.VISION.aprilTagRequestedID);
+        SmartDashboard.putNumber("Vision/SetStdDev", cnt);
+        SmartDashboard.putNumber("Vision/SetStdDev2", cnt2);
         //SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());
         //SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.getY());
         SmartDashboard.putString("Vision/Apriltag AlignState", g.VISION.aprilTagAlignState.toString());

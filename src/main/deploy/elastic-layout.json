@@ -1,0 +1,114 @@
+{
+  "version": 1.0,
+  "grid_size": 32,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "AprilTagIsFound",
+            "x": 1216.0,
+            "y": 32.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Vision/AprilTagIsFound",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Apriltag AlignState",
+            "x": 1216.0,
+            "y": 160.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Vision/Apriltag AlignState",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "AlignState",
+            "x": 1216.0,
+            "y": 288.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Robot/AlignState",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "angleTarget_deg",
+            "x": 1472.0,
+            "y": 32.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Robot/angleTarget_deg",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "angleActual_deg",
+            "x": 1600.0,
+            "y": 32.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Robot/angleActual_deg",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Drive Field2d",
+            "x": 448.0,
+            "y": 32.0,
+            "width": 768.0,
+            "height": 384.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Robot/Drive Field2d",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    }
+  ]
+}
