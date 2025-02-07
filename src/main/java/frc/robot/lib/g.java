@@ -165,12 +165,16 @@ public class g {
     public static final Trigger DRIVER_MODE_ROBOTCENTRIC = driverController.povRight();
     public static final Trigger DRIVER_MODE_ANGLEFIELDCENTRIC = driverController.povDown();
     public static final Trigger DRIVER_TOGGLE_AUTO_DRIVE = driverController.povUp();
-    public static final Trigger DRIVER_MODE_SPEED_HI = driverController.R1();
-    public static final Trigger DRIVER_MODE_SPEED_LOW = driverController.L1();
+    public static final Trigger DRIVER_CORAL_IN = driverController.R1();
+    public static final Trigger DRIVER_CORAL_OUT = driverController.L1();
     public static final Trigger DRIVER_RESET_YAW = driverController.create();
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
     public static final Trigger DRIVER_STATION_RIGHT = driverController.circle();
     public static final Trigger DRIVER_STATION_LEFT = driverController.square();
+    public static final Trigger DRIVER_ALGAE_OUT = driverController.triangle();
+    public static final Trigger DRIVER_ALGAE_IN = driverController.cross();
+    public static final Trigger DRIVER_MODE_SPEED_TOGGLE = driverController.PS();
+    public static final Trigger DRIVER_RAISE_LIFT = driverController.R2();
      
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;

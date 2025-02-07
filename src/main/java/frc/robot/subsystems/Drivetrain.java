@@ -415,7 +415,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
 
-        g.ROBOT.vision.calculatePose();
+        
         if(g.VISION.isAprilTagFound || g.VISION.tagState == TagFoundState.TAG_FOUND){
           cnt++;
           m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH);
