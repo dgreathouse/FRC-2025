@@ -403,6 +403,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
   double cnt = 0;
   private class PoseEstimatorThread extends Thread{
+    boolean visionEnable = false;
     public PoseEstimatorThread(){
       super();
     }
@@ -421,7 +422,14 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
         g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
-
+        
+        
+        if(visionEnable){
+          g.ROBOT.vision.calculatePose();
+          visionEnable = false;
+        }else {
+          visionEnable = true;
+        }
         
         if(g.VISION.isAprilTagFound || g.VISION.tagState == TagFoundState.TAG_FOUND){
           cnt++;
@@ -438,6 +446,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         } catch (InterruptedException e) {
           System.out.println(e.getMessage());
         }
+        
       }
     }
   }

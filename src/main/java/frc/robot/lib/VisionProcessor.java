@@ -7,7 +7,6 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -16,7 +15,6 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**  */
 public class VisionProcessor implements IUpdateDashboard{
     
-    VisionPoseEstimatorThread m_poseEstimatorThread;
+   // VisionPoseEstimatorThread m_poseEstimatorThread;
     PhotonCamera m_leftCamera;
     PhotonPoseEstimator m_leftPoseEstimator;
 
@@ -36,7 +34,7 @@ public class VisionProcessor implements IUpdateDashboard{
 
     PhotonCamera m_backCamera;
     PhotonPoseEstimator m_backPoseEstimator;
-    
+
     boolean isTartgetFound = false;
      
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
@@ -66,8 +64,8 @@ public class VisionProcessor implements IUpdateDashboard{
         g.DASHBOARD.updates.add(this);
         createApriltagLocations();
 
-        m_poseEstimatorThread = new VisionPoseEstimatorThread();
-        m_poseEstimatorThread.start();
+     //   m_poseEstimatorThread = new VisionPoseEstimatorThread();
+      //  m_poseEstimatorThread.start();
 
         
     }
@@ -302,22 +300,22 @@ public class VisionProcessor implements IUpdateDashboard{
 
     }
 
-    private class VisionPoseEstimatorThread extends Thread{
-        public VisionPoseEstimatorThread(){
-            super();
-        }
-        @Override
-        public void run(){
-            while(true){
-                calculatePose();
-                try{
-                    Thread.sleep(10);
-                }catch(InterruptedException e){
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
-    }
+    // private class VisionPoseEstimatorThread extends Thread{
+    //     public VisionPoseEstimatorThread(){
+    //         super();
+    //     }
+    //     @Override
+    //     public void run(){
+    //         while(true){
+    //             calculatePose();
+    //             try{
+    //                 Thread.sleep(10);
+    //             }catch(InterruptedException e){
+    //                 System.out.println(e.getMessage());
+    //             }
+    //         }
+    //     }
+    // }
     @Override
     public void updateDashboard() {
         g.VISION.field2d.setRobotPose(g.VISION.pose2d);
