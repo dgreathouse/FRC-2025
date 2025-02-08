@@ -26,8 +26,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class VisionProcessor implements IUpdateDashboard{
     
    // VisionPoseEstimatorThread m_poseEstimatorThread;
-    PhotonCamera m_leftCamera;
-    PhotonPoseEstimator m_leftPoseEstimator;
+    // PhotonCamera m_leftCamera;
+    // PhotonPoseEstimator m_leftPoseEstimator;
 
     PhotonCamera m_rightCamera;
     PhotonPoseEstimator m_rightPoseEstimator;
@@ -39,14 +39,14 @@ public class VisionProcessor implements IUpdateDashboard{
      
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     public VisionProcessor(){
-        m_leftCamera = new PhotonCamera("leftArducam");
-        m_leftCamera.setPipelineIndex(0);
-        m_leftCamera.setDriverMode(false);
-        // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_leftCameraLocation = new Transform3d(new Translation3d(0.254,0.254,0.292), new Rotation3d(0,0,0));
-        m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_leftCameraLocation);
+        // m_leftCamera = new PhotonCamera("leftArducam");
+        // m_leftCamera.setPipelineIndex(0);
+        // m_leftCamera.setDriverMode(false);
+        // // TODO: update cameral location on robot. x forward, y left, z up
+        // Transform3d m_leftCameraLocation = new Transform3d(new Translation3d(0.254,0.254,0.292), new Rotation3d(0,0,0));
+        // m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_leftCameraLocation);
 
-        m_rightCamera = new PhotonCamera("rightArducam");
+        m_rightCamera = new PhotonCamera("FrontArducam");
         m_rightCamera.setPipelineIndex(0);
         m_rightCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
@@ -54,7 +54,7 @@ public class VisionProcessor implements IUpdateDashboard{
         m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
 
         
-        m_backCamera = new PhotonCamera("backArducam");
+        m_backCamera = new PhotonCamera("BackCamera");
         m_backCamera.setPipelineIndex(0);
         m_backCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
@@ -222,13 +222,13 @@ public class VisionProcessor implements IUpdateDashboard{
 
     public void calculatePose(){
         g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
-        TagFoundState leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
+      //  TagFoundState leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
         TagFoundState rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
         TagFoundState backCamState = calculatePose(m_backCamera, m_backPoseEstimator);
 
-        if(leftCamState == TagFoundState.TARGET_ID_FOUND || rightCamState == TagFoundState.TARGET_ID_FOUND || backCamState == TagFoundState.TARGET_ID_FOUND){
+        if(rightCamState == TagFoundState.TARGET_ID_FOUND || backCamState == TagFoundState.TARGET_ID_FOUND){
             g.VISION.isAprilTagFound = true;
-        }else if (leftCamState == TagFoundState.EMPTY && rightCamState == TagFoundState.EMPTY && backCamState == TagFoundState.EMPTY){
+        }else if (rightCamState == TagFoundState.EMPTY && backCamState == TagFoundState.EMPTY){
             g.VISION.isAprilTagFound = false;
             emptyCnt++;
         }
