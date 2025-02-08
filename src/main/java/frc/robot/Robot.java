@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -32,7 +31,6 @@ public class Robot extends TimedRobot {
 
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   private CoralDefaultCommand m_coralDefaultCommand = new CoralDefaultCommand();
- //private Timer m_marchTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -102,16 +100,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     g.ROBOT.drive.setOdometry(StartLocation.RIGHT);
-    // m_marchTimer.restart();
-    // g.SWERVE.modules[2].playImperialMarch();
+    g.ROBOT.vision.setOdometry(StartLocation.RIGHT);
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // if(m_marchTimer.hasElapsed(2)){
-    //   g.DRIVETRAIN.playingMarch = false;
-    // }
   }
 
   @Override

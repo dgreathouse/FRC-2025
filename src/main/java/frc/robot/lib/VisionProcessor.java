@@ -25,12 +25,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**  */
 public class VisionProcessor implements IUpdateDashboard{
     
-   // VisionPoseEstimatorThread m_poseEstimatorThread;
-    // PhotonCamera m_leftCamera;
-    // PhotonPoseEstimator m_leftPoseEstimator;
-
-    PhotonCamera m_rightCamera;
-    PhotonPoseEstimator m_rightPoseEstimator;
+    PhotonCamera m_frontCamera;
+    PhotonPoseEstimator m_frontPoseEstimator;
 
     PhotonCamera m_backCamera;
     PhotonPoseEstimator m_backPoseEstimator;
@@ -39,34 +35,24 @@ public class VisionProcessor implements IUpdateDashboard{
      
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     public VisionProcessor(){
-        // m_leftCamera = new PhotonCamera("leftArducam");
-        // m_leftCamera.setPipelineIndex(0);
-        // m_leftCamera.setDriverMode(false);
-        // // TODO: update cameral location on robot. x forward, y left, z up
-        // Transform3d m_leftCameraLocation = new Transform3d(new Translation3d(0.254,0.254,0.292), new Rotation3d(0,0,0));
-        // m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_leftCameraLocation);
 
-        m_rightCamera = new PhotonCamera("FrontArducam");
-        m_rightCamera.setPipelineIndex(0);
-        m_rightCamera.setDriverMode(false);
+        m_frontCamera = new PhotonCamera("FrontArducam");
+        m_frontCamera.setPipelineIndex(0);
+        m_frontCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2254,-0.254,0.292), new Rotation3d(0,0,0));
-        m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
+        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2254,0,0.292), new Rotation3d(0,Math.toRadians(-12.5),0));
+        m_frontPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
 
         
         m_backCamera = new PhotonCamera("BackCamera");
         m_backCamera.setPipelineIndex(0);
         m_backCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_backCameraLocation = new Transform3d(new Translation3d(-0.2254,0,0.292), new Rotation3d(0,0,Math.toRadians(180)));
+        Transform3d m_backCameraLocation = new Transform3d(new Translation3d(-0.2032,0,0.292), new Rotation3d(0,Math.toRadians(-34.3),Math.toRadians(180)));
         m_backPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_backCameraLocation);
 
         g.DASHBOARD.updates.add(this);
         createApriltagLocations();
-
-     //   m_poseEstimatorThread = new VisionPoseEstimatorThread();
-      //  m_poseEstimatorThread.start();
-
         
     }
     public Pose2d getRobotLocationToAprilTag(int _id, AprilTagAlignState _apriltagAlignState ){
@@ -207,6 +193,30 @@ public class VisionProcessor implements IUpdateDashboard{
         }
         return g.VISION.tagState;
     }
+    public void setOdometry(StartLocation _start) {
+        switch (_start) {
+          case LEFT:
+          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+            break;
+          case RIGHT:
+          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
+          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
+            break;
+          case CENTER:
+          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
+          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
+            break;
+          case ZERO:
+          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
+          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
+            break;
+          default:
+          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+            break;
+        }
+      }
     /*
      * Even if the tag is seen a lot of results are empty. 
      * Options:
@@ -222,13 +232,12 @@ public class VisionProcessor implements IUpdateDashboard{
 
     public void calculatePose(){
         g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
-      //  TagFoundState leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
-        TagFoundState rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
+        TagFoundState frontCamState = calculatePose(m_frontCamera, m_frontPoseEstimator);
         TagFoundState backCamState = calculatePose(m_backCamera, m_backPoseEstimator);
 
-        if(rightCamState == TagFoundState.TARGET_ID_FOUND || backCamState == TagFoundState.TARGET_ID_FOUND){
+        if(frontCamState == TagFoundState.TARGET_ID_FOUND || backCamState == TagFoundState.TARGET_ID_FOUND){
             g.VISION.isAprilTagFound = true;
-        }else if (rightCamState == TagFoundState.EMPTY && backCamState == TagFoundState.EMPTY){
+        }else if (frontCamState == TagFoundState.EMPTY && backCamState == TagFoundState.EMPTY){
             g.VISION.isAprilTagFound = false;
             emptyCnt++;
         }
@@ -300,22 +309,6 @@ public class VisionProcessor implements IUpdateDashboard{
 
     }
 
-    // private class VisionPoseEstimatorThread extends Thread{
-    //     public VisionPoseEstimatorThread(){
-    //         super();
-    //     }
-    //     @Override
-    //     public void run(){
-    //         while(true){
-    //             calculatePose();
-    //             try{
-    //                 Thread.sleep(10);
-    //             }catch(InterruptedException e){
-    //                 System.out.println(e.getMessage());
-    //             }
-    //         }
-    //     }
-    // }
     @Override
     public void updateDashboard() {
         g.VISION.field2d.setRobotPose(g.VISION.pose2d);
