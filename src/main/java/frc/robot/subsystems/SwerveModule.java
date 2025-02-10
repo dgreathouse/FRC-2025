@@ -67,9 +67,9 @@ public class SwerveModule implements IUpdateDashboard {
     m_canCoder = new CANcoder(_canCoderId, g.CAN_IDS_CANIVORE.NAME);
 
     // Configure Drive Motor
-    AudioConfigs audioConfig = new AudioConfigs();
-    audioConfig.AllowMusicDurDisable = true;
-    m_driveMotor.getConfigurator().apply(audioConfig);    
+    // AudioConfigs audioConfig = new AudioConfigs();
+    // audioConfig.AllowMusicDurDisable = true;
+    // m_driveMotor.getConfigurator().apply(audioConfig);    
 
     MotorOutputConfigs driveMotorOutputConfig = new MotorOutputConfigs();
     driveMotorOutputConfig.NeutralMode = NeutralModeValue.Brake;

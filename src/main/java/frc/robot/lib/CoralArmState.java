@@ -10,7 +10,5 @@ public enum CoralArmState {
     L3,
     L2,
     L1,
-    FLOOR_VERT,
-    FLOOR_HORZ,
     START,
 }

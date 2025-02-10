@@ -1,13 +1,18 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.g;
 
 public class Lift extends SubsystemBase implements IUpdateDashboard{
+  TalonFX m_motor;
   /** Creates a new ScissorLift. */
   public Lift() {
     g.DASHBOARD.updates.add(this);
+    m_motor = new TalonFX(10, g.CAN_IDS_ROBORIO.NAME);
   }
 
   @Override
@@ -21,10 +26,6 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
    */
   public void moveToPosition(){
     switch (g.CORAL.armState) {
-      case FLOOR_HORZ:
-        break;
-      case FLOOR_VERT:
-        break;
       case L1:
       // Hopefully do nothing
         break;
