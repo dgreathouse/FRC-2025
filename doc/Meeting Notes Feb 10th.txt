@@ -1,0 +1,10 @@
+Band
+Robot Status
+	Features, Coral, Algae, Not Climb
+	Vision, Pose, Autonomous
+Registration
+Competitions
+Shirts
+Meals
+Travel
+STEM Center update
