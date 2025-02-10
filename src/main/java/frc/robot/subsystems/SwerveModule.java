@@ -1,9 +1,7 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -33,7 +31,6 @@ public class SwerveModule implements IUpdateDashboard {
   private TalonFX m_driveMotor;
   private TalonFX m_steerMotor;
   private CANcoder m_canCoder;
-  private boolean m_musicEnabled = false;
   private SwerveModulePosition m_position = new SwerveModulePosition();
   // TODO Tune Steer PID kP, kI, kD
   private PIDController m_steerPID = new PIDController(g.SWERVE.STEER.PID_KP, g.SWERVE.STEER.PID_KI, 0);
@@ -65,11 +62,6 @@ public class SwerveModule implements IUpdateDashboard {
     m_driveMotor = new TalonFX(_driveCanId, g.CAN_IDS_CANIVORE.NAME);
     m_steerMotor = new TalonFX(_steerCanId, g.CAN_IDS_CANIVORE.NAME);
     m_canCoder = new CANcoder(_canCoderId, g.CAN_IDS_CANIVORE.NAME);
-
-    // Configure Drive Motor
-    // AudioConfigs audioConfig = new AudioConfigs();
-    // audioConfig.AllowMusicDurDisable = true;
-    // m_driveMotor.getConfigurator().apply(audioConfig);    
 
     MotorOutputConfigs driveMotorOutputConfig = new MotorOutputConfigs();
     driveMotorOutputConfig.NeutralMode = NeutralModeValue.Brake;
@@ -195,17 +187,6 @@ public class SwerveModule implements IUpdateDashboard {
 
   public double getSteerCurrent() {
     return m_steerMotor.getTorqueCurrent().getValueAsDouble();
-  }
-  public void toggleImperialMarch(){
-    m_musicEnabled = !m_musicEnabled;
-  }
-  public void playImperialMarch(){
-      Orchestra march = new Orchestra();
-      StatusCode status = march.loadMusic("march.chrp");
-      march.addInstrument(m_driveMotor);
-      System.out.println(m_name + " Music Status =" + status.toString());
-      march.play();
-      march.close();
   }
   /**
    * 

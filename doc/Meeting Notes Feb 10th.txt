@@ -1,7 +1,7 @@
 Band
 Robot Status
-	Features, Coral, Algae, Not Climb
-	Vision, Pose, Autonomous
+	Features, Coral, Algae, Not Climb, 
+	Vision, Pose, Autonomous, Button board
 Registration
 Competitions
 Shirts
