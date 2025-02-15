@@ -114,7 +114,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
                                                   VecBuilder.fill(0.15,0.15,0.15), 
                                                   VecBuilder.fill(0.9,0.9,0.9));
 
-    resetYaw(0);
+   //resetYaw(0);
     g.DASHBOARD.updates.add(this);
     
   }
@@ -378,7 +378,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
   public void resetYaw(double _angle) {
     g.ROBOT.gyro_pigeon2.setYaw(_angle);
-    g.ROBOT.gyro_navx.reset();
+    //g.ROBOT.gyro_navx.reset();
+    g.ROBOT.gyro_navx.setAngleAdjustment(-_angle);
   }
 
   
@@ -458,15 +459,16 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
         
-        
+        //g.ROBOT.vision.getTargetIDAngle(20);
         if(visionEnable){
+
           g.ROBOT.vision.calculatePose();
           visionEnable = false;
         }else {
           visionEnable = true;
         }
         
-        if(g.VISION.isAprilTagFound || g.VISION.tagState == TagFoundState.TAG_FOUND){
+        if(g.VISION.isTargetAprilTagFound || g.VISION.tagState == TagFoundState.TAG_FOUND){
           cnt++;
           m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH);
         }else {
@@ -496,7 +498,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     // }
   //  SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
     SmartDashboard.putData("Robot/Drive Field2d", g.ROBOT.field2d);
-    
+    SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2d.getRotation().getDegrees());
    // SmartDashboard.putData("Drive/TurnPID", m_turnPID);
     //SmartDashboard.putNumber("Robot/Pose Drive X", g.ROBOT.pose2d.getX());
     //SmartDashboard.putNumber("Robot/Pose Drive Y", g.ROBOT.pose2d.getY());

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -71,22 +72,29 @@ public class Robot extends TimedRobot {
   /** */
   @Override
   public void robotPeriodic() {
+    
     CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {}
-
+ boolean flag = false;
   @Override
   public void disabledPeriodic() {
+    if(!flag && g.VISION.pose2d.getRotation().getDegrees() != 0.0){
+    if(g.VISION.frontTargetAmbiguity >= 0.0 && g.VISION.frontTargetAmbiguity < g.VISION.ambiguitySetPoint){
+      g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
+      flag = true;
+    }
+  }
     // TODO: reseting pose and angle
     // [ ] Try reseting the pose from vision. Pose and Yaw to angle reset
-     
+    
     // Get the closest tag(s) and determine angle 
     // Disable happens again after auton is over. Don't let the yaw reset happen during normal game play.
     // Maybe check and see if it can be used to help fix gyro drift. Probably not.
-    
+
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -108,8 +116,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    g.ROBOT.drive.setOdometry(StartLocation.RIGHT);
-    g.ROBOT.vision.setOdometry(StartLocation.RIGHT);
+    //g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
+    // g.ROBOT.drive.setOdometry(StartLocation.RIGHT);
+    // g.ROBOT.vision.setOdometry(StartLocation.RIGHT);
   }
 
   /** This function is called periodically during operator control. */
