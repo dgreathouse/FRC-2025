@@ -20,6 +20,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.AprilTagAlignState;
+import frc.robot.lib.CoralArmState;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.StartLocation;
@@ -241,30 +242,22 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     if (Math.abs(hyp) > g.OI.THUMBSTICK_AXIS_ANGLE_DEADBAND) {
       if (joystickAngle >= -22.5 && joystickAngle <= 22.5) { // North
-        g.ROBOT.angleRobotTarget_deg = 0.0;
-        g.ROBOT.alignmentState = RobotAlignStates.FRONT;
+        setTargetRobotAngle(RobotAlignStates.FRONT);
       } else if (joystickAngle >= -67.5 && joystickAngle < -22.5) { // North East
-        g.ROBOT.angleRobotTarget_deg = -60.0;
-        g.ROBOT.alignmentState = RobotAlignStates.FRONT_LEFT;
+        setTargetRobotAngle(RobotAlignStates.FRONT_LEFT);
       } else if (joystickAngle >= -112.5 && joystickAngle < -67.5) { // East
-        g.ROBOT.angleRobotTarget_deg = -90.0;
-        g.ROBOT.alignmentState = RobotAlignStates.RIGHT;
+        setTargetRobotAngle(RobotAlignStates.RIGHT);
       } else if (joystickAngle >= -157.5 && joystickAngle < -112.5) { // South East
-        g.ROBOT.angleRobotTarget_deg = -120.0;
-        g.ROBOT.alignmentState = RobotAlignStates.BACK_LEFT;
+        setTargetRobotAngle(RobotAlignStates.BACK_LEFT);
       } else if ((joystickAngle >= 157.5 && joystickAngle <= 180.0)
           || (joystickAngle <= -157.5 && joystickAngle > -179.99)) { // South
-        g.ROBOT.angleRobotTarget_deg = 180.0;
-        g.ROBOT.alignmentState = RobotAlignStates.BACK;
+            setTargetRobotAngle(RobotAlignStates.BACK);
       } else if (joystickAngle <= 67.5 && joystickAngle > 22.5) { // North West
-        g.ROBOT.angleRobotTarget_deg = 60.0;
-        g.ROBOT.alignmentState = RobotAlignStates.FRONT_RIGHT;
+        setTargetRobotAngle(RobotAlignStates.FRONT_RIGHT);
       } else if (joystickAngle <= 112.5 && joystickAngle > 67.5) { // West
-        g.ROBOT.angleRobotTarget_deg = 90.0;
-        g.ROBOT.alignmentState = RobotAlignStates.LEFT;
+        setTargetRobotAngle(RobotAlignStates.LEFT);
       } else if (joystickAngle <= 157.5 && joystickAngle > 112.5) { // South West
-        g.ROBOT.angleRobotTarget_deg = 120.0;
-        g.ROBOT.alignmentState = RobotAlignStates.BACK_RIGHT;
+        setTargetRobotAngle(RobotAlignStates.BACK_RIGHT);
       }
     }
   }
@@ -273,26 +266,68 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       case BACK:
       g.ROBOT.alignmentState = RobotAlignStates.BACK;
       g.ROBOT.angleRobotTarget_deg = 180.0;
+      if(g.CORAL.armState == CoralArmState.L1){
+        if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
+          g.ROBOT.angleRobotTarget_deg -= 60;
+        }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
+          g.ROBOT.angleRobotTarget_deg += 60;
+        }
+      }
         break;
       case BACK_LEFT:
       g.ROBOT.alignmentState = RobotAlignStates.BACK_LEFT;
       g.ROBOT.angleRobotTarget_deg = -120.0;
+      if(g.CORAL.armState == CoralArmState.L1){
+        if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
+          g.ROBOT.angleRobotTarget_deg -= 60;
+        }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
+          g.ROBOT.angleRobotTarget_deg += 60;
+        }
+      }
         break;
       case BACK_RIGHT:
       g.ROBOT.alignmentState = RobotAlignStates.BACK_RIGHT;
       g.ROBOT.angleRobotTarget_deg = 120.0;
+      if(g.CORAL.armState == CoralArmState.L1){
+        if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
+          g.ROBOT.angleRobotTarget_deg -= 60;
+        }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
+          g.ROBOT.angleRobotTarget_deg += 60;
+        }
+      }
         break;
       case FRONT:
       g.ROBOT.alignmentState = RobotAlignStates.FRONT;
       g.ROBOT.angleRobotTarget_deg = 0.0;
+      if(g.CORAL.armState == CoralArmState.L1){
+        if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
+          g.ROBOT.angleRobotTarget_deg -= 60;
+        }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
+          g.ROBOT.angleRobotTarget_deg += 60;
+        }
+      }
         break;
       case FRONT_LEFT:
       g.ROBOT.alignmentState = RobotAlignStates.FRONT_LEFT;
       g.ROBOT.angleRobotTarget_deg = -60.0;
+      if(g.CORAL.armState == CoralArmState.L1){
+        if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
+          g.ROBOT.angleRobotTarget_deg -= 60;
+        }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
+          g.ROBOT.angleRobotTarget_deg += 60;
+        }
+      }
         break;
       case FRONT_RIGHT:
       g.ROBOT.alignmentState = RobotAlignStates.FRONT_RIGHT;
       g.ROBOT.angleRobotTarget_deg = 60.0;
+      if(g.CORAL.armState == CoralArmState.L1){
+        if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
+          g.ROBOT.angleRobotTarget_deg -= 60;
+        }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
+          g.ROBOT.angleRobotTarget_deg += 60;
+        }
+      }
         break;
       case LEFT:
       g.ROBOT.alignmentState = RobotAlignStates.LEFT;

@@ -79,11 +79,20 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // TODO: reseting pose and angle
+    // [ ] Try reseting the pose from vision. Pose and Yaw to angle reset
+     
+    // Get the closest tag(s) and determine angle 
+    // Disable happens again after auton is over. Don't let the yaw reset happen during normal game play.
+    // Maybe check and see if it can be used to help fix gyro drift. Probably not.
+    
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+
     m_autonomousCommand = m_autoChooser.getSelected();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

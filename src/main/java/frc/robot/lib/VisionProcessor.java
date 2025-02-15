@@ -32,7 +32,8 @@ public class VisionProcessor implements IUpdateDashboard{
     PhotonPoseEstimator m_backPoseEstimator;
 
     boolean isTartgetFound = false;
-     
+    double m_tagEmptyCnt = 0;
+
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     public VisionProcessor(){
 
@@ -163,7 +164,7 @@ public class VisionProcessor implements IUpdateDashboard{
         cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
         g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0)); // ID 22
     }
-    double emptyCnt = 0;
+    
     public TagFoundState calculatePose(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor) {
         double ambiguity = 0;
         g.VISION.tagState = TagFoundState.EMPTY;
@@ -239,7 +240,7 @@ public class VisionProcessor implements IUpdateDashboard{
             g.VISION.isAprilTagFound = true;
         }else if (frontCamState == TagFoundState.EMPTY && backCamState == TagFoundState.EMPTY){
             g.VISION.isAprilTagFound = false;
-            emptyCnt++;
+            m_tagEmptyCnt++;
         }
     }
     /* Notes for trusting vision pose.
@@ -314,7 +315,7 @@ public class VisionProcessor implements IUpdateDashboard{
         g.VISION.field2d.setRobotPose(g.VISION.pose2d);
         SmartDashboard.putBoolean("Vision/AprilTagIsFound", g.VISION.isAprilTagFound);
         SmartDashboard.putNumber("Vision/Apriltag Requested ID", g.VISION.aprilTagRequestedID);
-        SmartDashboard.putNumber("Vision/SetStdDev", emptyCnt);
+        SmartDashboard.putNumber("Vision/Empty Tag Cnt", m_tagEmptyCnt);
         //SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());
         //SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.getY());
         SmartDashboard.putString("Vision/Apriltag AlignState", g.VISION.aprilTagAlignState.toString());

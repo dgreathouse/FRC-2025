@@ -58,9 +58,10 @@ public class AutoDriveToPose extends Command {
   }
 
   // TODO: Test this class. Possible issues.
-  //  [x] Starting Pose
+  //  [x] Starting Pose, CAN vision reset pose at beginning before match. OrangePI is on and working. Just reset Gyro based on yaw to tag
   //  [ ] Tolerance
   //  [ ] PIDs
+  //  [ ] Speeds
 
   @Override
   public void execute() {
