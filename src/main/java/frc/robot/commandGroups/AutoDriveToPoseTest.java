@@ -19,8 +19,8 @@ public class AutoDriveToPoseTest extends SequentialCommandGroup {
       //new AutoDriveToPose(new Pose2d(2.51,g.ROBOT. POSE_START_RIGHT.getY(),new Rotation2d(0)), 0.35, 8), // Drives straight to the back left of the field
       //new AutoDriveToPose(new Pose2d(2.51,4.492,new Rotation2d(0)), 0.35, 8) // Drives behind the reef
       //new AutoDriveToPose(new Pose2d(3,4.492,new Rotation2d(0)), 0.35, 8)    // Drives up to the reef on the back side
-      new AutoDriveToPose(g.ROBOT.vision.getRobotLocationToAprilTag(20, AprilTagAlignState.RIGHT), 0.3,g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.BACK_LEFT), 3),
-      new AutoDriveToPose(g.ROBOT.vision.getRobotLocationToAprilTag(13, AprilTagAlignState.CENTER), 0.3,g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_LEFT), 5)
+      new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(20, AprilTagAlignState.RIGHT), 0.3,g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.BACK_LEFT), 3),
+      new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(13, AprilTagAlignState.CENTER), 0.3,g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_LEFT), 5)
       
     );
   }

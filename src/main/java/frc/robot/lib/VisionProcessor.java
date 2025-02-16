@@ -51,7 +51,7 @@ public class VisionProcessor implements IUpdateDashboard{
         m_backCamera = new PhotonCamera("BackCamera");
         m_backCamera.setPipelineIndex(0);
         m_backCamera.setDriverMode(false);
-        // TODO: update cameral location on robot. x forward, y left, z up
+        // TODO: update camera location on robot. x forward, y left, z up
         Transform3d m_backCameraLocation = new Transform3d(new Translation3d(-0.2032,0,0.292), new Rotation3d(0,Math.toRadians(-34.3),Math.toRadians(180)));
         m_backPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_backCameraLocation);
 
@@ -59,25 +59,25 @@ public class VisionProcessor implements IUpdateDashboard{
         createApriltagLocations();
         
     }
-    public Pose2d getRobotLocationToAprilTag(int _id, AprilTagAlignState _apriltagAlignState ){
+    public Pose2d getRobotPoseForAprilTag(int _id, AprilTagAlignState _apriltagAlignState ){
         Pose2d rtn;
         ApriltagPose pose = g.AprilTagLocations.pose.get(_id);
 
         switch (_apriltagAlignState) {
             case LEFT:
-                rtn = new Pose2d(pose.x_left,pose.y_left , new Rotation2d());
+                rtn = new Pose2d(pose.x_left,pose.y_left , new Rotation2d(Math.toRadians(pose.angle)));
                 break;
             case RIGHT:
-                rtn = new Pose2d(pose.x_right,pose.y_right , new Rotation2d());
+                rtn = new Pose2d(pose.x_right,pose.y_right , new Rotation2d(Math.toRadians(pose.angle)));
                 break;
             case CENTER:
-                rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d());
+                rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d(Math.toRadians(pose.angle)));
                 break;
             case NONE:
-                 rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d());
+                 rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d(Math.toRadians(pose.angle)));
                 break;
             default:
-                rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d());
+                rtn = new Pose2d(pose.x_center,pose.y_center , new Rotation2d(Math.toRadians(pose.angle)));
                 break;
         }
         return rtn;

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.AprilTagAlignState;
+import frc.robot.lib.ApriltagPose;
 import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.g;
 
@@ -20,6 +21,7 @@ public class AutoDriveToPose extends Command {
   double m_timeOut_sec;
   double m_driveDistance_m = 0;
   double m_driveAngle_deg = 0;
+  double m_robotTargetAngle_deg = 0;
   double m_rampuUpTime_sec = 0.25;
   Rotation2d m_zeroRotation = new Rotation2d();
   PIDController m_drivePID = new PIDController(1, 0.5  , 0);
@@ -43,19 +45,22 @@ public class AutoDriveToPose extends Command {
     m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
     m_alignState = RobotAlignStates.UNKNOWN;
     m_apriltagAlignState = AprilTagAlignState.NONE;
-
+    m_robotTargetAngle_deg = _desiredPose.getRotation().getDegrees();
 
   }
 public AutoDriveToPose(Pose2d _desiredPose,  double _speed, double _robotTargetAngle, double _timeOut_sec) {
   this(_desiredPose, _speed, _timeOut_sec);
-  g.ROBOT.angleRobotTarget_deg = _robotTargetAngle;
-  
+  m_robotTargetAngle_deg = _robotTargetAngle;
+}
+public AutoDriveToPose(ApriltagPose _tagPose){
+
 }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     m_timer.restart();
+    g.ROBOT.angleRobotTarget_deg = m_robotTargetAngle_deg;
     // Set the global varables so the vision processor works on them
     //g.ROBOT.alignmentState = m_alignState;
     //g.VISION.aprilTagAlignState = m_apriltagAlignState;
@@ -71,7 +76,6 @@ public AutoDriveToPose(Pose2d _desiredPose,  double _speed, double _robotTargetA
   @Override
   public void execute() {
     // Calculate the angle and distance to the pose
-    
     Pose2d trajectory = m_desiredPose.relativeTo(new Pose2d(g.ROBOT.pose2d.getX(), g.ROBOT.pose2d.getY(), m_zeroRotation));
 
     m_driveAngle_deg = trajectory.getTranslation().getAngle().getDegrees();
@@ -82,9 +86,9 @@ public AutoDriveToPose(Pose2d _desiredPose,  double _speed, double _robotTargetA
     }
     m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
 
-    SmartDashboard.putNumber("Drive/AutoDrive Distance m", m_driveDistance_m);
-    SmartDashboard.putNumber("Drive/AutoDrive Angle", m_driveAngle_deg);
-    SmartDashboard.putNumber("Drive/Robot Angle", g.ROBOT.angleRobotTarget_deg);
+    // SmartDashboard.putNumber("Drive/AutoDrive Distance m", m_driveDistance_m);
+    // SmartDashboard.putNumber("Drive/AutoDrive Angle", m_driveAngle_deg);
+    // SmartDashboard.putNumber("Drive/Robot Angle", g.ROBOT.angleRobotTarget_deg);
     // PID the speed based on distance
     double speed = Math.abs(m_drivePID.calculate(m_driveDistance_m,0));
     speed = rampUpValue(speed, m_rampuUpTime_sec);
