@@ -44,8 +44,13 @@ public class AutoDriveToPose extends Command {
     m_alignState = RobotAlignStates.UNKNOWN;
     m_apriltagAlignState = AprilTagAlignState.NONE;
 
-  }
 
+  }
+public AutoDriveToPose(Pose2d _desiredPose,  double _speed, double _robotTargetAngle, double _timeOut_sec) {
+  this(_desiredPose, _speed, _timeOut_sec);
+  g.ROBOT.angleRobotTarget_deg = _robotTargetAngle;
+  
+}
 
   // Called when the command is initially scheduled.
   @Override
@@ -79,12 +84,13 @@ public class AutoDriveToPose extends Command {
 
     SmartDashboard.putNumber("Drive/AutoDrive Distance m", m_driveDistance_m);
     SmartDashboard.putNumber("Drive/AutoDrive Angle", m_driveAngle_deg);
+    SmartDashboard.putNumber("Drive/Robot Angle", g.ROBOT.angleRobotTarget_deg);
     // PID the speed based on distance
     double speed = Math.abs(m_drivePID.calculate(m_driveDistance_m,0));
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, 0, m_speed);
     // Drive the robot in Polar mode since we have a speed and angle.
-    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg,m_driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, m_driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
   }
 
   private double rampUpValue(double _val, double _rampTime_sec) {

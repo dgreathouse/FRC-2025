@@ -261,7 +261,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       }
     }
   }
-  public void setTargetRobotAngle(RobotAlignStates _state){
+  public double setTargetRobotAngle(RobotAlignStates _state){
     switch (_state) {
       case BACK:
       g.ROBOT.alignmentState = RobotAlignStates.BACK;
@@ -355,6 +355,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
 
     }
+    return g.ROBOT.angleRobotTarget_deg;
   }
   /**
    * Directly set the g.ROBOT.angleTarget_deg to a angle. Generally this is used

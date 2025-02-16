@@ -7,7 +7,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.proto.Photon;
+
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -36,6 +36,7 @@ public class VisionProcessor implements IUpdateDashboard{
     double m_tagEmptyCnt = 0;
 
     double m_frontTargetAmbiguity = -1.0;
+    boolean m_resetYawInitFlag = false;
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     public VisionProcessor(){
 
@@ -154,7 +155,7 @@ public class VisionProcessor implements IUpdateDashboard{
         y = m_apriltagFieldLayout.getTagPose(20).get().getY();
         cx = x + g.ROBOT.centerDistanceToFrontBumper_m/2;
         cy = y + g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy, 0));  // ID 20
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy,-120));  // ID 20
         x = m_apriltagFieldLayout.getTagPose(21).get().getX();
         y = m_apriltagFieldLayout.getTagPose(21).get().getY();
         cx = x + g.ROBOT.centerDistanceToFrontBumper_m;
@@ -260,25 +261,37 @@ public class VisionProcessor implements IUpdateDashboard{
      *    if it is a april tag we don't care about empty. But if it is empty because no tags we have to deal with something else.
      * 6. Doing vision at 5ms means it is asking for results at a 200hz rate. The camera only does at most 50FPS. Therefore this should not be done at 200Hz.
      */
-
+    
     public void calculatePose(){
+        PoseEstimateStatus frontCamState = null;
+        PoseEstimateStatus backCamState = null;
         if (DriverStation.getAlliance().isPresent()) {
             g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
-            if(m_frontCamera.isConnected()){
-            PoseEstimateStatus frontCamState = calculatePose(m_frontCamera, m_frontPoseEstimator);
-            g.VISION.frontTargetAmbiguity = frontCamState.getAmbiguity();
+            if (m_frontCamera.isConnected()) {
+                frontCamState = calculatePose(m_frontCamera, m_frontPoseEstimator);
+                g.VISION.frontTargetAmbiguity = frontCamState.getAmbiguity();
             }
-            if(m_backCamera.isConnected()){
-            PoseEstimateStatus backCamState = calculatePose(m_backCamera, m_backPoseEstimator);
+            if (m_backCamera.isConnected()) {
+                backCamState = calculatePose(m_backCamera, m_backPoseEstimator);
             }
 
-            // if (frontCamState.getState() == TagFoundState.TARGET_ID_FOUND
-            //         || backCamState.m_state == TagFoundState.TARGET_ID_FOUND) {
-            //     g.VISION.isTargetAprilTagFound = true;
-            // } else if (frontCamState.m_state == TagFoundState.EMPTY && backCamState.getState() == TagFoundState.EMPTY) {
-            //     g.VISION.isTargetAprilTagFound = false;
-            //     m_tagEmptyCnt++;
-            // }
+            if (!m_resetYawInitFlag && g.VISION.pose2d.getRotation().getDegrees() != 0.0) {
+                if (g.VISION.frontTargetAmbiguity >= 0.0
+                        && g.VISION.frontTargetAmbiguity < g.VISION.ambiguitySetPoint) {
+                    g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
+                    m_resetYawInitFlag = true;
+                }
+            }
+            if (frontCamState != null && backCamState != null) {
+                if (frontCamState.getState() == TagFoundState.TARGET_ID_FOUND
+                        || backCamState.m_state == TagFoundState.TARGET_ID_FOUND) {
+                    g.VISION.isTargetAprilTagFound = true;
+                } else if (frontCamState.m_state == TagFoundState.EMPTY
+                        && backCamState.getState() == TagFoundState.EMPTY) {
+                    g.VISION.isTargetAprilTagFound = false;
+                    m_tagEmptyCnt++;
+                }
+            }
         }
     }
     /* Notes for trusting vision pose.
