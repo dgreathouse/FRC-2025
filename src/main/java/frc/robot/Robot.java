@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,13 +15,13 @@ import frc.robot.commandGroups.AutoDriveToFront;
 import frc.robot.commandGroups.AutoDriveToPoseTest;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
+import frc.robot.defaultCommands.LiftDefaultCommand;
 import frc.robot.lib.AlgaeArmState;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.CoralArmState;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
-import frc.robot.lib.StartLocation;
 import frc.robot.lib.g;
 
 public class Robot extends TimedRobot {
@@ -32,6 +31,7 @@ public class Robot extends TimedRobot {
 
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   private CoralDefaultCommand m_coralDefaultCommand = new CoralDefaultCommand();
+  private LiftDefaultCommand m_LiftDefaultCommand  = new LiftDefaultCommand();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -41,6 +41,9 @@ public class Robot extends TimedRobot {
     // Set the default commands for the subsystems
     g.ROBOT.drive.setDefaultCommand(m_drivetrainDefaultCommand);
     g.ROBOT.coral.setDefaultCommand(m_coralDefaultCommand);
+    g.ROBOT.lift.setDefaultCommand(m_LiftDefaultCommand); 
+    
+
     // Configure/Map all the controller buttons to commands
     configureBindings();
 
@@ -155,7 +158,7 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_STATION_LEFT.onTrue( new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_LEFT);}, g.ROBOT.drive));
     g.OI.DRIVER_TOGGLE_AUTO_DRIVE.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.isAutoDriveEnabled = !g.DRIVETRAIN.isAutoDriveEnabled;}));
     g.OI.DRIVER_MODE_SPEED_TOGGLE.onTrue(new InstantCommand(() -> {g.ROBOT.drive.toggleSpeed();}));
-    g.OI.DRIVER_RAISE_LIFT.whileTrue(new InstantCommand(() -> {g.ROBOT.lift.moveToPosition();}));
+
 
     // Operator controls
     g.OI.OPERATOR_ALIGN_CENTER.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.CENTER);}, g.ROBOT.drive));

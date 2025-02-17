@@ -5,6 +5,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.g;
 
@@ -14,8 +15,7 @@ public class LiftDefaultCommand extends Command {
   // An elevator FF may not work since the kg changes as the lift is lowered and raised.
   // An interpolation table will probably be needed
   ElevatorFeedforward m_ff = new ElevatorFeedforward(0, 0, 0);
-  TalonFX m_motor = new TalonFX(60);
-  VoltageOut m_voltageOut = new VoltageOut(0).withEnableFOC(true).withOverrideBrakeDurNeutral(true);
+
   /** Creates a new ScissorLiftDefaultCommand. 
    * While default running the lift should being maintaining 0 position.
    * Maintaing the position is done through a PID and FF from current position to expected.
@@ -24,6 +24,7 @@ public class LiftDefaultCommand extends Command {
   */
   public LiftDefaultCommand() {
     addRequirements(g.ROBOT.lift);
+    SmartDashboard.putNumber("Lift/LiftVolts", 0);
   }
 
   // Called when the command is initially scheduled.
@@ -33,7 +34,8 @@ public class LiftDefaultCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    double volts = SmartDashboard.getNumber("Lift/LiftVolts", 0);
+    g.ROBOT.lift.moveWithVoltage(volts);
   }
 
   // Called once the command ends or is interrupted.

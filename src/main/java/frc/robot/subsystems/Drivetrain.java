@@ -339,11 +339,11 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
       case STATION_LEFT:
       g.ROBOT.alignmentState = RobotAlignStates.STATION_LEFT;
-      g.ROBOT.angleRobotTarget_deg = -54.0;
+      g.ROBOT.angleRobotTarget_deg = -54.011;
         break;
       case STATION_RIGHT:
       g.ROBOT.alignmentState = RobotAlignStates.STATION_RIGHT;
-      g.ROBOT.angleRobotTarget_deg = 54.0;
+      g.ROBOT.angleRobotTarget_deg = 54.011;
         break;
       case UNKNOWN:
       g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
@@ -379,7 +379,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
   public void resetYaw(double _angle) {
     g.ROBOT.gyro_pigeon2.setYaw(_angle);
-    //g.ROBOT.gyro_navx.reset();
+    g.ROBOT.gyro_navx.reset();
     g.ROBOT.gyro_navx.setAngleAdjustment(-_angle);
   }
 
