@@ -1,8 +1,5 @@
 package frc.robot.defaultCommands;
 
-import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.CoralArmState;
 import frc.robot.lib.g;
@@ -23,7 +20,7 @@ public class LiftDefaultCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(g.OI.operatorController.L1().getAsBoolean()){
+    if(g.OI.driverController.getL2Axis() > 0){
     g.ROBOT.lift.moveToPosition(g.CORAL.armState);
     }else {
       g.ROBOT.lift.moveToPosition(CoralArmState.START);

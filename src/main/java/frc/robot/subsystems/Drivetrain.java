@@ -438,7 +438,6 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     speed = speed / g.SWERVE.COUNT;
     return speed;
   }
-  double cnt = 0;
   private class PoseEstimatorThread extends Thread{
     boolean visionEnable = false;
     public PoseEstimatorThread(){
@@ -470,7 +469,6 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         }
         
         if(g.VISION.isTargetAprilTagFound || g.VISION.tagState == TagFoundState.TAG_FOUND){
-          cnt++;
           m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH);
         }else {
           m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_LOW);
@@ -515,7 +513,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     //SmartDashboard.putString("Robot/ApriltagAlignState", g.VISION.aprilTagAlignState.toString());
     SmartDashboard.putNumber("Drive Speed Actual", g.DRIVETRAIN.driveSpeedActual_mps);
     SmartDashboard.putNumber("Drive Speed Requested", g.DRIVETRAIN.driveSpeedRequested_mps);
-    SmartDashboard.putNumber("Drive/StdDevDriveVision", cnt);
+    SmartDashboard.putString("Drive/DriveMode", g.DRIVETRAIN.driveMode.toString());
 
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);

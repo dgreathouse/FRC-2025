@@ -41,7 +41,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     // m_rightMotor.getConfigurator().apply(spinnerConfig);
     
     // m_rotateMotor.setPosition(0.0);  // TODO: set offset angle for start position.
-    // g.DASHBOARD.updates.add(this);
+     g.DASHBOARD.updates.add(this);
 
   }
 
