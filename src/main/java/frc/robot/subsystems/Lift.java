@@ -23,16 +23,15 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   VoltageOut m_voltageOut;
   /** Creates a new ScissorLift. */
   public Lift() {
-    g.DASHBOARD.updates.add(this);
-    m_motor = new TalonFX(10, g.CAN_IDS_ROBORIO.NAME);
-    m_voltageOut = new VoltageOut(0).withEnableFOC(true);
-    m_pid = new PIDController(0.1, 0.1, 0);
-    m_pid.setIZone(20);
-    m_pid.setIntegratorRange(-.1, .1);
-    m_pid.setTolerance(0.1);
+    m_motor = new TalonFX(10, g.CAN_IDS_ROBORIO.NAME); // Creates a new TalonFX.
+    m_voltageOut = new VoltageOut(0).withEnableFOC(true); // Creates a new VoltageOut.
+    m_pid = new PIDController(0.1, 0.1, 0); // Creates a new PID Controller.
+    m_pid.setIZone(20); // Sets the IZone range.
+    m_pid.setIntegratorRange(-.1, .1); // Sets the Integrator range.
+    m_pid.setTolerance(0.1); // Sets the tolerance
     
     
-    MotorOutputConfigs motorOutputConfig = new MotorOutputConfigs();
+    MotorOutputConfigs motorOutputConfig = new MotorOutputConfigs(); // Creates new MotorOutputConfigs.
     motorOutputConfig.NeutralMode = NeutralModeValue.Brake;
     motorOutputConfig.Inverted = InvertedValue.Clockwise_Positive;
     m_motor.getConfigurator().apply(motorOutputConfig);
