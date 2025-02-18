@@ -1,30 +1,19 @@
 package frc.robot.defaultCommands;
 
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.lib.CoralArmState;
 import frc.robot.lib.g;
 
 public class LiftDefaultCommand extends Command {
-  // PID in this default command only lowers the lift and maintains 0
-  PIDController m_pid = new PIDController(0, 0, 0);
-  // An elevator FF may not work since the kg changes as the lift is lowered and raised.
-  // An interpolation table will probably be needed
-  ElevatorFeedforward m_ff = new ElevatorFeedforward(0, 0, 0);
 
-  /** Creates a new ScissorLiftDefaultCommand. 
-   * While default running the lift should being maintaining 0 position.
-   * Maintaing the position is done through a PID and FF from current position to expected.
-   * During the movement a button trigger take over the movement to the state of coral or algae
-   * When button trigger is released the state should be reset to 0 and the PID/FF should take over and go back to 0. Gently
-  */
+  /**
+   * Creates a new LiftDefaultCommand.
+   */
   public LiftDefaultCommand() {
     addRequirements(g.ROBOT.lift);
-    SmartDashboard.putNumber("Lift/LiftVolts", 0);
   }
 
   // Called when the command is initially scheduled.
@@ -34,8 +23,11 @@ public class LiftDefaultCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double volts = SmartDashboard.getNumber("Lift/LiftVolts", 0);
-    g.ROBOT.lift.moveWithVoltage(volts);
+    if(g.OI.operatorController.L1().getAsBoolean()){
+    g.ROBOT.lift.moveToPosition(g.CORAL.armState);
+    }else {
+      g.ROBOT.lift.moveToPosition(CoralArmState.START);
+    }
   }
 
   // Called once the command ends or is interrupted.

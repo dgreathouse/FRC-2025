@@ -336,7 +336,16 @@ public class g {
     public static volatile CoralIntakeStates clawState = CoralIntakeStates.OFF;
   }
   public static class LIFT {
-    public static double distanceBARGE_mm = 0;
+    public static final double SPROCKET_PITCH_mm = 44.4754;
+    public static final double SPROCKET_CIRCUMFERENCE_mm = Math.PI * SPROCKET_PITCH_mm;
+    public static final double GEARBOX_RATIO = 84.0;
+    public static final double MOTOR_ROTATIONS_TO_LIFT_DISTANCE_rotPmm = GEARBOX_RATIO / SPROCKET_CIRCUMFERENCE_mm;
+    public static final double MOTOR_MAX_VELOCITY_rotPsec = 5800.0 / 60.0;
+    public static final double MAX_VELOCITY_mmPsec = MOTOR_MAX_VELOCITY_rotPsec / MOTOR_ROTATIONS_TO_LIFT_DISTANCE_rotPmm;
+    public static final double MAX_HEIGHT_mm = 100;
+    public static final double MAX_TIME_TO_RAISE_sec = MAX_HEIGHT_mm / MAX_VELOCITY_mmPsec;
+    public static final double MIN_HEIGHT_mm = 0;
+    
   }
   public static class VISION {
     public static volatile AprilTagAlignState aprilTagAlignState = AprilTagAlignState.NONE;
