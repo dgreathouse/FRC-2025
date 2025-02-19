@@ -26,11 +26,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**  */
 public class VisionProcessor implements IUpdateDashboard{
     
-    PhotonCamera m_frontCamera;
-    PhotonPoseEstimator m_frontPoseEstimator;
+    PhotonCamera m_leftCamera;
+    PhotonPoseEstimator m_leftPoseEstimator;
 
-    PhotonCamera m_backCamera;
-    PhotonPoseEstimator m_backPoseEstimator;
+    PhotonCamera m_rightCamera;
+    PhotonPoseEstimator m_rightPoseEstimator;
 
     boolean isTartgetFound = false;
     double m_tagEmptyCnt = 0;
@@ -40,21 +40,20 @@ public class VisionProcessor implements IUpdateDashboard{
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public VisionProcessor(){
 
-        m_frontCamera = new PhotonCamera("FrontArducam");
-        m_frontCamera.setPipelineIndex(0);
-        m_frontCamera.setDriverMode(false);
+        m_leftCamera = new PhotonCamera("LeftArducam");
+        m_leftCamera.setPipelineIndex(0);
+        m_leftCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2254,0,0.292), new Rotation3d(0,Math.toRadians(-12.5),0));
-        m_frontPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
+        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2972,0.2667,0.26), new Rotation3d(0,Math.toRadians(-12.5),Math.toRadians(-10)));
+        m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
 
         
-        m_backCamera = new PhotonCamera("BackCamera");
-        m_backCamera.setPipelineIndex(0);
-        m_backCamera.setDriverMode(false);
+        m_rightCamera = new PhotonCamera("RightCamera");
+        m_rightCamera.setPipelineIndex(0);
+        m_rightCamera.setDriverMode(false);
         // TODO: update camera location on robot. x forward, y left, z up
-        Transform3d m_backCameraLocation = new Transform3d(new Translation3d(-0.2032,0,0.292), new Rotation3d(0,Math.toRadians(-34.3),Math.toRadians(180)));
-        m_backPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_backCameraLocation);
-
+        Transform3d m_backCameraLocation = new Transform3d(new Translation3d(0.2972,-0.2667,0.26), new Rotation3d(0,Math.toRadians(12.5),Math.toRadians(-10)));
+        m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_backCameraLocation);
         g.DASHBOARD.updates.add(this);
         createApriltagLocations();
         
@@ -197,7 +196,7 @@ public class VisionProcessor implements IUpdateDashboard{
         return new PoseEstimateStatus(g.VISION.tagState, ambiguity);
     }
     public double getTargetIDAngle(double _id){
-        return getTargetIDAngle(m_frontCamera, m_frontPoseEstimator, 20);
+        return getTargetIDAngle(m_leftCamera, m_leftPoseEstimator, 20);
     }
     public double getTargetIDAngle(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor, int _id){
         double ambiguity = 0;
@@ -226,24 +225,24 @@ public class VisionProcessor implements IUpdateDashboard{
     public void setOdometry(StartLocation _start) {
         switch (_start) {
           case LEFT:
-          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+          m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
             break;
           case RIGHT:
-          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
-          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
+          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
+          m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
             break;
           case CENTER:
-          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
-          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
+          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
+          m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
             break;
           case ZERO:
-          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
-          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
+          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
+          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
             break;
           default:
-          m_backPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-          m_frontPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+          m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
             break;
         }
       }
@@ -265,12 +264,12 @@ public class VisionProcessor implements IUpdateDashboard{
         PoseEstimateStatus backCamState = null;
         if (DriverStation.getAlliance().isPresent()) {
             g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
-            if (m_frontCamera.isConnected()) {
-                frontCamState = calculatePose(m_frontCamera, m_frontPoseEstimator);
+            if (m_leftCamera.isConnected()) {
+                frontCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
                 g.VISION.frontTargetAmbiguity = frontCamState.getAmbiguity();
             }
-            if (m_backCamera.isConnected()) {
-                backCamState = calculatePose(m_backCamera, m_backPoseEstimator);
+            if (m_rightCamera.isConnected()) {
+                backCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
             }
 
             if (!m_resetYawInitFlag && g.VISION.pose2d.getRotation().getDegrees() != 0.0) {
