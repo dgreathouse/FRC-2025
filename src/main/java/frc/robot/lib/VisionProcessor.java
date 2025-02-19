@@ -37,7 +37,7 @@ public class VisionProcessor implements IUpdateDashboard{
 
     double m_frontTargetAmbiguity = -1.0;
     boolean m_resetYawInitFlag = false;
-    AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+    AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public VisionProcessor(){
 
         m_frontCamera = new PhotonCamera("FrontArducam");
