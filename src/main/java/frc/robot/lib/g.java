@@ -345,7 +345,7 @@ public class g {
     public static final double MAX_HEIGHT_mm = 100;
     public static final double MAX_TIME_TO_RAISE_sec = MAX_HEIGHT_mm / MAX_VELOCITY_mmPsec;
     public static final double MIN_HEIGHT_mm = 0;
-    
+  
   }
   public static class VISION {
     public static volatile AprilTagAlignState aprilTagAlignState = AprilTagAlignState.NONE;
