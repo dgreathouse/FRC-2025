@@ -514,7 +514,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putNumber("Drive Speed Actual", g.DRIVETRAIN.driveSpeedActual_mps);
     SmartDashboard.putNumber("Drive Speed Requested", g.DRIVETRAIN.driveSpeedRequested_mps);
     SmartDashboard.putString("Drive/DriveMode", g.DRIVETRAIN.driveMode.toString());
-
+    SmartDashboard.putNumber("Robot/PD_Volts", g.ROBOT.pd.getVoltage());
+    SmartDashboard.putNumber("Robot/PD_Amps", g.ROBOT.pd.getTotalCurrent());
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
     

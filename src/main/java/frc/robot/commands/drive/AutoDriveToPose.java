@@ -22,7 +22,7 @@ public class AutoDriveToPose extends Command {
   double m_robotTargetAngle_deg = 0;
   double m_rampuUpTime_sec = 0.5;
   Rotation2d m_zeroRotation = new Rotation2d();
-  PIDController m_drivePID = new PIDController(.35, 0.4  , 0);
+  PIDController m_drivePID = new PIDController(.55, 0.4  , 0);
   Timer m_timer = new Timer();
   RobotAlignStates m_alignState = RobotAlignStates.UNKNOWN;
   AprilTagAlignState m_apriltagAlignState = AprilTagAlignState.NONE;
@@ -39,7 +39,7 @@ public class AutoDriveToPose extends Command {
     m_timeOut_sec = _timeOut_sec;
     m_drivePID.setTolerance(g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m);
     m_drivePID.setIZone(0.5);
-    m_drivePID.setIntegratorRange(-.25, .25);
+    m_drivePID.setIntegratorRange(-.35, .35);
     m_alignState = RobotAlignStates.UNKNOWN;
     m_apriltagAlignState = AprilTagAlignState.NONE;
     m_robotTargetAngle_deg = _desiredPose.getRotation().getDegrees();

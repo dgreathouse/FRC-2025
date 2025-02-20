@@ -49,7 +49,7 @@ public class DrivetrainDefaultCommand extends Command {
 
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
       g.VISION.aprilTagRequestedPose = g.ROBOT.vision.getRobotPoseForAprilTag(g.VISION.aprilTagRequestedID, g.VISION.aprilTagAlignState);
-      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.3, 5);
+      AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.7, 5);
       autoPose.schedule();
     }else {
       switch (g.DRIVETRAIN.driveMode) {
