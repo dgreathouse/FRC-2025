@@ -19,13 +19,13 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   TalonFX m_motor;
   PIDController m_pid;
   double m_kG = 0.0;
-  double m_maxSpeed_volts = 5;
+  double m_maxSpeed_volts = 12;
   VoltageOut m_voltageOut;
   /** Creates a new ScissorLift. */
   public Lift() {
     m_motor = new TalonFX(10, g.CAN_IDS_ROBORIO.NAME); // Creates a new TalonFX.
     m_voltageOut = new VoltageOut(0).withEnableFOC(true); // Creates a new VoltageOut.
-    m_pid = new PIDController(0.1, 0.1, 0); // Creates a new PID Controller.
+    m_pid = new PIDController(0.45, 0.1, 0); // Creates a new PID Controller.
     m_pid.setIZone(20); // Sets the IZone range.
     m_pid.setIntegratorRange(-.1, .1); // Sets the Integrator range.
     m_pid.setTolerance(0.1); // Sets the tolerance
@@ -61,10 +61,10 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
       moveToPosition(0);
         break;
       case L3:
-      moveToPosition(100);
+      moveToPosition(200);
         break;
       case L4:
-      moveToPosition(200);
+      moveToPosition(350);
         break;
       case START:
         // TODO Add logic for algae if algae is not at START
