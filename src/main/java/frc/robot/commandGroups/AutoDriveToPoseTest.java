@@ -13,8 +13,7 @@ public class AutoDriveToPoseTest extends SequentialCommandGroup {
     // Pose X,Y are in Meters, X positive is forward, Y Positive is to the left
     
 addCommands(
-        new ParallelDeadlineGroup(null, null),
-        new ParallelRaceGroup(null, null),  
+
        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.6, 6),
 
        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.RIGHT), 0.6, 6),
