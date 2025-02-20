@@ -320,9 +320,12 @@ public class g {
     public static boolean isAutoDriveEnabled = true;
     public static volatile double driveSpeedActual_mps = 0.0;
     public static volatile double driveSpeedRequested_mps = 0.0;
+    public static volatile double driveSpeedError_mps = 0.0;
     public static final Vector<N3> STD_DEV_HIGH = VecBuilder.fill(0.1,0.1,0.1);
     public static final Vector<N3> STD_DEV_LOW = VecBuilder.fill(0.9,0.9,0.9);
     //public static boolean isAutoToAprilTagDone = false;
+    public static final double DRIVE_SPEED_LOW_mps = 1;
+    public static double turnPIDErrorDerivative = Double.POSITIVE_INFINITY;
 
   }
 
@@ -332,8 +335,9 @@ public class g {
   }
   public static class CORAL {
     public static final double ROTATE_GEAR_RATIO = 2; // TODO: find gear ratio
+    public static final double INTAKE_RANGE_MIN_mm = 0.1;
     public static volatile CoralArmState armState = CoralArmState.START;
-    public static volatile CoralIntakeStates clawState = CoralIntakeStates.OFF;
+    public static volatile CoralIntakeStates intakeState = CoralIntakeStates.OFF;
   }
   public static class LIFT {
     public static final double SPROCKET_PITCH_mm = 44.4754;

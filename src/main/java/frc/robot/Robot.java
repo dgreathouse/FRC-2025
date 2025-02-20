@@ -7,10 +7,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commandGroups.AutoBlueRight244;
 import frc.robot.commandGroups.AutoDoNothing;
-import frc.robot.commandGroups.AutoDriveRotateTest;
-import frc.robot.commandGroups.AutoDriveToBackFromLeft;
-import frc.robot.commandGroups.AutoDriveToBackFromRight;
 import frc.robot.commandGroups.AutoDriveToFront;
 import frc.robot.commandGroups.AutoDriveToPoseTest;
 import frc.robot.defaultCommands.CoralDefaultCommand;
@@ -49,11 +47,9 @@ public class Robot extends TimedRobot {
 
     // Setup the autonomous play default and send to dashboard for selection
     m_autoChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
-    m_autoChooser.addOption("Left", new AutoDriveToBackFromLeft());
-    m_autoChooser.addOption("Right", new AutoDriveToBackFromRight());
+    m_autoChooser.addOption("Blue Right 244", new AutoBlueRight244());
     m_autoChooser.addOption("Center", new AutoDriveToFront());
     m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
-    m_autoChooser.addOption("Drive Rotate Test", new AutoDriveRotateTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 
     // Start telemetry in a slower rate than the main loop
@@ -85,18 +81,6 @@ public class Robot extends TimedRobot {
  //boolean flag = false;
   @Override
   public void disabledPeriodic() {
-    // if(!flag && g.VISION.pose2d.getRotation().getDegrees() != 0.0){
-    // if(g.VISION.frontTargetAmbiguity >= 0.0 && g.VISION.frontTargetAmbiguity < g.VISION.ambiguitySetPoint){
-    //   g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
-    //   flag = true;
-    // }
- // }
-    // TODO: reseting pose and angle
-    // [ ] Try reseting the pose from vision. Pose and Yaw to angle reset
-    
-    // Get the closest tag(s) and determine angle 
-    // Disable happens again after auton is over. Don't let the yaw reset happen during normal game play.
-    // Maybe check and see if it can be used to help fix gyro drift. Probably not.
 
   }
 

@@ -20,7 +20,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   // TalonFXS m_rightMotor;
   // TalonFX m_rotateMotor;
   // CANrange m_rangeSensor;
-  // PIDController m_rotatePID;
+   PIDController m_rotatePID;
   // ArmFeedforward m_rotateFF;
   // VoltageOut m_leftVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
   // VoltageOut m_rightVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
@@ -44,7 +44,14 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
      g.DASHBOARD.updates.add(this);
 
   }
-
+  public void spinIn(){
+    // m_leftMotor.setControl(m_leftVoltageOut.withOutput(g.CORAL.SPIN_SPEED * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
+    // m_rightMotor.setControl(m_rightVoltageOut.withOutput(-g.CORAL.SPIN_SPEED * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
+  }
+  public void spinOut(){
+    // m_leftMotor.setControl(m_leftVoltageOut.withOutput(-g.CORAL.SPIN_SPEED * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
+    // m_rightMotor.setControl(m_rightVoltageOut.withOutput(g.CORAL.SPIN_SPEED * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
+  }
   public void spin(double _speed){
     // m_leftMotor.setControl(m_leftVoltageOut.withOutput(_speed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
     // m_rightMotor.setControl(m_rightVoltageOut.withOutput(-_speed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
@@ -88,7 +95,10 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   public void periodic() {
 
   }
+  public boolean isAtState(){
 
+    return m_rotatePID.atSetpoint();
+  }
   @Override
   public void updateDashboard() {
     SmartDashboard.putString("Coral/Claw Arm State", g.CORAL.armState.toString());

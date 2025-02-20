@@ -41,7 +41,6 @@ public class VisionProcessor implements IUpdateDashboard{
         m_leftCamera = new PhotonCamera("LeftArducam");
         m_leftCamera.setPipelineIndex(0);
         m_leftCamera.setDriverMode(false);
-        // TODO: update cameral location on robot. x forward, y left, z up
         Transform3d m_leftCameraLocation = new Transform3d(new Translation3d(0.2972,0.2667,0.26), new Rotation3d(0,Math.toRadians(-12.5),Math.toRadians(-10)));
         m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_leftCameraLocation);
 
@@ -49,7 +48,6 @@ public class VisionProcessor implements IUpdateDashboard{
         m_rightCamera = new PhotonCamera("RightCamera");
         m_rightCamera.setPipelineIndex(0);
         m_rightCamera.setDriverMode(false);
-        // TODO: update camera location on robot. x forward, y left, z up
         Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2972,-0.2667,0.26), new Rotation3d(0,Math.toRadians(12.5),Math.toRadians(-10)));
         m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
         g.DASHBOARD.updates.add(this);
@@ -265,24 +263,28 @@ public class VisionProcessor implements IUpdateDashboard{
         PoseEstimateStatus rightCamState = null;
 
         if (DriverStation.getAlliance().isPresent()) {
+            // Calculate the pose for the left camera
             g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
             if (m_leftCamera.isConnected()) {
                 leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
                 g.VISION.leftTargetAmbiguity = leftCamState.getAmbiguity();
             }
+            // Calculate the pose for the right camera
             if (m_rightCamera.isConnected()) {
                 rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
                 g.VISION.rightTargetAmbiguity = rightCamState.getAmbiguity();
             }
-
-            if (!m_resetYawInitFlag && g.VISION.pose2d.getRotation().getDegrees() != 0.0) {
-                if (g.VISION.leftTargetAmbiguity >= 0.0 && g.VISION.leftTargetAmbiguity < g.VISION.ambiguitySetPoint) {
+            // Reset the gyro angles, based on vision, once at the beginning when a good tag is found
+            double angle = Math.abs(g.VISION.pose2d.getRotation().getDegrees());
+            if (!m_resetYawInitFlag && angle > 5.0) {
+                if (g.VISION.leftTargetAmbiguity >= 0.0 && g.VISION.leftTargetAmbiguity < g.VISION.ambiguitySetPoint &&
+                    g.VISION.rightTargetAmbiguity >= 0.0 && g.VISION.rightTargetAmbiguity < g.VISION.ambiguitySetPoint) {
                     g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
                     m_resetYawInitFlag = true;
                 }
             }
+
             if (leftCamState != null && rightCamState != null) {
-                
                 if (leftCamState.getState() == TagFoundState.TARGET_ID_FOUND || rightCamState.m_state == TagFoundState.TARGET_ID_FOUND) {
                     g.VISION.isTargetAprilTagFound = true;
              

@@ -193,7 +193,7 @@ public class SwerveModule implements IUpdateDashboard {
    * @return Drive speed in MPS
    */
   public double getDriveSpeed(){
-    return m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm;
+    return Math.abs(m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm);
   }
     /**
    * Called by separate thread to put stuff to the dashboard at a slower rate than the main periodic

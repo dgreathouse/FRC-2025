@@ -89,6 +89,9 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
     m_motor.setControl(m_voltageOut.withOutput(_volts));
 
   }
+  public boolean isAtState(){
+    return m_pid.atSetpoint();
+  }
   @Override
   public void updateDashboard() {
     SmartDashboard.putNumber("Lift/Distance_mm", getPosition_mm());

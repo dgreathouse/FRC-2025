@@ -113,10 +113,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
                                                   g.SWERVE.positions, new Pose2d(),
                                                   VecBuilder.fill(0.15,0.15,0.15), 
                                                   VecBuilder.fill(0.9,0.9,0.9));
+   
+   SmartDashboard.putBoolean("Robot/IsGyroPrimaryActive", true);
+   g.DASHBOARD.updates.add(this);
 
-   //resetYaw(0);
-    g.DASHBOARD.updates.add(this);
-    
   }
 
   @Override
@@ -216,14 +216,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, _centerOfRotation_m);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
     g.DRIVETRAIN.driveSpeedRequested_mps = 0.0;
-    g.DRIVETRAIN.driveSpeedActual_mps = 0.0;
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.modules[i].setDesiredState(states[i]);
-      g.DRIVETRAIN.driveSpeedRequested_mps += states[i].speedMetersPerSecond;
-      g.DRIVETRAIN.driveSpeedActual_mps += g.SWERVE.modules[i].getDriveSpeed();
+       g.DRIVETRAIN.driveSpeedRequested_mps += Math.abs(states[i].speedMetersPerSecond);
     }
     g.DRIVETRAIN.driveSpeedRequested_mps = g.DRIVETRAIN.driveSpeedRequested_mps / g.SWERVE.COUNT;
-    g.DRIVETRAIN.driveSpeedActual_mps = g.DRIVETRAIN.driveSpeedActual_mps / g.SWERVE.COUNT;
+    g.DRIVETRAIN.driveSpeedActual_mps = getDriveSpeed();
+    g.DRIVETRAIN.driveSpeedError_mps = Math.abs(g.DRIVETRAIN.driveSpeedActual_mps - g.DRIVETRAIN.driveSpeedActual_mps);
   }
 
 
@@ -374,6 +373,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @return if the rotation of the robot is on target
    */
   public boolean isRotateAtTarget() {
+    g.DRIVETRAIN.turnPIDErrorDerivative = m_turnPID.getErrorDerivative();
     return m_turnPID.atSetpoint();
   }
 
@@ -438,6 +438,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     speed = speed / g.SWERVE.COUNT;
     return speed;
   }
+  public double getDriveSpeedError(double _speed){
+    return Math.abs(_speed - g.DRIVETRAIN.driveSpeedActual_mps);
+  }
   private class PoseEstimatorThread extends Thread{
     boolean visionEnable = false;
     public PoseEstimatorThread(){
@@ -487,7 +490,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     }
   }
   public void addVisionMeasurement(Pose2d _estPose, double _timeStamp){
-    m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp);
+    // TODO only add vision measurement if drive speed is low. TEST
+    //  [x] Add speed check
+    //  [ ] Test if this works
+    if(g.DRIVETRAIN.driveSpeedActual_mps < g.DRIVETRAIN.DRIVE_SPEED_LOW_mps){
+      m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp);
+    }
+    
   }
   public void updateDashboard() {
     // g.SWERVE.totalSwerveCurrent_amps = 0;
@@ -495,27 +504,24 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     //   g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
     //       + Math.abs(swerveModule.getSteerCurrent());
     // }
-  //  SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
+
     SmartDashboard.putData("Robot/Drive Field2d", g.ROBOT.field2d);
+
     SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2d.getRotation().getDegrees());
-   // SmartDashboard.putData("Drive/TurnPID", m_turnPID);
-    //SmartDashboard.putNumber("Robot/Pose Drive X", g.ROBOT.pose2d.getX());
-    //SmartDashboard.putNumber("Robot/Pose Drive Y", g.ROBOT.pose2d.getY());
-    //SmartDashboard.putNumber("Robot/Pose Angle", g.ROBOT.pose2d.getRotation().getDegrees());
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
-    //SmartDashboard.putBoolean("Drive/IsRotateAtTarget", isRotateAtTarget());
     SmartDashboard.putNumber("Robot/GyroPrimary_deg", m_yawPrimary);
     SmartDashboard.putNumber("Robot/GyroSecondary_deg", m_yawSecondary);
-  //  SmartDashboard.putNumber("Robot/GyroYaw_deg", getYaw());
     SmartDashboard.putBoolean("Robot/Is AprilTag Active", g.ROBOT.vision.getIsAutoAprilTagActive());
     SmartDashboard.putString("Robot/AlignState", g.ROBOT.alignmentState.toString());
-    //SmartDashboard.putString("Robot/ApriltagAlignState", g.VISION.aprilTagAlignState.toString());
+    SmartDashboard.putNumber("Robot/PD_Volts", g.ROBOT.pd.getVoltage());
+    SmartDashboard.putNumber("Robot/PD_Amps", g.ROBOT.pd.getTotalCurrent());
+
     SmartDashboard.putNumber("Drive Speed Actual", g.DRIVETRAIN.driveSpeedActual_mps);
     SmartDashboard.putNumber("Drive Speed Requested", g.DRIVETRAIN.driveSpeedRequested_mps);
     SmartDashboard.putString("Drive/DriveMode", g.DRIVETRAIN.driveMode.toString());
-    SmartDashboard.putNumber("Robot/PD_Volts", g.ROBOT.pd.getVoltage());
-    SmartDashboard.putNumber("Robot/PD_Amps", g.ROBOT.pd.getTotalCurrent());
+    SmartDashboard.putNumber("Drive/TurnPID error Derivative", g.DRIVETRAIN.turnPIDErrorDerivative);  
+
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
     
