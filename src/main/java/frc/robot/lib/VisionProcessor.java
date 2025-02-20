@@ -274,13 +274,14 @@ public class VisionProcessor implements IUpdateDashboard{
                 rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
                 g.VISION.rightTargetAmbiguity = rightCamState.getAmbiguity();
             }
-            // Reset the gyro angles, based on vision, once at the beginning when a good tag is found
-            double angle = Math.abs(g.VISION.pose2d.getRotation().getDegrees());
-            if (!m_resetYawInitFlag && angle > 5.0) {
-                if (g.VISION.leftTargetAmbiguity >= 0.0 && g.VISION.leftTargetAmbiguity < g.VISION.ambiguitySetPoint &&
-                    g.VISION.rightTargetAmbiguity >= 0.0 && g.VISION.rightTargetAmbiguity < g.VISION.ambiguitySetPoint) {
-                    g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
-                    m_resetYawInitFlag = true;
+            if (m_rightCamera.isConnected() && m_leftCamera.isConnected()) {
+                double angle = Math.abs(g.VISION.pose2d.getRotation().getDegrees());
+                if (!m_resetYawInitFlag && angle > 5.0) {
+                    if (g.VISION.leftTargetAmbiguity >= 0.0 && g.VISION.leftTargetAmbiguity < g.VISION.ambiguitySetPoint &&
+                        g.VISION.rightTargetAmbiguity >= 0.0 && g.VISION.rightTargetAmbiguity < g.VISION.ambiguitySetPoint) {
+                        g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
+                        m_resetYawInitFlag = true;
+                    }
                 }
             }
 
@@ -312,9 +313,18 @@ public class VisionProcessor implements IUpdateDashboard{
      * @return
      */
     public boolean getIsAutoAprilTagActive(){
-        if(g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.VISION.tagState == TagFoundState.TARGET_ID_FOUND && g.DRIVETRAIN.isAutoDriveEnabled){
+        if (g.VISION.aprilTagAlignState != AprilTagAlignState.NONE 
+            && g.VISION.tagState == TagFoundState.TARGET_ID_FOUND
+            && g.DRIVETRAIN.isAutoDriveEnabled) {
             return true;
         }
+        if (g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.DRIVETRAIN.isAutoDriveEnabled)
+            if (g.VISION.aprilTagRequestedID == 12 
+                || g.VISION.aprilTagRequestedID == 13 
+                || g.VISION.aprilTagRequestedID == 1 
+                || g.VISION.aprilTagRequestedID == 2) {
+                return true;
+            }
         return false;
     }
     public int getAprilTagID(RobotAlignStates _alignState, Alliance _alliance) {

@@ -383,7 +383,6 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     g.ROBOT.gyro_navx.setAngleAdjustment(-_angle);
   }
 
-  
   private void updatePositions() {
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
