@@ -165,7 +165,7 @@ public class VisionProcessor implements IUpdateDashboard{
     
     public PoseEstimateStatus calculatePose(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor) {
         double ambiguity = 0;
-        g.VISION.tagState = TagFoundState.EMPTY;
+        TagFoundState tagState = TagFoundState.EMPTY;
         List<PhotonPipelineResult> results = _camera.getAllUnreadResults(); // Get all results from the apriltag pipeline.
         if (!results.isEmpty()) { // If there are no results from the pipeline the results is empty. This happens 2 times. 1. No tag found, 2. Pipeline flushed to often with no new results
             for (PhotonPipelineResult photonPipelineResult : results) {
@@ -263,8 +263,7 @@ public class VisionProcessor implements IUpdateDashboard{
     public void calculatePose(){
         PoseEstimateStatus leftCamState = null;
         PoseEstimateStatus rightCamState = null;
-        PoseEstimateStatus leftCamState = null;
-        PoseEstimateStatus rightCamState = null;
+
         if (DriverStation.getAlliance().isPresent()) {
             g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
             if (m_leftCamera.isConnected()) {
@@ -283,10 +282,10 @@ public class VisionProcessor implements IUpdateDashboard{
                 }
             }
             if (leftCamState != null && rightCamState != null) {
-                if (leftCamState.getState() == TagFoundState.TARGET_ID_FOUND || rightCamState.m_state == TagFoundState.TARGET_ID_FOUND) {
+                
                 if (leftCamState.getState() == TagFoundState.TARGET_ID_FOUND || rightCamState.m_state == TagFoundState.TARGET_ID_FOUND) {
                     g.VISION.isTargetAprilTagFound = true;
-                } else if (leftCamState.m_state == TagFoundState.EMPTY && rightCamState.getState() == TagFoundState.EMPTY) {
+             
                 } else if (leftCamState.m_state == TagFoundState.EMPTY && rightCamState.getState() == TagFoundState.EMPTY) {
                     g.VISION.isTargetAprilTagFound = false;
                 }
