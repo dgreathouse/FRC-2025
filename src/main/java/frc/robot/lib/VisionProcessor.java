@@ -33,9 +33,9 @@ public class VisionProcessor implements IUpdateDashboard{
     PhotonPoseEstimator m_rightPoseEstimator;
 
     boolean isTartgetFound = false;
-    double m_tagEmptyCnt = 0;
 
-    double m_frontTargetAmbiguity = -1.0;
+    // double m_leftTargetAmbiguity = -1.0;
+    // double m_rightTargetAmbiguity = -1.0;
     boolean m_resetYawInitFlag = false;
     AprilTagFieldLayout m_apriltagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public VisionProcessor(){
@@ -167,6 +167,9 @@ public class VisionProcessor implements IUpdateDashboard{
     
     public PoseEstimateStatus calculatePose(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor) {
         double ambiguity = 0;
+
+        TagFoundState tagState = TagFoundState.EMPTY;
+
         g.VISION.tagState = TagFoundState.EMPTY;
         List<PhotonPipelineResult> results = _camera.getAllUnreadResults(); // Get all results from the apriltag pipeline.
         if (!results.isEmpty()) { // If there are no results from the pipeline the results is empty. This happens 2 times. 1. No tag found, 2. Pipeline flushed to often with no new results
@@ -178,14 +181,16 @@ public class VisionProcessor implements IUpdateDashboard{
                             ambiguity = target.poseAmbiguity;
 
                             if(ambiguity >= 0 && ambiguity < g.VISION.ambiguitySetPoint){
-                                g.VISION.tagState = TagFoundState.TAG_FOUND;
+                                if(tagState != TagFoundState.TARGET_ID_FOUND){
+                                    tagState = TagFoundState.TAG_FOUND;
+                                }
                                 Optional<EstimatedRobotPose> estimatedRobotPose = _poseEstimtor.update(photonPipelineResult);
                                 if(estimatedRobotPose.isPresent()){
                                     g.ROBOT.drive.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds);
                                     g.VISION.pose2d = estimatedRobotPose.get().estimatedPose.toPose2d();
                                 }
                                 if(target.getFiducialId() == g.VISION.aprilTagRequestedID){
-                                    g.VISION.tagState = TagFoundState.TARGET_ID_FOUND;
+                                    tagState = TagFoundState.TARGET_ID_FOUND;
                                 }
                             }
                         }
@@ -193,59 +198,60 @@ public class VisionProcessor implements IUpdateDashboard{
                 }
             }
         }
+        g.VISION.tagState = tagState;
         return new PoseEstimateStatus(g.VISION.tagState, ambiguity);
     }
-    public double getTargetIDAngle(double _id){
-        return getTargetIDAngle(m_leftCamera, m_leftPoseEstimator, 20);
-    }
-    public double getTargetIDAngle(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor, int _id){
-        double ambiguity = 0;
-        List<PhotonPipelineResult> results = _camera.getAllUnreadResults(); // Get all results from the apriltag pipeline.
-        if (!results.isEmpty()) { // If there are no results from the pipeline the results is empty. This happens 2 times. 1. No tag found, 2. Pipeline flushed to often with no new results
-            for (PhotonPipelineResult photonPipelineResult : results) {
-                if(photonPipelineResult.hasTargets()){
-                    List<PhotonTrackedTarget> targets = photonPipelineResult.getTargets();
-                    if(!targets.isEmpty()){
-                        for (PhotonTrackedTarget target : targets) {
-                            ambiguity = target.poseAmbiguity;
-                            if(ambiguity >= 0 && ambiguity < g.VISION.ambiguitySetPoint){
-                                if(target.getFiducialId() == _id){
-                                    g.VISION.initTargetIDAngle = target.yaw;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    // public double getTargetIDAngle(double _id){
+    //     return getTargetIDAngle(m_leftCamera, m_leftPoseEstimator, 20);
+    // }
+    // public double getTargetIDAngle(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor, int _id){
+    //     double ambiguity = 0;
+    //     List<PhotonPipelineResult> results = _camera.getAllUnreadResults(); // Get all results from the apriltag pipeline.
+    //     if (!results.isEmpty()) { // If there are no results from the pipeline the results is empty. This happens 2 times. 1. No tag found, 2. Pipeline flushed to often with no new results
+    //         for (PhotonPipelineResult photonPipelineResult : results) {
+    //             if(photonPipelineResult.hasTargets()){
+    //                 List<PhotonTrackedTarget> targets = photonPipelineResult.getTargets();
+    //                 if(!targets.isEmpty()){
+    //                     for (PhotonTrackedTarget target : targets) {
+    //                         ambiguity = target.poseAmbiguity;
+    //                         if(ambiguity >= 0 && ambiguity < g.VISION.ambiguitySetPoint){
+    //                             if(target.getFiducialId() == _id){
+    //                                 g.VISION.initTargetIDAngle = target.yaw;
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
 
 
-        return  g.VISION.initTargetIDAngle;
-    }
-    public void setOdometry(StartLocation _start) {
-        switch (_start) {
-          case LEFT:
-          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-          m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-            break;
-          case RIGHT:
-          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
-          m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
-            break;
-          case CENTER:
-          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
-          m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
-            break;
-          case ZERO:
-          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
-          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
-            break;
-          default:
-          m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-          m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-            break;
-        }
-      }
+    //     return  g.VISION.initTargetIDAngle;
+    // }
+    // public void setOdometry(StartLocation _start) {
+    //     switch (_start) {
+    //       case LEFT:
+    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+    //       m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+    //         break;
+    //       case RIGHT:
+    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
+    //       m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
+    //         break;
+    //       case CENTER:
+    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
+    //       m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
+    //         break;
+    //       case ZERO:
+    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
+    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
+    //         break;
+    //       default:
+    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+    //       m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
+    //         break;
+    //     }
+    //   }
     /*
      * Even if the tag is seen a lot of results are empty. 
      * Options:
@@ -266,27 +272,24 @@ public class VisionProcessor implements IUpdateDashboard{
             g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
             if (m_leftCamera.isConnected()) {
                 leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
-                g.VISION.frontTargetAmbiguity = leftCamState.getAmbiguity();
+                g.VISION.leftTargetAmbiguity = leftCamState.getAmbiguity();
             }
             if (m_rightCamera.isConnected()) {
                 rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
+                g.VISION.rightTargetAmbiguity = rightCamState.getAmbiguity();
             }
 
             if (!m_resetYawInitFlag && g.VISION.pose2d.getRotation().getDegrees() != 0.0) {
-                if (g.VISION.frontTargetAmbiguity >= 0.0
-                        && g.VISION.frontTargetAmbiguity < g.VISION.ambiguitySetPoint) {
+                if (g.VISION.leftTargetAmbiguity >= 0.0 && g.VISION.leftTargetAmbiguity < g.VISION.ambiguitySetPoint) {
                     g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
                     m_resetYawInitFlag = true;
                 }
             }
             if (leftCamState != null && rightCamState != null) {
-                if (leftCamState.getState() == TagFoundState.TARGET_ID_FOUND
-                        || rightCamState.m_state == TagFoundState.TARGET_ID_FOUND) {
+                if (leftCamState.getState() == TagFoundState.TARGET_ID_FOUND || rightCamState.m_state == TagFoundState.TARGET_ID_FOUND) {
                     g.VISION.isTargetAprilTagFound = true;
-                } else if (leftCamState.m_state == TagFoundState.EMPTY
-                        && rightCamState.getState() == TagFoundState.EMPTY) {
+                } else if (leftCamState.m_state == TagFoundState.EMPTY && rightCamState.getState() == TagFoundState.EMPTY) {
                     g.VISION.isTargetAprilTagFound = false;
-                    m_tagEmptyCnt++;
                 }
             }
         }
