@@ -42,16 +42,16 @@ public class VisionProcessor implements IUpdateDashboard{
         m_leftCamera.setPipelineIndex(0);
         m_leftCamera.setDriverMode(false);
         // TODO: update cameral location on robot. x forward, y left, z up
-        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2972,0.2667,0.26), new Rotation3d(0,Math.toRadians(-12.5),Math.toRadians(-10)));
-        m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
+        Transform3d m_leftCameraLocation = new Transform3d(new Translation3d(0.2972,0.2667,0.26), new Rotation3d(0,Math.toRadians(-12.5),Math.toRadians(-10)));
+        m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_leftCameraLocation);
 
         
         m_rightCamera = new PhotonCamera("RightCamera");
         m_rightCamera.setPipelineIndex(0);
         m_rightCamera.setDriverMode(false);
         // TODO: update camera location on robot. x forward, y left, z up
-        Transform3d m_backCameraLocation = new Transform3d(new Translation3d(0.2972,-0.2667,0.26), new Rotation3d(0,Math.toRadians(12.5),Math.toRadians(-10)));
-        m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_backCameraLocation);
+        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2972,-0.2667,0.26), new Rotation3d(0,Math.toRadians(12.5),Math.toRadians(-10)));
+        m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
         g.DASHBOARD.updates.add(this);
         createApriltagLocations();
         
@@ -265,6 +265,8 @@ public class VisionProcessor implements IUpdateDashboard{
      */
     
     public void calculatePose(){
+        PoseEstimateStatus leftCamState = null;
+        PoseEstimateStatus rightCamState = null;
         PoseEstimateStatus leftCamState = null;
         PoseEstimateStatus rightCamState = null;
         if (DriverStation.getAlliance().isPresent()) {
