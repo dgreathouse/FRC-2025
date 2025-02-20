@@ -52,12 +52,12 @@ public class Robot extends TimedRobot {
 
     // Setup the autonomous play default and send to dashboard for selection
     m_autoChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
-    m_autoChooser.addOption("Blue Right 244", new AutoBlueLeft244());
+    m_autoChooser.addOption("Blue Left 244", new AutoBlueLeft244());
     m_autoChooser.addOption("Blue Right 244", new AutoBlueRight244());
-    m_autoChooser.addOption("Blue Right 244", new AutoRedRight244());
-    m_autoChooser.addOption("Blue Right 244", new AutoRedLeft244());
-    m_autoChooser.addOption("Blue Right 244", new AutoRedCenter4());
-    m_autoChooser.addOption("Blue Right 244", new AutoBlueCenter4());
+    m_autoChooser.addOption("Red Right 244", new AutoRedRight244());
+    m_autoChooser.addOption("Red Right 244", new AutoRedLeft244());
+    m_autoChooser.addOption("Red Center 4", new AutoRedCenter4());
+    m_autoChooser.addOption("Blue Center 4", new AutoBlueCenter4());
     m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 

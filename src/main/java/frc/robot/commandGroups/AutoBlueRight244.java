@@ -26,39 +26,39 @@ public class AutoBlueRight244 extends SequentialCommandGroup {
     addCommands(
       // Drive to first coral for L2
       new ParallelDeadlineGroup(
-        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.LEFT), 0.6, 3),
-        new CoralMoveToStateCommand(CoralArmState.L2)
+        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.LEFT), 0.6, 3)
+       // new CoralMoveToStateCommand(CoralArmState.L2)
       ),
       new CoralSpinCommand(CoralIntakeStates.OUT, 1),
       // Drive to Station on the left
       new ParallelDeadlineGroup(
-        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.LEFT), 0.6, 4),
-        new CoralMoveToStateCommand(CoralArmState.START)
+        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.LEFT), 0.6, 4)
+    //    new CoralMoveToStateCommand(CoralArmState.START)
       ),
       new CoralSpinCommand(CoralIntakeStates.IN, 2),
       // Drive to reef for L4 on the right
       new ParallelDeadlineGroup(
-        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(17, AprilTagAlignState.RIGHT), 0.6, 4),
-        new CoralMoveToStateCommand(CoralArmState.L4),
-        new LiftMoveCommand(CoralArmState.L4, 2)
+        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(17, AprilTagAlignState.RIGHT), 0.6, 4)
+     //   new CoralMoveToStateCommand(CoralArmState.L4),
+      //  new LiftMoveCommand(CoralArmState.L4, 2)
       ),
       new CoralSpinCommand(CoralIntakeStates.OUT, 1),
       // Drive to Station on the left
       new ParallelDeadlineGroup(
-        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.LEFT), 0.6, 4),
-        new CoralMoveToStateCommand(CoralArmState.START),
-        new LiftMoveCommand(CoralArmState.START, 0)
+        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.LEFT), 0.6, 4)
+     //   new CoralMoveToStateCommand(CoralArmState.START),
+      //  new LiftMoveCommand(CoralArmState.START, 0)
       ),
       new CoralSpinCommand(CoralIntakeStates.IN, 2),
       // Drive to reef for L4 on the LEFT
       new ParallelDeadlineGroup(
-        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(17, AprilTagAlignState.LEFT), 0.6, 4),
-        new CoralMoveToStateCommand(CoralArmState.L4),
-        new LiftMoveCommand(CoralArmState.L4, 2)
+        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(17, AprilTagAlignState.LEFT), 0.6, 4)
+    //    new CoralMoveToStateCommand(CoralArmState.L4),
+      //  new LiftMoveCommand(CoralArmState.L4, 2)
       ),
-      new CoralSpinCommand(CoralIntakeStates.OUT, 1),
-      new LiftMoveCommand(CoralArmState.START, 0),
-      new CoralMoveToStateCommand(CoralArmState.START)
+      new CoralSpinCommand(CoralIntakeStates.OUT, 1)
+    //  new LiftMoveCommand(CoralArmState.START, 0),
+    //  new CoralMoveToStateCommand(CoralArmState.START)
     );
   }
 }
