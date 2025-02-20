@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoBlueRight244;
 import frc.robot.commandGroups.AutoDoNothing;
-import frc.robot.commandGroups.AutoDriveToFront;
+
 import frc.robot.commandGroups.AutoDriveToPoseTest;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
     // Setup the autonomous play default and send to dashboard for selection
     m_autoChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
     m_autoChooser.addOption("Blue Right 244", new AutoBlueRight244());
-    m_autoChooser.addOption("Center", new AutoDriveToFront());
+
     m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 

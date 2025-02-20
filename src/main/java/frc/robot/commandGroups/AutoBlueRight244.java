@@ -29,7 +29,7 @@ public class AutoBlueRight244 extends SequentialCommandGroup {
         new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.LEFT), 0.6, 3),
         new CoralMoveToStateCommand(CoralArmState.L2)
       ),
-      new CoralSpinCommand(CoralIntakeStates.OUT, 2),
+      new CoralSpinCommand(CoralIntakeStates.OUT, 1),
       // Drive to Station on the left
       new ParallelDeadlineGroup(
         new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.LEFT), 0.6, 4),
@@ -42,7 +42,7 @@ public class AutoBlueRight244 extends SequentialCommandGroup {
         new CoralMoveToStateCommand(CoralArmState.L4),
         new LiftMoveCommand(CoralArmState.L4, 2)
       ),
-      new CoralSpinCommand(CoralIntakeStates.OUT, 2),
+      new CoralSpinCommand(CoralIntakeStates.OUT, 1),
       // Drive to Station on the left
       new ParallelDeadlineGroup(
         new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.LEFT), 0.6, 4),
@@ -56,12 +56,9 @@ public class AutoBlueRight244 extends SequentialCommandGroup {
         new CoralMoveToStateCommand(CoralArmState.L4),
         new LiftMoveCommand(CoralArmState.L4, 2)
       ),
-      new CoralSpinCommand(CoralIntakeStates.OUT, 2),
+      new CoralSpinCommand(CoralIntakeStates.OUT, 1),
       new LiftMoveCommand(CoralArmState.START, 0),
       new CoralMoveToStateCommand(CoralArmState.START)
-      
-
-
     );
   }
 }
