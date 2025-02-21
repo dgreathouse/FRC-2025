@@ -2,6 +2,8 @@ package frc.robot.defaultCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.AutoDriveToPose;
 import frc.robot.lib.g;
@@ -47,6 +49,13 @@ public class DrivetrainDefaultCommand extends Command {
     rightXFiltered_Driver = m_stickLimiterRX.calculate(rightXFiltered_Driver);
     rightYFiltered_Driver = m_stickLimiterRY.calculate(rightYFiltered_Driver);
 
+    double redInvert = 1;
+    var alliance = DriverStation.getAlliance();
+    if(alliance.isPresent()){
+      if(alliance.get() == Alliance.Red){
+        redInvert = -1;
+      }
+    }
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
       g.VISION.aprilTagRequestedPose = g.ROBOT.vision.getRobotPoseForAprilTag(g.VISION.aprilTagRequestedID, g.VISION.aprilTagAlignState);
       AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.7, 5);
@@ -54,19 +63,19 @@ public class DrivetrainDefaultCommand extends Command {
     }else {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:
-          g.ROBOT.drive.driveFieldCentric( leftXFiltered_Driver, leftYFiltered_Driver, rightYFiltered_Driver, g.ROBOT.angleActual_deg, g.DRIVETRAIN.centerOfRotation_m);
+          g.ROBOT.drive.driveFieldCentric(leftXFiltered_Driver*redInvert, leftYFiltered_Driver*redInvert, rightYFiltered_Driver, g.ROBOT.angleActual_deg, g.DRIVETRAIN.centerOfRotation_m);
           break;
         case ANGLE_FIELD_CENTRIC:
-          g.ROBOT.drive.setTargetRobotAngle(rightXFiltered_Driver, rightYFiltered_Driver);
-          g.ROBOT.drive.setTargetRobotAngle(rightXRaw_Operator,rightYRaw_Operator);
-          g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered_Driver, leftYFiltered_Driver, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+          g.ROBOT.drive.setTargetRobotAngle(rightXFiltered_Driver*redInvert, rightYFiltered_Driver*redInvert);
+          g.ROBOT.drive.setTargetRobotAngle(rightXRaw_Operator*redInvert,rightYRaw_Operator*redInvert);
+          g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered_Driver*redInvert, leftYFiltered_Driver*redInvert, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case POLAR_CENTRIC:
           // This mode is not used by the operator. It is intented for autonomous or teleOp commands. 
-          g.ROBOT.drive.drivePolarFieldCentric(g.ROBOT.speedDriveTarget_mPsec, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.ROBOT.angleDriveTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+          //g.ROBOT.drive.drivePolarFieldCentric(g.ROBOT.speedDriveTarget_mPsec, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg, g.ROBOT.angleDriveTarget_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case ROBOT_CENTRIC:
-          g.ROBOT.drive.driveRobotCentric(leftXFiltered_Driver, leftYFiltered_Driver, rightYFiltered_Driver, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+          g.ROBOT.drive.driveRobotCentric(leftXFiltered_Driver*redInvert, leftYFiltered_Driver*redInvert, rightYFiltered_Driver, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
           break;
         case FAST_STOP:
           // g.ROBOT.drive.fastStop();

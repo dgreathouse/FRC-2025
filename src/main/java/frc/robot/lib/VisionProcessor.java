@@ -77,6 +77,7 @@ public class VisionProcessor implements IUpdateDashboard{
         }
         return rtn;
     }
+
     /**
      *  Create the x,y locations for the robot with reference to the Blue field.
      *  The angle is the angle the robot should face in reference to the Blue or Red field with respect to zero is away from the alliance wall. CW is negative
@@ -85,8 +86,8 @@ public class VisionProcessor implements IUpdateDashboard{
         double x,y,cx,cy;
 
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 0 which does not exist on the map
-        g.AprilTagLocations.pose.add(new ApriltagPose(15.9576, 0.6263, 16.9339, 1.3429, 16.4408, 0.9846, -54.011));  // ID 1 red left station. Only care about center at this point
-        g.AprilTagLocations.pose.add(new ApriltagPose(16.9339, 6.6872, 15.9476, 7.4039, 16.4408, 7.0456, 54.011));  //  ID 2 red right station. Only care about center at this point
+        g.AprilTagLocations.pose.add(new ApriltagPose(15.9576, 0.6263, 16.9339, 1.3429, 16.4408, 0.9846, 126));  // ID 1 red left station. Only care about center at this point
+        g.AprilTagLocations.pose.add(new ApriltagPose(16.9339, 6.6872, 15.9476, 7.4039, 16.4408, 7.0456, -126));  //  ID 2 red right station. Only care about center at this point
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 3 red processor. Only care about center at this point
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 4
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 5
@@ -94,32 +95,32 @@ public class VisionProcessor implements IUpdateDashboard{
         y = m_apriltagFieldLayout.getTagPose(6).get().getY();
         cx = x + g.ROBOT.centerDistanceToFrontBumper_m/2;
         cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy, -60));  // ID 6
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx, cy, 120));  // ID 6
         x = m_apriltagFieldLayout.getTagPose(7).get().getX();
         y = m_apriltagFieldLayout.getTagPose(7).get().getY();
         cx = x + g.ROBOT.centerDistanceToFrontBumper_m;
         cy = y;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy - g.FIELD.TAG_TO_POST_m, cx, cy + g.FIELD.TAG_TO_POST_m, cx, cy, 0));  // ID 7
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy - g.FIELD.TAG_TO_POST_m, cx, cy + g.FIELD.TAG_TO_POST_m, cx, cy, 180));  // ID 7
         x = m_apriltagFieldLayout.getTagPose(8).get().getX();
         y = m_apriltagFieldLayout.getTagPose(8).get().getY();
         cx = x + g.ROBOT.centerDistanceToFrontBumper_m/2;
         cy = y + g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy,60));  // ID 8
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy,-120));  // ID 8
         x = m_apriltagFieldLayout.getTagPose(9).get().getX();
         y = m_apriltagFieldLayout.getTagPose(9).get().getY();
         cx = x - g.ROBOT.centerDistanceToFrontBumper_m/2;
         cy = y + g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy, 120));  // ID 9
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx + g.FIELD.TAG_TO_POST_m * 0.866, cy + g.FIELD.TAG_TO_POST_m / 2, cx - g.FIELD.TAG_TO_POST_m * 0.866, cy - g.FIELD.TAG_TO_POST_m / 2, cx, cy, -60));  // ID 9
         x = m_apriltagFieldLayout.getTagPose(10).get().getX();
         y = m_apriltagFieldLayout.getTagPose(10).get().getY();
         cx = x-g.ROBOT.centerDistanceToFrontBumper_m;
         cy = y;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy+g.FIELD.TAG_TO_POST_m, cx, cy - g.FIELD.TAG_TO_POST_m, cx, cy, 180));  // ID 10
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx, cy+g.FIELD.TAG_TO_POST_m, cx, cy - g.FIELD.TAG_TO_POST_m, cx, cy, 0));  // ID 10
         x = m_apriltagFieldLayout.getTagPose(11).get().getX();
         y = m_apriltagFieldLayout.getTagPose(11).get().getY();
         cx = x - g.ROBOT.centerDistanceToFrontBumper_m/2;
         cy = y - g.ROBOT.centerDistanceToFrontBumper_m * 0.866;
-        g.AprilTagLocations.pose.add(new ApriltagPose(cx-(g.FIELD.TAG_TO_POST_m*0.866), cy+g.FIELD.TAG_TO_POST_m/2, cx + g.FIELD.TAG_TO_POST_m*0.866,cy - g.FIELD.TAG_TO_POST_m/2, cx, cy, -120));   // ID 11
+        g.AprilTagLocations.pose.add(new ApriltagPose(cx-(g.FIELD.TAG_TO_POST_m*0.866), cy+g.FIELD.TAG_TO_POST_m/2, cx + g.FIELD.TAG_TO_POST_m*0.866,cy - g.FIELD.TAG_TO_POST_m/2, cx, cy, 60));   // ID 11
         x = m_apriltagFieldLayout.getTagPose(12).get().getX();
         y = m_apriltagFieldLayout.getTagPose(12).get().getY();
         g.AprilTagLocations.pose.add(new ApriltagPose(0.6315, 1.3429, 1.5871,0.6445,1.1247,0.9846, 54.011));  // ID 12
@@ -198,69 +199,7 @@ public class VisionProcessor implements IUpdateDashboard{
         g.VISION.tagState = tagState;
         return new PoseEstimateStatus(g.VISION.tagState, ambiguity);
     }
-    // public double getTargetIDAngle(double _id){
-    //     return getTargetIDAngle(m_leftCamera, m_leftPoseEstimator, 20);
-    // }
-    // public double getTargetIDAngle(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor, int _id){
-    //     double ambiguity = 0;
-    //     List<PhotonPipelineResult> results = _camera.getAllUnreadResults(); // Get all results from the apriltag pipeline.
-    //     if (!results.isEmpty()) { // If there are no results from the pipeline the results is empty. This happens 2 times. 1. No tag found, 2. Pipeline flushed to often with no new results
-    //         for (PhotonPipelineResult photonPipelineResult : results) {
-    //             if(photonPipelineResult.hasTargets()){
-    //                 List<PhotonTrackedTarget> targets = photonPipelineResult.getTargets();
-    //                 if(!targets.isEmpty()){
-    //                     for (PhotonTrackedTarget target : targets) {
-    //                         ambiguity = target.poseAmbiguity;
-    //                         if(ambiguity >= 0 && ambiguity < g.VISION.ambiguitySetPoint){
-    //                             if(target.getFiducialId() == _id){
-    //                                 g.VISION.initTargetIDAngle = target.yaw;
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-
-
-    //     return  g.VISION.initTargetIDAngle;
-    // }
-    // public void setOdometry(StartLocation _start) {
-    //     switch (_start) {
-    //       case LEFT:
-    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-    //       m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-    //         break;
-    //       case RIGHT:
-    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
-    //       m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_RIGHT);
-    //         break;
-    //       case CENTER:
-    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
-    //       m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_CENTER);
-    //         break;
-    //       case ZERO:
-    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
-    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_ZERO);
-    //         break;
-    //       default:
-    //       m_rightPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-    //       m_leftPoseEstimator.setLastPose(g.ROBOT.POSE_START_LEFT);
-    //         break;
-    //     }
-    //   }
-    /*
-     * Even if the tag is seen a lot of results are empty. 
-     * Options:
-     * 1. deal iwth the tagfound flickering.
-     * 2. Ignore empty for a certain amount of time. 
-     * 3. Figure out a way to limit it in backend
-     * 4. Ignore is tag found as an indicator, still set it and the autopose will happen eventually
-     * 5. We can assume empty results are where there are no values left in FIFO because we are calling it at a 5ms rate.
-     *    Therefore we can ignore the Empty results because results are a camera capture not just a apriltag. Even 
-     *    if it is a april tag we don't care about empty. But if it is empty because no tags we have to deal with something else.
-     * 6. Doing vision at 5ms means it is asking for results at a 200hz rate. The camera only does at most 50FPS. Therefore this should not be done at 200Hz.
-     */
+ 
     
     public void calculatePose(){
         PoseEstimateStatus leftCamState = null;

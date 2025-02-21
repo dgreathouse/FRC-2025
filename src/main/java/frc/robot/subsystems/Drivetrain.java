@@ -171,12 +171,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, Translation2d _centerOfRotation_m) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-    if(DriverStation.getAlliance().isPresent()){
-      if(DriverStation.getAlliance().get() == Alliance.Red){
-        _robotAngle_deg = _robotAngle_deg - 180;
-        _targetAngle_deg = _targetAngle_deg - 180;
-      }
-    }
+
     double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
     //rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND_rad);
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
@@ -198,6 +193,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   
    */
   public void drivePolarFieldCentric(double _maxSpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m) {
+    
     double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _maxSpeed;
     double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _maxSpeed;
     driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg, _centerOfRotation_m);

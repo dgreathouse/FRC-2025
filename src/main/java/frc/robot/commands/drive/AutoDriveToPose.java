@@ -50,7 +50,6 @@ public class AutoDriveToPose extends Command {
   public void initialize() {
     m_timer.restart();
     g.ROBOT.angleRobotTarget_deg = m_robotTargetAngle_deg;
-
   }
 
   // TODO: Test this class. Possible issues.
@@ -62,11 +61,6 @@ public class AutoDriveToPose extends Command {
   @Override
   public void execute() {
     m_driveAngle_deg = m_desiredPose.getTranslation().minus(g.ROBOT.pose2d.getTranslation()).getAngle().getDegrees();
-    if(DriverStation.getAlliance().isPresent()){
-      if(DriverStation.getAlliance().get() == Alliance.Red){
-        m_driveAngle_deg = m_driveAngle_deg + 180;
-      }
-    }
     m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
 
     double speed = Math.abs(m_drivePID.calculate(m_driveDistance_m,0));
