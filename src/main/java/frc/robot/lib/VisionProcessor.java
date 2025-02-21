@@ -45,10 +45,10 @@ public class VisionProcessor implements IUpdateDashboard{
         m_leftPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_leftCameraLocation);
 
         
-        m_rightCamera = new PhotonCamera("RightCamera");
+        m_rightCamera = new PhotonCamera("RightArducam");
         m_rightCamera.setPipelineIndex(0);
         m_rightCamera.setDriverMode(false);
-        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2972,-0.2667,0.26), new Rotation3d(0,Math.toRadians(12.5),Math.toRadians(-10)));
+        Transform3d m_rightCameraLocation = new Transform3d(new Translation3d(0.2972,-0.2667,0.26), new Rotation3d(0,Math.toRadians(-12.5),Math.toRadians(10)));
         m_rightPoseEstimator = new PhotonPoseEstimator(m_apriltagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_rightCameraLocation);
         g.DASHBOARD.updates.add(this);
         createApriltagLocations();
@@ -172,15 +172,19 @@ public class VisionProcessor implements IUpdateDashboard{
                     if(!targets.isEmpty()){
                         for (PhotonTrackedTarget target : targets) {
                             ambiguity = target.poseAmbiguity;
-
                             if(ambiguity >= 0 && ambiguity < g.VISION.ambiguitySetPoint){
                                 if(tagState != TagFoundState.TARGET_ID_FOUND){
                                     tagState = TagFoundState.TAG_FOUND;
                                 }
                                 Optional<EstimatedRobotPose> estimatedRobotPose = _poseEstimtor.update(photonPipelineResult);
                                 if(estimatedRobotPose.isPresent()){
-                                    g.ROBOT.drive.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds);
-                                    g.VISION.pose2d = estimatedRobotPose.get().estimatedPose.toPose2d();
+                                    Pose2d pose = estimatedRobotPose.get().estimatedPose.toPose2d();
+                                    // if(DriverStation.getAlliance().isPresent()){
+                                    //     pose = new Pose2d(pose.getX(), pose.getY(), pose.getRotation().rotateBy(Rotation2d.kPi));
+                                    // }
+                                    
+                                    g.ROBOT.drive.addVisionMeasurement(pose, estimatedRobotPose.get().timestampSeconds);
+                                    g.VISION.pose2d = pose;
                                 }
                                 if(target.getFiducialId() == g.VISION.aprilTagRequestedID){
                                     tagState = TagFoundState.TARGET_ID_FOUND;
@@ -382,6 +386,8 @@ public class VisionProcessor implements IUpdateDashboard{
         SmartDashboard.putString("Vision/Apriltag AlignState", g.VISION.aprilTagAlignState.toString());
         SmartDashboard.putString("Vision/AprilTagFoundState", g.VISION.tagState.toString());
         SmartDashboard.putData("Vision/Vision Field2d", g.VISION.field2d);
+        SmartDashboard.putNumber("Vision/LeftAmbiguity", g.VISION.leftTargetAmbiguity);
+        SmartDashboard.putNumber("Vision/RightAmbiguity", g.VISION.rightTargetAmbiguity);
         //SmartDashboard.putNumber("Vision/InitTargetAngle",  g.VISION.initTargetIDAngle);
         //SmartDashboard.putNumber("Vision/Pose Vision X", g.VISION.pose2d.getX());
         //SmartDashboard.putNumber("Vision/Pose Vision Y", g.VISION.pose2d.getY());

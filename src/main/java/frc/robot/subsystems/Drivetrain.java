@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.AprilTagAlignState;
@@ -169,9 +171,16 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, Translation2d _centerOfRotation_m) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
+    if(DriverStation.getAlliance().isPresent()){
+      if(DriverStation.getAlliance().get() == Alliance.Red){
+        _robotAngle_deg = _robotAngle_deg - 180;
+        _targetAngle_deg = _targetAngle_deg - 180;
+      }
+    }
     double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
     //rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND_rad);
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
+
 
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
 
@@ -260,11 +269,12 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       }
     }
   }
+
   public double setTargetRobotAngle(RobotAlignStates _state){
     switch (_state) {
       case BACK:
       g.ROBOT.alignmentState = RobotAlignStates.BACK;
-      g.ROBOT.angleRobotTarget_deg = 180.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(180.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
           g.ROBOT.angleRobotTarget_deg -= 60;
@@ -275,7 +285,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
       case BACK_LEFT:
       g.ROBOT.alignmentState = RobotAlignStates.BACK_LEFT;
-      g.ROBOT.angleRobotTarget_deg = -120.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle( -120.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
           g.ROBOT.angleRobotTarget_deg -= 60;
@@ -286,7 +296,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
       case BACK_RIGHT:
       g.ROBOT.alignmentState = RobotAlignStates.BACK_RIGHT;
-      g.ROBOT.angleRobotTarget_deg = 120.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(120.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
           g.ROBOT.angleRobotTarget_deg -= 60;
@@ -297,7 +307,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
       case FRONT:
       g.ROBOT.alignmentState = RobotAlignStates.FRONT;
-      g.ROBOT.angleRobotTarget_deg = 0.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
           g.ROBOT.angleRobotTarget_deg -= 60;
@@ -308,7 +318,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
       case FRONT_LEFT:
       g.ROBOT.alignmentState = RobotAlignStates.FRONT_LEFT;
-      g.ROBOT.angleRobotTarget_deg = -60.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-60.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
           g.ROBOT.angleRobotTarget_deg -= 60;
@@ -319,7 +329,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
       case FRONT_RIGHT:
       g.ROBOT.alignmentState = RobotAlignStates.FRONT_RIGHT;
-      g.ROBOT.angleRobotTarget_deg = 60.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(60.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
           g.ROBOT.angleRobotTarget_deg -= 60;
@@ -330,27 +340,27 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         break;
       case LEFT:
       g.ROBOT.alignmentState = RobotAlignStates.LEFT;
-      g.ROBOT.angleRobotTarget_deg = 90.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(90.0);
         break;
       case RIGHT:
       g.ROBOT.alignmentState = RobotAlignStates.RIGHT;
-      g.ROBOT.angleRobotTarget_deg = -90.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle( -90.0);
         break;
       case STATION_LEFT:
       g.ROBOT.alignmentState = RobotAlignStates.STATION_LEFT;
-      g.ROBOT.angleRobotTarget_deg = -54.011;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-54.011);
         break;
       case STATION_RIGHT:
       g.ROBOT.alignmentState = RobotAlignStates.STATION_RIGHT;
-      g.ROBOT.angleRobotTarget_deg = 54.011;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(54.011);
         break;
       case UNKNOWN:
       g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
-      g.ROBOT.angleRobotTarget_deg = 0.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
         break;
       default:
       g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
-      g.ROBOT.angleRobotTarget_deg = 0.0;
+      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
         break;
 
     }
@@ -363,8 +373,14 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _angle_deg The target angle the robot should PID to in
    *                   AngleFieldCentric Mode.
    */
-  public void setTargetRobotAngle(double _angle_deg) {
+  public double setTargetRobotAngle(double _angle_deg) {
+    if(DriverStation.getAlliance().isPresent()){
+      if(DriverStation.getAlliance().get() == Alliance.Red){
+        _angle_deg = _angle_deg - 180;
+      }
+    }
     g.ROBOT.angleRobotTarget_deg = _angle_deg;
+    return g.ROBOT.angleRobotTarget_deg;
   }
 
     /**
@@ -378,6 +394,11 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
 
   public void resetYaw(double _angle) {
+    // if(DriverStation.getAlliance().isPresent()){
+    //   if(DriverStation.getAlliance().get() == Alliance.Red){
+    //     _angle = _angle - 180;
+    //   } 
+    // }
     g.ROBOT.gyro_pigeon2.setYaw(_angle);
     g.ROBOT.gyro_navx.reset();
     g.ROBOT.gyro_navx.setAngleAdjustment(-_angle);
@@ -461,9 +482,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
         
-        //g.ROBOT.vision.getTargetIDAngle(20);
         if(visionEnable){
-
           g.ROBOT.vision.calculatePose();
           visionEnable = false;
         }else {
