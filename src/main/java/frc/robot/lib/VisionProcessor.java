@@ -163,32 +163,30 @@ public class VisionProcessor implements IUpdateDashboard{
     }
     
     public PoseEstimateStatus calculatePose(PhotonCamera _camera, PhotonPoseEstimator _poseEstimtor) {
-        double ambiguity = 0;
+        double ambiguity = -1.0;
         TagFoundState tagState = TagFoundState.EMPTY;
+        int tagID = -1;
         List<PhotonPipelineResult> results = _camera.getAllUnreadResults(); // Get all results from the apriltag pipeline.
         if (!results.isEmpty()) { // If there are no results from the pipeline the results is empty. This happens 2 times. 1. No tag found, 2. Pipeline flushed to often with no new results
-            for (PhotonPipelineResult photonPipelineResult : results) {
-                if(photonPipelineResult.hasTargets()){
-                    List<PhotonTrackedTarget> targets = photonPipelineResult.getTargets();
-                    if(!targets.isEmpty()){
-                        for (PhotonTrackedTarget target : targets) {
-                            ambiguity = target.poseAmbiguity;
-                            if(ambiguity >= 0 && ambiguity < g.VISION.ambiguitySetPoint){
-                                if(tagState != TagFoundState.TARGET_ID_FOUND){
-                                    tagState = TagFoundState.TAG_FOUND;
+            for (PhotonPipelineResult photonPipelineResult : results) {  // Loop through all the results
+                if(photonPipelineResult.hasTargets()){ // If the result has targets
+                    List<PhotonTrackedTarget> targets = photonPipelineResult.getTargets(); //
+                    if(!targets.isEmpty()){ // If the targets are not empty
+                        for (PhotonTrackedTarget target : targets) { // Loop through all the targets
+                            ambiguity = target.poseAmbiguity; // Get the ambiguity of the target
+                            tagID = target.getFiducialId(); // Get the ID of the target
+                            if(ambiguity >= 0 && ambiguity < g.VISION.AMBIGUITY_SETPOINT){  // If the ambiguity is within the setpoint
+                                if(tagState != TagFoundState.TARGET_ID_FOUND){  
+                                    tagState = TagFoundState.TAG_FOUND; 
                                 }
-                                Optional<EstimatedRobotPose> estimatedRobotPose = _poseEstimtor.update(photonPipelineResult);
-                                if(estimatedRobotPose.isPresent()){
-                                    Pose2d pose = estimatedRobotPose.get().estimatedPose.toPose2d();
-                                    // if(DriverStation.getAlliance().isPresent()){
-                                    //     pose = new Pose2d(pose.getX(), pose.getY(), pose.getRotation().rotateBy(Rotation2d.kPi));
-                                    // }
-                                    
-                                    g.ROBOT.drive.addVisionMeasurement(pose, estimatedRobotPose.get().timestampSeconds);
-                                    g.VISION.pose2d = pose;
+                                Optional<EstimatedRobotPose> estimatedRobotPose = _poseEstimtor.update(photonPipelineResult); // Update the pose estimator with the result
+                                if(estimatedRobotPose.isPresent()){ 
+                                    Pose2d pose = estimatedRobotPose.get().estimatedPose.toPose2d(); // Get the pose of the robot
+                                    g.ROBOT.drive.addVisionMeasurement(pose, estimatedRobotPose.get().timestampSeconds); // Add the pose to the drive
+                                    g.VISION.pose2d = Optional.of(pose); // Set the global vision pose to the pose
                                 }
-                                if(target.getFiducialId() == g.VISION.aprilTagRequestedID){
-                                    tagState = TagFoundState.TARGET_ID_FOUND;
+                                if(target.getFiducialId() == g.VISION.aprilTagRequestedID){ // If the target ID is the same as the requested ID
+                                    tagState = TagFoundState.TARGET_ID_FOUND; // Set the tagState to TARGET_ID_FOUND
                                 }
                             }
                         }
@@ -196,8 +194,8 @@ public class VisionProcessor implements IUpdateDashboard{
                 }
             }
         }
-        g.VISION.tagState = tagState;
-        return new PoseEstimateStatus(g.VISION.tagState, ambiguity);
+        g.VISION.tagState = tagState; // Set the global tagState to the tagState
+        return new PoseEstimateStatus(g.VISION.tagState, ambiguity, tagID); // Return the tagState, ambiguity and tagID
     }
  
     
@@ -205,35 +203,72 @@ public class VisionProcessor implements IUpdateDashboard{
         PoseEstimateStatus leftCamState = null;
         PoseEstimateStatus rightCamState = null;
 
+        // if (DriverStation.getAlliance().isPresent()) {
+        //     // Calculate the pose for the left camera
+        //     g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
+        //     if (m_leftCamera.isConnected()) {
+        //         leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
+        //         g.VISION.leftTargetAmbiguity = leftCamState.getAmbiguity();
+        //     }
+        //     // Calculate the pose for the right camera
+        //     if (m_rightCamera.isConnected()) {
+        //         rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
+        //         g.VISION.rightTargetAmbiguity = rightCamState.getAmbiguity();
+        //     }
+        //     if (m_rightCamera.isConnected() && m_leftCamera.isConnected()) {
+        //         double angle = Math.abs(g.VISION.pose2d.getRotation().getDegrees());
+        //         if (!m_resetYawInitFlag && angle > 5.0) {
+        //             if (g.VISION.leftTargetAmbiguity >= 0.0 && g.VISION.leftTargetAmbiguity < g.VISION.AMBIGUITY_SETPOINT &&
+        //                 g.VISION.rightTargetAmbiguity >= 0.0 && g.VISION.rightTargetAmbiguity < g.VISION.AMBIGUITY_SETPOINT) {
+        //                 g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
+        //                 m_resetYawInitFlag = true;
+        //             }
+        //         }
+        //     }
+
+        //     if (leftCamState != null && rightCamState != null) {
+        //         if (leftCamState.getState() == TagFoundState.TARGET_ID_FOUND || rightCamState.getState() == TagFoundState.TARGET_ID_FOUND) {
+        //             g.VISION.isTargetAprilTagFound = true;
+             
+        //         } else if (leftCamState.getState() == TagFoundState.EMPTY && rightCamState.getState() == TagFoundState.EMPTY) {
+        //             g.VISION.isTargetAprilTagFound = false;
+        //         }
+        //     }
+        // }
+
         if (DriverStation.getAlliance().isPresent()) {
-            // Calculate the pose for the left camera
             g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
-            if (m_leftCamera.isConnected()) {
+            if (m_leftCamera.isConnected() && m_rightCamera.isConnected()) {
                 leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
                 g.VISION.leftTargetAmbiguity = leftCamState.getAmbiguity();
-            }
-            // Calculate the pose for the right camera
-            if (m_rightCamera.isConnected()) {
+
                 rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
                 g.VISION.rightTargetAmbiguity = rightCamState.getAmbiguity();
-            }
-            if (m_rightCamera.isConnected() && m_leftCamera.isConnected()) {
-                double angle = Math.abs(g.VISION.pose2d.getRotation().getDegrees());
-                if (!m_resetYawInitFlag && angle > 5.0) {
-                    if (g.VISION.leftTargetAmbiguity >= 0.0 && g.VISION.leftTargetAmbiguity < g.VISION.ambiguitySetPoint &&
-                        g.VISION.rightTargetAmbiguity >= 0.0 && g.VISION.rightTargetAmbiguity < g.VISION.ambiguitySetPoint) {
-                        g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
-                        m_resetYawInitFlag = true;
-                    }
-                }
-            }
 
-            if (leftCamState != null && rightCamState != null) {
-                if (leftCamState.getState() == TagFoundState.TARGET_ID_FOUND || rightCamState.m_state == TagFoundState.TARGET_ID_FOUND) {
+                resetYaw(leftCamState.getAmbiguity(), rightCamState.getAmbiguity());
+
+                // Handle global isTargetAprilTagFound
+                if (leftCamState.getState() == TagFoundState.TARGET_ID_FOUND || rightCamState.getState() == TagFoundState.TARGET_ID_FOUND) {
                     g.VISION.isTargetAprilTagFound = true;
              
-                } else if (leftCamState.m_state == TagFoundState.EMPTY && rightCamState.getState() == TagFoundState.EMPTY) {
+                } else if (leftCamState.getState() == TagFoundState.EMPTY && rightCamState.getState() == TagFoundState.EMPTY) {
                     g.VISION.isTargetAprilTagFound = false;
+                }
+            }
+        }
+    }
+    /**
+     * Reset the yaw of the robot if the robot is at an angle, or POSE is not zero, and the vision pose is within the ambiguity setpoint.
+     * @param _leftAmbiguity
+     * @param _rightAmbiguity
+     */
+    private void resetYaw(double _leftAmbiguity, double _rightAmbiguity) {
+        if (!m_resetYawInitFlag) {  // Has this been done before
+            if (g.VISION.pose2d.isPresent()) { // has a pose been found by vision
+                // Are both cameras seeing a good target. 
+                if (_leftAmbiguity >= 0.0 && _leftAmbiguity < g.VISION.AMBIGUITY_SETPOINT && _rightAmbiguity >= 0.0 && _rightAmbiguity < g.VISION.AMBIGUITY_SETPOINT) {
+                    g.ROBOT.drive.resetYaw(g.VISION.pose2d.get().getRotation().getDegrees()); // Reset the yaw to the vision pose
+                    m_resetYawInitFlag = true; // Set the flag to true so we don't do this again.
                 }
             }
         }
@@ -316,10 +351,13 @@ public class VisionProcessor implements IUpdateDashboard{
 
     @Override
     public void updateDashboard() {
-        g.VISION.field2d.setRobotPose(g.VISION.pose2d);
+        if(g.VISION.pose2d.isPresent()){
+           g.VISION.field2d.setRobotPose(g.VISION.pose2d.get());
+           SmartDashboard.putNumber("Vision/Pose Angle", g.VISION.pose2d.get().getRotation().getDegrees());
+        }
         SmartDashboard.putNumber("Vision/Apriltag Requested ID", g.VISION.aprilTagRequestedID);
         //SmartDashboard.putNumber("Vision/Empty Tag Cnt", m_tagEmptyCnt);
-        SmartDashboard.putNumber("Vision/Pose Angle", g.VISION.pose2d.getRotation().getDegrees());
+        
         //SmartDashboard.putNumber("Vision/AprilTag Requested Pose X", g.VISION.aprilTagRequestedPose.getX());
         //SmartDashboard.putNumber("Vision/AprilTag Requested Pose Y", g.VISION.aprilTagRequestedPose.getY());
         SmartDashboard.putString("Vision/Apriltag AlignState", g.VISION.aprilTagAlignState.toString());

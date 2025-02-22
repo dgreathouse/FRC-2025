@@ -50,12 +50,10 @@ public class DrivetrainDefaultCommand extends Command {
     rightYFiltered_Driver = m_stickLimiterRY.calculate(rightYFiltered_Driver);
 
     double redInvert = 1;
-    var alliance = DriverStation.getAlliance();
-    if(alliance.isPresent()){
-      if(alliance.get() == Alliance.Red){
-        redInvert = -1;
-      }
+    if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
+      redInvert = -1;
     }
+
     if(g.ROBOT.vision.getIsAutoAprilTagActive()){
       g.VISION.aprilTagRequestedPose = g.ROBOT.vision.getRobotPoseForAprilTag(g.VISION.aprilTagRequestedID, g.VISION.aprilTagAlignState);
       AutoDriveToPose autoPose = new AutoDriveToPose(g.VISION.aprilTagRequestedPose, 0.7, 5);

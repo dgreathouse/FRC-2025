@@ -26,7 +26,6 @@ import frc.robot.lib.CoralArmState;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.StartLocation;
-import frc.robot.lib.TagFoundState;
 import frc.robot.lib.g;
 
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
@@ -190,12 +189,11 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _targetAngle_deg The angle you want the robot front to point to.
    * @param _driveAngle_deg The drive angle you want the robot to drive at
    * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
-  
    */
   public void drivePolarFieldCentric(double _maxSpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m) {
     
-    double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _maxSpeed;
-    double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _maxSpeed;
+    double y = Math.sin(Math.toRadians(_driveAngle_deg)) * _maxSpeed;
+    double x = Math.cos(Math.toRadians(_driveAngle_deg)) * _maxSpeed;
     driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg, _centerOfRotation_m);
   }
   /** This is a compensated AngleFieldCentric that takes the speed from the x,y and generates a new X,Y from driveAngle
@@ -210,15 +208,15 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m){
 
     double speed = Math.max(Math.abs(_xSpeed), Math.abs(_ySpeed));
-    double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * speed;
-    double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * speed;
+    double y = Math.sin(Math.toRadians(_driveAngle_deg)) * speed;
+    double x = Math.cos(Math.toRadians(_driveAngle_deg)) * speed;
     driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg, _centerOfRotation_m);
   }
 
   public void setSwerveModuleStates(ChassisSpeeds _speeds, Translation2d _centerOfRotation_m){
     _centerOfRotation_m = _centerOfRotation_m == null ? g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m : _centerOfRotation_m;
 
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds, _centerOfRotation_m);
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(_speeds, _centerOfRotation_m);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MetersPerSecond.of(g.SWERVE.DRIVE.MAX_VELOCITY_mPsec));
     g.DRIVETRAIN.driveSpeedRequested_mps = 0.0;
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
@@ -458,7 +456,6 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     return Math.abs(_speed - g.DRIVETRAIN.driveSpeedActual_mps);
   }
   private class PoseEstimatorThread extends Thread{
-    boolean visionEnable = false;
     public PoseEstimatorThread(){
       super();
     }
@@ -478,22 +475,25 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
         
-        if(visionEnable){
-          g.ROBOT.vision.calculatePose();
-          visionEnable = false;
-        }else {
-          visionEnable = true;
-        }
+        g.ROBOT.vision.calculatePose(); 
+        // if(visionEnable){ 
+        //   g.ROBOT.vision.calculatePose();
+        //   visionEnable = false;
+        // }else {
+        //   visionEnable = true;
+        // }
         
-        if(g.VISION.isTargetAprilTagFound || g.VISION.tagState == TagFoundState.TAG_FOUND){
-          m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH);
-        }else {
-          m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_LOW);
-        }
+        // if(g.VISION.isTargetAprilTagFound || g.VISION.tagState == TagFoundState.TAG_FOUND){
+        //   m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH);
+        // }else {
+        //   m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_LOW);
+        // }
+
         g.ROBOT.pose2d = m_poseEstimator.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
         g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
         
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
+
         try {
           Thread.sleep(g.ROBOT.ODOMETRY_RATE_ms);
         } catch (InterruptedException e) {
@@ -503,12 +503,22 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       }
     }
   }
+  /**
+   * Add a vision measurement to the PoseEstimator.
+   * This only gets called if a vision measurement is available and with low ambiguity.
+   * @param _estPose The estimated pose from the vision system
+   * @param _timeStamp The time the vision measurement was taken
+   */
   public void addVisionMeasurement(Pose2d _estPose, double _timeStamp){
     // TODO only add vision measurement if drive speed is low. TEST
     //  [x] Add speed check
     //  [ ] Test if this works
-    if(g.DRIVETRAIN.driveSpeedActual_mps < g.DRIVETRAIN.DRIVE_SPEED_LOW_mps){
-      m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp);
+
+    if(g.DRIVETRAIN.driveSpeedActual_mps < g.DRIVETRAIN.DRIVE_SPEED_LOW_mps){ // If the robot is moving slow
+      m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH); // Set the standard deviation to high for Vision
+      m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp); // Add the vision measurement to the PoseEstimator
+    }else {
+      m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_LOW); // Set the standard deviation to high for Vision
     }
     
   }
