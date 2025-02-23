@@ -343,7 +343,7 @@ public class g {
   public static class LIFT {
     public static final double SPROCKET_PITCH_mm = 44.4754;
     public static final double SPROCKET_CIRCUMFERENCE_mm = Math.PI * SPROCKET_PITCH_mm;
-    public static final double GEARBOX_RATIO = 84.0;
+    public static final double GEARBOX_RATIO = 48.0;
     public static final double MOTOR_ROTATIONS_TO_LIFT_DISTANCE_rotPmm = GEARBOX_RATIO / SPROCKET_CIRCUMFERENCE_mm;
     public static final double MOTOR_MAX_VELOCITY_rotPsec = 5800.0 / 60.0;
     public static final double MAX_VELOCITY_mmPsec = MOTOR_MAX_VELOCITY_rotPsec / MOTOR_ROTATIONS_TO_LIFT_DISTANCE_rotPmm;

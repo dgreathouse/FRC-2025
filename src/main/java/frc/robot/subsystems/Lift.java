@@ -19,7 +19,7 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   TalonFX m_motor;
   PIDController m_pid;
   double m_kG = 0.0;
-  double m_maxSpeed_volts = 12;
+  double m_maxSpeed_volts = 9;
   VoltageOut m_voltageOut;
   /** Creates a new ScissorLift. */
   public Lift() {
