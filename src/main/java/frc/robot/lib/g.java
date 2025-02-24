@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.Algae;
+//import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lift;
@@ -116,7 +116,7 @@ public class g {
     public static VisionProcessor vision = new VisionProcessor();
     
     public static Drivetrain drive = new Drivetrain();
-    public static Algae algae = new Algae();
+    //public static Algae algae = new Algae();
     public static Coral coral = new Coral();
     public static Lift lift = new Lift();
     
@@ -337,8 +337,10 @@ public class g {
   public static class CORAL {
     public static final double ROTATE_GEAR_RATIO = 2; // TODO: find gear ratio
     public static final double INTAKE_RANGE_MIN_mm = 0.1;
+
     public static volatile CoralArmState armState = CoralArmState.START;
     public static volatile CoralIntakeStates intakeState = CoralIntakeStates.OFF;
+    public static volatile double spinSpeed = 0.6;
   }
   public static class LIFT {
     public static final double SPROCKET_PITCH_mm = 44.4754;
