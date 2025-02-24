@@ -132,10 +132,10 @@ public class g {
    */
   public static class CAN_IDS_ROBORIO {
     public static final String NAME = "rio";
-    public static final int CORAL_LEFT_MOTOR  = 20;
-    public static final int CORAL_RIGHT_MOTOR  = 21;
-    public static final int CORAL_ROTATE_MOTOR  = 22;
-    public static final int CORAL_RANGE_SENSOR = 23;
+    public static final int CORAL_LEFT_MOTOR  = 5;
+    public static final int CORAL_RIGHT_MOTOR  = 6;
+    public static final int CORAL_ROTATE_MOTOR  = 60;
+    public static final int CORAL_RANGE_SENSOR = 30;
   }
   /** This is one place to store all the devices that are on the CANIvore CAN bus
    *  The CANIvore is a high speed CAN-FD adapter that was made by CTRE.
