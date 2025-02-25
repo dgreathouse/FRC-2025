@@ -79,6 +79,9 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   public void moveToPosition(double _pos_mm) {
     double volts = m_pid.calculate(getPosition_mm(), _pos_mm);
     volts = MathUtil.clamp(volts, -m_maxSpeed_volts, m_maxSpeed_volts);
+    if(_pos_mm < 20){
+      volts = 0;
+    }
     moveWithVoltage(m_kG + volts);
 
   }

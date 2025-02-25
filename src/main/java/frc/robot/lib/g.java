@@ -337,7 +337,7 @@ public class g {
   public static class CORAL {
     public static final double ROTATE_GEAR_RATIO = 4*4*3*(84/34); // TODO: find gear ratio
     public static final double INTAKE_RANGE_MIN_mm = 0.1;
-
+    public static volatile double spinnerHoldPosition = 0.0;
     public static volatile CoralArmState armState = CoralArmState.START;
     public static volatile CoralIntakeStates intakeState = CoralIntakeStates.OFF;
     public static volatile double spinSpeed = 0.6;

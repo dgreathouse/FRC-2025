@@ -15,20 +15,24 @@ public class CoralDefaultCommand extends Command {
   public void initialize() {
 
   }
-
+  // Check the sensor for a valid signal in range. If it is, start pulling the coral in until the signal is gone.
+  private void getCoral(){
+    if(g.ROBOT.coral.getRange() < 70 && g.ROBOT.coral.getRange() > 0){ // TODO: adjust range sensor
+      g.ROBOT.coral.spin(0.25); // Pull in the coral
+    }else {
+      g.ROBOT.coral.spin(0.0); // Stop pulling in the coral
+    }
+  }
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     if(g.OI.DRIVER_CORAL_IN.getAsBoolean()){
-      if(g.ROBOT.coral.getRange() < 70){ // TODO: adjust range sensor
-        g.ROBOT.coral.spin(0.25);
-      }else {
-        g.ROBOT.coral.spin(0.0);
-      }
+      getCoral();
     }else if(g.OI.DRIVER_CORAL_OUT.getAsBoolean()){
       g.ROBOT.coral.spin(0.25);
     }else { // OFF
-      g.ROBOT.coral.spin(0.0);
+
+      g.ROBOT.coral.spinnersHold(g.CORAL.spinnerHoldPosition);
     }
     g.ROBOT.coral.rotate(g.CORAL.armState);
   }

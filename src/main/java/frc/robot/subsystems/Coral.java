@@ -33,6 +33,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   SparkMax m_rotateMotor;
   CANrange m_rangeSensor;
   PIDController m_rotatePID;
+  PIDController m_spinnerPid;
   ArmFeedforward m_rotateFF;
   VoltageOut m_leftVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
   VoltageOut m_rightVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
@@ -64,12 +65,23 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     maxConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     m_rotateMotor.configure(maxConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
+    m_spinnerPid = new PIDController(0.1, 0, 0);
+    m_spinnerPid.setIZone(0.1);
+
+
+
     
     // FovParamsConfigs fovConfig = new FovParamsConfigs();
     // fovConfig.FOVCenterX = 1.0;
     // m_rangeSensor.getConfigurator().apply(fovConfig);
     g.DASHBOARD.updates.add(this);
 
+  }
+  public void spinnersHold(double _position){
+    double pidVolts = m_spinnerPid.calculate(getSpinnerPosition(), _position);
+
+    m_leftMotor.setControl(m_leftVoltageOut.withOutput(pidVolts));
+    m_rightMotor.setControl(m_rightVoltageOut.withOutput(-pidVolts));
   }
   public void spinIn(){
 
@@ -109,20 +121,24 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
         break;
     }
   }
+
   public void rotateToAngle(double _angle_deg){
     double ff = m_rotateFF.calculate(Math.toRadians(_angle_deg), 0.1);
     double pid = m_rotatePID.calculate(Math.toRadians(getRotateAngle_deg()), Math.toRadians(_angle_deg));
     SmartDashboard.putNumber("Coral/pid", pid);
     m_rotateMotor.setVoltage(pid);
   }
+
   public double getRotateAngle_deg(){
-
-    return m_rotateMotor.getEncoder().getPosition()*360 / g.CORAL.ROTATE_GEAR_RATIO;
+    return m_rotateMotor.getEncoder().getPosition() * 360 / g.CORAL.ROTATE_GEAR_RATIO;
   }
+
   public double getRange(){
-
-    return m_rangeSensor.getDistance().getValue().in(Millimeter);
+    boolean status = m_rangeSensor.getIsDetected().getValue();
+    return status ? m_rangeSensor.getDistance().getValue().in(Millimeter) : -1;
+   
   }
+
   @Override
   public void periodic() {
 
@@ -131,6 +147,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
 
     return m_rotatePID.atSetpoint();
   }
+
   @Override
   public void updateDashboard() {
     SmartDashboard.putString("Coral/Claw Arm State", g.CORAL.armState.toString());
