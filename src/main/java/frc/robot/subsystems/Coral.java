@@ -7,10 +7,12 @@ import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.ProximityParamsConfigs;
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -41,7 +43,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_rotateMotor = new SparkMax(g.CAN_IDS_ROBORIO.CORAL_ROTATE_MOTOR, MotorType.kBrushless);
     m_rangeSensor = new CANrange(g.CAN_IDS_ROBORIO.CORAL_RANGE_SENSOR);
 
-    m_rotatePID = new PIDController(0, 0, 0);
+    m_rotatePID = new PIDController(8.45, 4, 0);
     m_rotateFF = new ArmFeedforward(0, 0, 0);
 
     MotorOutputConfigs spinnerConfig = new MotorOutputConfigs();
@@ -49,6 +51,10 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_leftMotor.getConfigurator().apply(spinnerConfig);
     m_rightMotor.getConfigurator().apply(spinnerConfig);
     
+    TalonFXSConfiguration toConfigure = new TalonFXSConfiguration();
+    toConfigure.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    m_leftMotor.getConfigurator().apply(toConfigure);
+    m_rightMotor.getConfigurator().apply(toConfigure);
     //m_rotateMotor.setPosition(0.0);  // TODO: set offset angle for start position.
 
 
@@ -76,19 +82,19 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   public void rotate(CoralArmState _state){
     switch (_state) { // TODO: adjust the angles for the levels
       case L1:
-        rotateToAngle(45);
+        rotateToAngle(10);
         break;
       case L2:
-      rotateToAngle(45);
+      rotateToAngle(15);
         break;
       case L3:
-      rotateToAngle(45);
+      rotateToAngle(20);
         break;
       case L4:
-      rotateToAngle(45);
+      rotateToAngle(25);
         break;
       case START:
-      rotateToAngle(45);
+      rotateToAngle(-10);
         break;
       default:
         break;
@@ -97,11 +103,12 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   public void rotateToAngle(double _angle_deg){
     double ff = m_rotateFF.calculate(Math.toRadians(_angle_deg), 0.1);
     double pid = m_rotatePID.calculate(Math.toRadians(getRotateAngle_deg()), Math.toRadians(_angle_deg));
-    //m_rotateMotor.setControl(m_rotateVoltageOut.withOutput(pid + ff));
+    SmartDashboard.putNumber("Coral/pid", pid);
+    m_rotateMotor.setVoltage(pid);
   }
   public double getRotateAngle_deg(){
 
-    return m_rotateMotor.getAbsoluteEncoder().getPosition() * 360 * g.CORAL.ROTATE_GEAR_RATIO;
+    return m_rotateMotor.getEncoder().getPosition()*360 / g.CORAL.ROTATE_GEAR_RATIO;
   }
   public double getRange(){
 

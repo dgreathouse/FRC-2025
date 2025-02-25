@@ -21,12 +21,12 @@ public class CoralDefaultCommand extends Command {
   public void execute() {
     if(g.OI.DRIVER_CORAL_IN.getAsBoolean()){
       if(g.ROBOT.coral.getRange() > 1){ // TODO: adjust range sensor
-        g.ROBOT.coral.spin(0.5);
+        g.ROBOT.coral.spin(0.25);
       }else {
         g.ROBOT.coral.spin(0.0);
       }
     }else if(g.OI.DRIVER_CORAL_OUT.getAsBoolean()){
-      g.ROBOT.coral.spin(0.5);
+      g.ROBOT.coral.spin(0.25);
     }else { // OFF
       g.ROBOT.coral.spin(0.0);
     }

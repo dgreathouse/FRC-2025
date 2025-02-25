@@ -335,12 +335,14 @@ public class g {
     public static volatile AlgaeIntakeStates intakeState = AlgaeIntakeStates.OFF;
   }
   public static class CORAL {
-    public static final double ROTATE_GEAR_RATIO = 2; // TODO: find gear ratio
+    public static final double ROTATE_GEAR_RATIO = 4*4*3*(84/34); // TODO: find gear ratio
     public static final double INTAKE_RANGE_MIN_mm = 0.1;
 
     public static volatile CoralArmState armState = CoralArmState.START;
     public static volatile CoralIntakeStates intakeState = CoralIntakeStates.OFF;
     public static volatile double spinSpeed = 0.6;
+    public static final double ARM_BACK_LIMIT = 73;
+    public static final double ARM_FROUNT_LIMIT = 64;
   }
   public static class LIFT {
     public static final double SPROCKET_PITCH_mm = 44.4754;
