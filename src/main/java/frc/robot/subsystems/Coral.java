@@ -15,7 +15,9 @@ import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
@@ -44,6 +46,8 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_rangeSensor = new CANrange(g.CAN_IDS_ROBORIO.CORAL_RANGE_SENSOR);
 
     m_rotatePID = new PIDController(8.45, 4, 0);
+    m_rotatePID.setIZone(Math.toRadians(7.5));
+
     m_rotateFF = new ArmFeedforward(0, 0, 0);
 
     MotorOutputConfigs spinnerConfig = new MotorOutputConfigs();
@@ -55,14 +59,16 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     toConfigure.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     m_leftMotor.getConfigurator().apply(toConfigure);
     m_rightMotor.getConfigurator().apply(toConfigure);
-    //m_rotateMotor.setPosition(0.0);  // TODO: set offset angle for start position.
 
+    SparkMaxConfig maxConfig = new SparkMaxConfig();
+    maxConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
+    m_rotateMotor.configure(maxConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
     
     FovParamsConfigs fovConfig = new FovParamsConfigs();
     fovConfig.FOVCenterX = 1.0;
     m_rangeSensor.getConfigurator().apply(fovConfig);
-     g.DASHBOARD.updates.add(this);
+    g.DASHBOARD.updates.add(this);
 
   }
   public void spinIn(){
@@ -126,7 +132,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   public void updateDashboard() {
     SmartDashboard.putString("Coral/Claw Arm State", g.CORAL.armState.toString());
     SmartDashboard.putNumber("Coral/Arm Angle", getRotateAngle_deg());
-SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
+    SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
   //  SmartDashboard.putNumber("Coral/Arm Rotations",m_rotateMotor.getPosition().getValueAsDouble() / g.CORAL.ROTATE_GEAR_RATIO);
   }
 }

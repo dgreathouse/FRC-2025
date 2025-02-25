@@ -341,8 +341,8 @@ public class g {
     public static volatile CoralArmState armState = CoralArmState.START;
     public static volatile CoralIntakeStates intakeState = CoralIntakeStates.OFF;
     public static volatile double spinSpeed = 0.6;
-    public static final double ARM_BACK_LIMIT = 73;
-    public static final double ARM_FROUNT_LIMIT = 64;
+    public static final double ARM_BACK_LIMIT = -70;
+    public static final double ARM_FROUNT_LIMIT = 60;
   }
   public static class LIFT {
     public static final double SPROCKET_PITCH_mm = 44.4754;

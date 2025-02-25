@@ -18,8 +18,8 @@ import frc.robot.lib.g;
 public class Lift extends SubsystemBase implements IUpdateDashboard{
   TalonFX m_motor;
   PIDController m_pid;
-  double m_kG = 0.0;
-  double m_maxSpeed_volts = 9;
+  double m_kG = 0.50;
+  double m_maxSpeed_volts = 7;
   VoltageOut m_voltageOut;
   /** Creates a new ScissorLift. */
   public Lift() {
@@ -55,16 +55,16 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   public void moveToPosition(CoralArmState _state){
     switch (_state) {
       case L1:
-      moveToPosition(0);
+      moveToPosition(20);
         break;
       case L2:
-      moveToPosition(0);
+      moveToPosition(40);
         break;
       case L3:
-      moveToPosition(200);
+      moveToPosition(150);
         break;
       case L4:
-      moveToPosition(350);
+      moveToPosition(370);
         break;
       case START:
         // TODO Add logic for algae if algae is not at START
