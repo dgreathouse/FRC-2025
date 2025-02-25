@@ -18,7 +18,7 @@ import frc.robot.lib.g;
 public class Lift extends SubsystemBase implements IUpdateDashboard{
   TalonFX m_motor;
   PIDController m_pid;
-  double m_kG = 0.50;
+  double m_kG = 0.0;
   double m_maxSpeed_volts = 7;
   VoltageOut m_voltageOut;
   /** Creates a new ScissorLift. */
@@ -99,5 +99,6 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   public void updateDashboard() {
     SmartDashboard.putNumber("Lift/Distance_mm", getPosition_mm());
     SmartDashboard.putNumber("Lift/Volts", m_voltageOut.Output);
+    
   }
 }
