@@ -65,9 +65,9 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_rotateMotor.configure(maxConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
     
-    FovParamsConfigs fovConfig = new FovParamsConfigs();
-    fovConfig.FOVCenterX = 1.0;
-    m_rangeSensor.getConfigurator().apply(fovConfig);
+    // FovParamsConfigs fovConfig = new FovParamsConfigs();
+    // fovConfig.FOVCenterX = 1.0;
+    // m_rangeSensor.getConfigurator().apply(fovConfig);
     g.DASHBOARD.updates.add(this);
 
   }
@@ -85,10 +85,13 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_rightMotor.setControl(m_rightVoltageOut.withOutput(-_speed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
 
   }
+  public double getSpinnerPosition(){
+    return m_leftMotor.getPosition().getValueAsDouble();
+  }
   public void rotate(CoralArmState _state){
     switch (_state) { // TODO: adjust the angles for the levels
       case L1:
-        rotateToAngle(10);
+        rotateToAngle(0);
         break;
       case L2:
       rotateToAngle(15);
@@ -100,7 +103,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
       rotateToAngle(25);
         break;
       case START:
-      rotateToAngle(-10);
+      rotateToAngle(-73);
         break;
       default:
         break;
@@ -133,6 +136,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     SmartDashboard.putString("Coral/Claw Arm State", g.CORAL.armState.toString());
     SmartDashboard.putNumber("Coral/Arm Angle", getRotateAngle_deg());
     SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
+    SmartDashboard.putNumber("Coral/SpinnerPosition", getSpinnerPosition());
   //  SmartDashboard.putNumber("Coral/Arm Rotations",m_rotateMotor.getPosition().getValueAsDouble() / g.CORAL.ROTATE_GEAR_RATIO);
   }
 }

@@ -20,7 +20,7 @@ public class CoralDefaultCommand extends Command {
   @Override
   public void execute() {
     if(g.OI.DRIVER_CORAL_IN.getAsBoolean()){
-      if(g.ROBOT.coral.getRange() > 1){ // TODO: adjust range sensor
+      if(g.ROBOT.coral.getRange() < 70){ // TODO: adjust range sensor
         g.ROBOT.coral.spin(0.25);
       }else {
         g.ROBOT.coral.spin(0.0);
@@ -32,7 +32,7 @@ public class CoralDefaultCommand extends Command {
     }
     g.ROBOT.coral.rotate(g.CORAL.armState);
   }
-
+  
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
