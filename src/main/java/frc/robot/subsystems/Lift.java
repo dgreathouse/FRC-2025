@@ -19,7 +19,8 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   TalonFX m_motor;
   PIDController m_pid;
   double m_kG = 0.0;
-  double m_maxSpeed_volts = 7;
+  double m_maxUpSpeed_volts = 7;
+  double m_maxDownSpeed_volts = -3;
   VoltageOut m_voltageOut;
   /** Creates a new ScissorLift. */
   public Lift() {
@@ -55,16 +56,16 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   public void moveToPosition(CoralArmState _state){
     switch (_state) {
       case L1:
-      moveToPosition(20);
+      moveToPosition(0);
         break;
       case L2:
-      moveToPosition(40);
+      moveToPosition(0);
         break;
       case L3:
-      moveToPosition(150);
+      moveToPosition(390);
         break;
       case L4:
-      moveToPosition(370);
+      moveToPosition(0);
         break;
       case START:
         // TODO Add logic for algae if algae is not at START
@@ -78,8 +79,8 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
 
   public void moveToPosition(double _pos_mm) {
     double volts = m_pid.calculate(getPosition_mm(), _pos_mm);
-    volts = MathUtil.clamp(volts, -m_maxSpeed_volts, m_maxSpeed_volts);
-    if(_pos_mm < 20){
+    volts = MathUtil.clamp(volts, m_maxDownSpeed_volts, m_maxUpSpeed_volts);
+    if(getPosition_mm() < 20 && volts < 0) {
       volts = 0;
     }
     moveWithVoltage(m_kG + volts);

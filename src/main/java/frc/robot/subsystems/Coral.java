@@ -19,6 +19,7 @@ import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,7 +47,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_rotateMotor = new SparkMax(g.CAN_IDS_ROBORIO.CORAL_ROTATE_MOTOR, MotorType.kBrushless);
     m_rangeSensor = new CANrange(g.CAN_IDS_ROBORIO.CORAL_RANGE_SENSOR);
 
-    m_rotatePID = new PIDController(8.45, 4, 0);
+    m_rotatePID = new PIDController(2.45, 1, 0);
     m_rotatePID.setIZone(Math.toRadians(7.5));
 
     m_rotateFF = new ArmFeedforward(0, 0, 0);
@@ -122,17 +123,23 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     }
   }
 
+
   public void rotateToAngle(double _angle_deg){
     double ff = m_rotateFF.calculate(Math.toRadians(_angle_deg), 0.1);
     double pid = m_rotatePID.calculate(Math.toRadians(getRotateAngle_deg()), Math.toRadians(_angle_deg));
     SmartDashboard.putNumber("Coral/pid", pid);
+    pid = MathUtil.clamp(pid, -2, 2);
     m_rotateMotor.setVoltage(pid);
   }
 
   public double getRotateAngle_deg(){
     return m_rotateMotor.getEncoder().getPosition() * 360 / g.CORAL.ROTATE_GEAR_RATIO;
+   
   }
 
+  public boolean getIsDetected(){
+    return m_rangeSensor.getIsDetected().getValue();
+  }
   public double getRange(){
     boolean status = m_rangeSensor.getIsDetected().getValue();
     return status ? m_rangeSensor.getDistance().getValue().in(Millimeter) : -1;
@@ -154,6 +161,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     SmartDashboard.putNumber("Coral/Arm Angle", getRotateAngle_deg());
     SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
     SmartDashboard.putNumber("Coral/SpinnerPosition", getSpinnerPosition());
+    SmartDashboard.putBoolean("Coral/IsCoralDetected", getIsDetected());
   //  SmartDashboard.putNumber("Coral/Arm Rotations",m_rotateMotor.getPosition().getValueAsDouble() / g.CORAL.ROTATE_GEAR_RATIO);
   }
 }

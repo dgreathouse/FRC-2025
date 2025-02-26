@@ -17,7 +17,7 @@ public class CoralDefaultCommand extends Command {
   }
   // Check the sensor for a valid signal in range. If it is, start pulling the coral in until the signal is gone.
   private void getCoral(){
-    if(g.ROBOT.coral.getRange() < 70 && g.ROBOT.coral.getRange() > 0){ // TODO: adjust range sensor
+    if(g.ROBOT.coral.getRange() < 70 && g.ROBOT.coral.getIsDetected()){ // TODO: adjust range sensor
       g.ROBOT.coral.spin(0.25); // Pull in the coral
     }else {
       g.ROBOT.coral.spin(0.0); // Stop pulling in the coral
