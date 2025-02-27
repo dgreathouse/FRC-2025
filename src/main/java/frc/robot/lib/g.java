@@ -343,6 +343,8 @@ public class g {
     public static volatile double spinSpeed = 0.6;
     public static final double ARM_BACK_LIMIT = -70;
     public static final double ARM_FROUNT_LIMIT = 60;
+    public static final double SPINNER_MOTOR_MAX_VELOCITY_rotPsec = 7200.0 / 60.0;
+    
   }
   public static class LIFT {
     public static final double SPROCKET_PITCH_mm = 44.4754;

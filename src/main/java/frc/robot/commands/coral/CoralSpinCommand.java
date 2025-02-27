@@ -37,14 +37,14 @@ public class CoralSpinCommand extends Command {
     switch(m_state){
       case IN:
       // TODO: handle range sensor
-        g.ROBOT.coral.spinIn();
+        g.ROBOT.coral.spinIn(.25);
         break;
       case OUT:
       // TODO: Handle timer
-        g.ROBOT.coral.spinOut();
+        g.ROBOT.coral.spinOut(.25);
         break;
       case OFF:
-        g.ROBOT.coral.spin(0.0);
+        g.ROBOT.coral.spinOut(0.0);
         break;
     }
     g.ROBOT.coral.rotate(g.CORAL.armState);

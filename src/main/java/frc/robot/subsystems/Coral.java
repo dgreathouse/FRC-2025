@@ -22,6 +22,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.CoralArmState;
@@ -35,6 +36,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   CANrange m_rangeSensor;
   PIDController m_rotatePID;
   PIDController m_spinnerPid;
+  SimpleMotorFeedforward m_spinnerFF;
   ArmFeedforward m_rotateFF;
   VoltageOut m_leftVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
   VoltageOut m_rightVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
@@ -66,9 +68,10 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     maxConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     m_rotateMotor.configure(maxConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
-    m_spinnerPid = new PIDController(0.1, 0, 0);
+    m_spinnerPid = new PIDController(1, 0, 0);
     m_spinnerPid.setIZone(0.1);
 
+    m_spinnerFF = new SimpleMotorFeedforward(0, g.ROBOT.MAX_BATTERY_SUPPLY_volts/g.CORAL.SPINNER_MOTOR_MAX_VELOCITY_rotPsec, 0);
 
 
     
@@ -78,29 +81,43 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     g.DASHBOARD.updates.add(this);
 
   }
-  public void spinnersHold(double _position){
-    double pidVolts = m_spinnerPid.calculate(getSpinnerPosition(), _position);
+  /**
+   * Spins the coral in at the desired speed
+   * Does not spin if the coral is not detected
+   * This uses a PID and Feedforward controller to spin the coral in at the desired speed
+   * Hopefulle this will allow the coral to spin in and maintain it's position when a 0 speed is given.
+   * 
+   * @param _speed The speed to spin the coral in (-1.0 to 1.0)
+   */
+  public void spinIn(double _speed) {
+    double speed;
+    if (getRange() > 0 && getRange() < 70) { // A range of -1 means the sensor is not detecting anything
+      speed = _speed * g.CORAL.SPINNER_MOTOR_MAX_VELOCITY_rotPsec;
+    }else {
+      speed = 0;
+    }
 
-    m_leftMotor.setControl(m_leftVoltageOut.withOutput(pidVolts));
-    m_rightMotor.setControl(m_rightVoltageOut.withOutput(-pidVolts));
-  }
-  public void spinIn(){
+    double pid = m_spinnerPid.calculate(m_leftMotor.getVelocity().getValueAsDouble(), speed);
+    double ff = m_spinnerFF.calculate(speed);
+    double volts = pid + ff;
 
-    m_leftMotor.setControl(m_leftVoltageOut.withOutput(g.CORAL.spinSpeed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
-    m_rightMotor.setControl(m_rightVoltageOut.withOutput(-g.CORAL.spinSpeed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
+    m_leftMotor.setControl(m_leftVoltageOut.withOutput(volts));
+    m_rightMotor.setControl(m_rightVoltageOut.withOutput(-volts));
   }
-  public void spinOut(){
-    m_leftMotor.setControl(m_leftVoltageOut.withOutput(-g.CORAL.spinSpeed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
-    m_rightMotor.setControl(m_rightVoltageOut.withOutput(g.CORAL.spinSpeed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
-  }
-  public void spin(double _speed){
+
+  /**
+   * Spins the coral out at the desired speed
+   * 
+   * @param _speed The speed to spin the coral out (-1.0 to 1.0)
+   */
+  public void spinOut(double _speed) {
     m_leftMotor.setControl(m_leftVoltageOut.withOutput(_speed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
     m_rightMotor.setControl(m_rightVoltageOut.withOutput(-_speed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
-
   }
-  public double getSpinnerPosition(){
-    return m_leftMotor.getPosition().getValueAsDouble();
-  }
+  /**
+   * Rotates the arm to the desired state
+   * @param _state The CoralArmState to rotate to as L1, L2, L3, ALGAE_HIGH, ALGAE_LOW, START
+   */
   public void rotate(CoralArmState _state){
     switch (_state) { // TODO: adjust the angles for the levels
       case L1:
@@ -112,8 +129,11 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
       case L3:
       rotateToAngle(20);
         break;
-      case L4:
-      rotateToAngle(25);
+      case ALGAE_HIGH:
+      rotateToAngle(30);
+        break;
+      case ALGAE_LOW:
+      rotateToAngle(30);
         break;
       case START:
       rotateToAngle(-73);
@@ -123,7 +143,10 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     }
   }
 
-
+/**
+ * Rotates the arm to the desired angle
+ * @param _angle_deg 
+ *  */
   public void rotateToAngle(double _angle_deg){
     double ff = m_rotateFF.calculate(Math.toRadians(_angle_deg), 0.1);
     double pid = m_rotatePID.calculate(Math.toRadians(getRotateAngle_deg()), Math.toRadians(_angle_deg));
@@ -134,22 +157,31 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
 
   public double getRotateAngle_deg(){
     return m_rotateMotor.getEncoder().getPosition() * 360 / g.CORAL.ROTATE_GEAR_RATIO;
-   
   }
-
+/**
+ *  Returns true if the coral is detected by the range sensor
+ * @return boolean
+ */
   public boolean getIsDetected(){
     return m_rangeSensor.getIsDetected().getValue();
   }
+  /**
+   * Returns the distance in mm from the range sensor
+   * @return double
+   */
   public double getRange(){
     boolean status = m_rangeSensor.getIsDetected().getValue();
     return status ? m_rangeSensor.getDistance().getValue().in(Millimeter) : -1;
-   
   }
 
   @Override
   public void periodic() {
 
   }
+  /**
+   * Returns true if the arm is at the desired angle
+   * @return boolean
+   */
   public boolean isAtState(){
 
     return m_rotatePID.atSetpoint();
@@ -160,8 +192,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     SmartDashboard.putString("Coral/Claw Arm State", g.CORAL.armState.toString());
     SmartDashboard.putNumber("Coral/Arm Angle", getRotateAngle_deg());
     SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
-    SmartDashboard.putNumber("Coral/SpinnerPosition", getSpinnerPosition());
     SmartDashboard.putBoolean("Coral/IsCoralDetected", getIsDetected());
-  //  SmartDashboard.putNumber("Coral/Arm Rotations",m_rotateMotor.getPosition().getValueAsDouble() / g.CORAL.ROTATE_GEAR_RATIO);
+  
   }
 }

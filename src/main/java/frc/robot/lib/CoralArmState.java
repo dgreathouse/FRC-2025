@@ -6,7 +6,8 @@ package frc.robot.lib;
 
 /** Add your docs here. */
 public enum CoralArmState {
-    L4,
+    ALGAE_HIGH,
+    ALGAE_LOW,
     L3,
     L2,
     L1,

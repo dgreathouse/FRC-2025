@@ -64,16 +64,17 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
       case L3:
       moveToPosition(390);
         break;
-      case L4:
-      moveToPosition(0);
+      case ALGAE_HIGH:
+        moveToPosition(300);
+        break;
+      case ALGAE_LOW:
+        moveToPosition(100);
         break;
       case START:
-        // TODO Add logic for algae if algae is not at START
         moveToPosition(0);
         break;
       default:
         break;
-
     }
   }
 
@@ -84,7 +85,6 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
       volts = 0;
     }
     moveWithVoltage(m_kG + volts);
-
   }
   public double getPosition_mm(){
     return m_motor.getPosition().getValueAsDouble() / g.LIFT.MOTOR_ROTATIONS_TO_LIFT_DISTANCE_rotPmm;
