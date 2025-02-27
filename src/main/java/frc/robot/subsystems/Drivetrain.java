@@ -341,13 +341,16 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle( -90.0);
         break;
       case STATION_LEFT:
+      g.CORAL.armState = CoralArmState.START;
       g.ROBOT.alignmentState = RobotAlignStates.STATION_LEFT;
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-54.011);
         break;
       case STATION_RIGHT:
+      g.CORAL.armState = CoralArmState.START;
       g.ROBOT.alignmentState = RobotAlignStates.STATION_RIGHT;
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(54.011);
         break;
+
       case UNKNOWN:
       g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);

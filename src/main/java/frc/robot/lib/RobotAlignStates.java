@@ -13,6 +13,7 @@ public enum RobotAlignStates {
     FRONT_LEFT,
     STATION_RIGHT,
     STATION_LEFT,
+    STATION_CENTER,
     RIGHT,
     LEFT,
     UNKNOWN
