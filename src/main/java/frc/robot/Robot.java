@@ -19,7 +19,6 @@ import frc.robot.commandGroups.AutoRedRight244;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.defaultCommands.LiftDefaultCommand;
-import frc.robot.lib.AlgaeArmState;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.CoralArmState;
 import frc.robot.lib.DriveMode;

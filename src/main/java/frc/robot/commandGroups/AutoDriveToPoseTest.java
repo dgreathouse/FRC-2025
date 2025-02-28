@@ -1,7 +1,5 @@
 package frc.robot.commandGroups;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.AutoDriveToPose;
 import frc.robot.lib.AprilTagAlignState;
@@ -15,17 +13,10 @@ public class AutoDriveToPoseTest extends SequentialCommandGroup {
 addCommands(
 
        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.6, 6),
-
        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.RIGHT), 0.6, 6),
-
        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(17, AprilTagAlignState.RIGHT), 0.6, 6),
-
        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.RIGHT), 0.6, 6),
-
        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(17, AprilTagAlignState.LEFT), 0.6, 6)
-
-
-
       
     );
   }

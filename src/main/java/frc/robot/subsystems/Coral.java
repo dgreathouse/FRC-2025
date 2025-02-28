@@ -1,16 +1,10 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.Millimeter;
-
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
-import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.ProximityParamsConfigs;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -91,7 +85,6 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
    */
   public void spinIn(double _speed) {
     double speed = _speed;
-    boolean isIn = false;
     if (getRange() > 0 && getRange() < 100) { // A range of -1 means the sensor is not detecting anything
       speed = _speed * g.CORAL.SPINNER_MOTOR_MAX_VELOCITY_rotPsec;
     }else {
@@ -149,7 +142,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
  * @param _angle_deg 
  *  */
   public void rotateToAngle(double _angle_deg){
-    double ff = m_rotateFF.calculate(Math.toRadians(_angle_deg), 0.1);
+    //double ff = m_rotateFF.calculate(Math.toRadians(_angle_deg), 0.1);
     double pid = m_rotatePID.calculate(Math.toRadians(getRotateAngle_deg()), Math.toRadians(_angle_deg));
     SmartDashboard.putNumber("Coral/pid", pid);
     pid = MathUtil.clamp(pid, -2, 2);

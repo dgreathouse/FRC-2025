@@ -4,15 +4,11 @@
 
 package frc.robot.commandGroups;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Lift.LiftMoveCommand;
-import frc.robot.commands.coral.CoralMoveToStateCommand;
 import frc.robot.commands.coral.CoralSpinCommand;
 import frc.robot.commands.drive.AutoDriveToPose;
 import frc.robot.lib.AprilTagAlignState;
-import frc.robot.lib.CoralArmState;
 import frc.robot.lib.CoralIntakeStates;
 import frc.robot.lib.g;
 

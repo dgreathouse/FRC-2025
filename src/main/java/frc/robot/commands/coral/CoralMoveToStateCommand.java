@@ -3,7 +3,6 @@ package frc.robot.commands.coral;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.CoralArmState;
 import frc.robot.lib.g;
-import frc.robot.subsystems.Coral;
 
 
 public class CoralMoveToStateCommand extends Command {
