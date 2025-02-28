@@ -49,7 +49,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_rotateMotor = new SparkMax(g.CAN_IDS_ROBORIO.CORAL_ROTATE_MOTOR, MotorType.kBrushless);
     m_rangeSensor = new CANrange(g.CAN_IDS_ROBORIO.CORAL_RANGE_SENSOR);
 
-    m_rotatePID = new PIDController(2.45, 1, 0);
+    m_rotatePID = new PIDController(3.45, 1, 0);
     m_rotatePID.setIZone(Math.toRadians(7.5));
 
     m_rotateFF = new ArmFeedforward(0, 0, 0);
@@ -68,7 +68,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     maxConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     m_rotateMotor.configure(maxConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
-    m_spinnerPid = new PIDController(1, 0, 0);
+    m_spinnerPid = new PIDController(.1, 0, 0);
     m_spinnerPid.setIZone(0.1);
 
     m_spinnerFF = new SimpleMotorFeedforward(0, g.ROBOT.MAX_BATTERY_SUPPLY_volts/g.CORAL.SPINNER_MOTOR_MAX_VELOCITY_rotPsec, 0);
@@ -90,8 +90,9 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
    * @param _speed The speed to spin the coral in (-1.0 to 1.0)
    */
   public void spinIn(double _speed) {
-    double speed;
-    if (getRange() > 0 && getRange() < 70) { // A range of -1 means the sensor is not detecting anything
+    double speed = _speed;
+    boolean isIn = false;
+    if (getRange() > 0 && getRange() < 100) { // A range of -1 means the sensor is not detecting anything
       speed = _speed * g.CORAL.SPINNER_MOTOR_MAX_VELOCITY_rotPsec;
     }else {
       speed = 0;
@@ -100,7 +101,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     double pid = m_spinnerPid.calculate(m_leftMotor.getVelocity().getValueAsDouble(), speed);
     double ff = m_spinnerFF.calculate(speed);
     double volts = pid + ff;
-
+    volts = MathUtil.clamp(volts, -1,1);
     m_leftMotor.setControl(m_leftVoltageOut.withOutput(volts));
     m_rightMotor.setControl(m_rightVoltageOut.withOutput(-volts));
   }
@@ -193,6 +194,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     SmartDashboard.putNumber("Coral/Arm Angle", getRotateAngle_deg());
     SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
     SmartDashboard.putBoolean("Coral/IsCoralDetected", getIsDetected());
-  
+    SmartDashboard.putNumber("Coral/Spinner Velocity", m_leftMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Coral/LeftMotorAmps", m_leftMotor.getStatorCurrent().getValueAsDouble());
   }
 }

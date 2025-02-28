@@ -277,8 +277,8 @@ public class g {
     }
     /** The data for the SWERVE Steer motors */
     public static class STEER {
-      public static double PID_KP = 0.12;
-      public static double PID_KI = 0.10;
+      public static double PID_KP = 0.2;
+      public static double PID_KI = 0.15;
 
       private static final double MOTOR_PINION_TEETH = 8.0;
       private static final double MOTOR_DRIVE_GEAR_TEETH = 24.0;
@@ -307,8 +307,8 @@ public class g {
   }
 
   public static class DRIVETRAIN {
-    public static final double TURN_KP = 0.55;
-    public static final double TURN_KI = 0.250;
+    public static final double TURN_KP = 0.45;
+    public static final double TURN_KI = 0.20;
     public static final double TURN_KD = 0.0;
     public static final double TURN_DEADBAND_rad = 0.02;
     public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.0254; // 1 inches

@@ -101,9 +101,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
     // TODO set Derivative tolerance so atSetPoint only returns true at low speeds
-    m_turnPID.setTolerance(Math.toRadians(1.0), Double.POSITIVE_INFINITY);
-    m_turnPID.setIZone(Math.toRadians(30));
-    m_turnPID.setIntegratorRange(-0.5, 0.5);
+    m_turnPID.setTolerance(Math.toRadians(0.5), Double.POSITIVE_INFINITY);
+    m_turnPID.setIZone(Math.toRadians(20));
+    m_turnPID.setIntegratorRange(-0.25, 0.25);
     
     m_poseEstimatorThread = new PoseEstimatorThread();
     m_poseEstimatorThread.start();
@@ -153,7 +153,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
-
+    SmartDashboard.putNumber("Drive/m_speeds.vxMetersPerSecond", m_speeds.vxMetersPerSecond);
+    SmartDashboard.putNumber("Drive/m_speeds.vyMetersPerSecond", m_speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("Drive/m_speeds.omegaRadiansPerSecond", m_speeds.omegaRadiansPerSecond);
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }

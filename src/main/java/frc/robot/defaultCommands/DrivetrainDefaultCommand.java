@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.AutoDriveToPose;
 import frc.robot.lib.g;
@@ -38,8 +39,8 @@ public class DrivetrainDefaultCommand extends Command {
     double rightXRaw_Operator = -g.OI.operatorController.getRightY(); // 5
 
     // Limit the inputs for a deadband related to the joystick
-    double leftYFiltered_Driver = MathUtil.applyDeadband(leftYRaw_Driver, 0.08, 1.0);
-    double leftXFiltered_Driver = MathUtil.applyDeadband(leftXRaw_Driver, 0.08, 1.0);
+    double leftYFiltered_Driver = MathUtil.applyDeadband(leftYRaw_Driver, 0.1, 1.0);
+    double leftXFiltered_Driver = MathUtil.applyDeadband(leftXRaw_Driver, 0.1, 1.0);
     double rightXFiltered_Driver = MathUtil.applyDeadband(rightXRaw_Driver, 0.1, 1.0);
     double rightYFiltered_Driver = MathUtil.applyDeadband(rightYRaw_Driver, 0.1, 1.0);
 
@@ -62,6 +63,7 @@ public class DrivetrainDefaultCommand extends Command {
       switch (g.DRIVETRAIN.driveMode) {
         case FIELD_CENTRIC:
           g.ROBOT.drive.driveFieldCentric(leftXFiltered_Driver*redInvert, leftYFiltered_Driver*redInvert, rightYFiltered_Driver, g.ROBOT.angleActual_deg, g.DRIVETRAIN.centerOfRotation_m);
+
           break;
         case ANGLE_FIELD_CENTRIC:
           g.ROBOT.drive.setTargetRobotAngle(rightXFiltered_Driver*redInvert, rightYFiltered_Driver*redInvert);
