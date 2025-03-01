@@ -22,7 +22,7 @@ public class CoralDefaultCommand extends Command {
     if(g.OI.DRIVER_CORAL_IN.getAsBoolean()){
       g.ROBOT.coral.spinIn(0.25);
     }else if(g.OI.DRIVER_CORAL_OUT.getAsBoolean()){
-      g.ROBOT.coral.spinOut(0.25);
+      g.ROBOT.coral.spinOut(g.CORAL.armState);
     }else { // OFF
       g.ROBOT.coral.spinIn(0);
     }

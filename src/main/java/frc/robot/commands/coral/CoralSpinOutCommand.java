@@ -6,21 +6,20 @@ package frc.robot.commands.coral;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.lib.CoralIntakeStates;
+import frc.robot.lib.CoralArmState;
+
 import frc.robot.lib.g;
 
-public class CoralSpinCommand extends Command {
+public class CoralSpinOutCommand extends Command {
   /** Creates a new CoralSpinCommand. */
-  CoralIntakeStates m_state;
+  CoralArmState m_state;
   double m_timeout = 0.0;
   Timer m_timer = new Timer();
 
-  public CoralSpinCommand(CoralIntakeStates _state, double _timeout) { 
+  public CoralSpinOutCommand(CoralArmState _state, double _timeout) { 
     addRequirements(g.ROBOT.coral);
     m_state = _state;
-
     m_timeout = _timeout;
-    
   }
 
 
@@ -28,26 +27,13 @@ public class CoralSpinCommand extends Command {
   @Override
   public void initialize() {
     m_timer.restart();
-    g.CORAL.intakeState = m_state;
+    g.CORAL.armState = m_state;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    switch(m_state){
-      case IN:
-      // TODO: handle range sensor
-        g.ROBOT.coral.spinIn(.25);
-        break;
-      case OUT:
-      // TODO: Handle timer
-        g.ROBOT.coral.spinOut(.25);
-        break;
-      case OFF:
-        g.ROBOT.coral.spinOut(0.0);
-        break;
-    }
-    g.ROBOT.coral.rotate(g.CORAL.armState);
+    g.ROBOT.coral.spinOut(m_state);
   }
 
   // Called once the command ends or is interrupted.
@@ -57,11 +43,6 @@ public class CoralSpinCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_state == CoralIntakeStates.OUT){
-      return m_timer.hasElapsed(m_timeout);
-    }else if(m_state == CoralIntakeStates.IN){
-      return g.ROBOT.coral.getRange() < g.CORAL.INTAKE_RANGE_MIN_mm;
-    }
-    return false;
+    return m_timer.hasElapsed(m_timeout);
   }
 }

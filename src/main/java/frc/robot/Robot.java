@@ -7,15 +7,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.commandGroups.AutoBlueCenter4;
-import frc.robot.commandGroups.AutoBlueLeft244;
-import frc.robot.commandGroups.AutoBlueRight244;
 import frc.robot.commandGroups.AutoDoNothing;
-
 import frc.robot.commandGroups.AutoDriveToPoseTest;
-import frc.robot.commandGroups.AutoRedCenter4;
-import frc.robot.commandGroups.AutoRedLeft244;
-import frc.robot.commandGroups.AutoRedRight244;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.defaultCommands.LiftDefaultCommand;
@@ -51,12 +44,12 @@ public class Robot extends TimedRobot {
 
     // Setup the autonomous play default and send to dashboard for selection
     m_autoChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
-    m_autoChooser.addOption("Blue Left 244", new AutoBlueLeft244());
-    m_autoChooser.addOption("Blue Right 244", new AutoBlueRight244());
-    m_autoChooser.addOption("Red Right 244", new AutoRedRight244());
-    m_autoChooser.addOption("Red Right 244", new AutoRedLeft244());
-    m_autoChooser.addOption("Red Center 4", new AutoRedCenter4());
-    m_autoChooser.addOption("Blue Center 4", new AutoBlueCenter4());
+    // m_autoChooser.addOption("Blue Left 244", new AutoBlueLeft244());
+    // m_autoChooser.addOption("Blue Right 244", new AutoBlueRight244());
+    // m_autoChooser.addOption("Red Right 244", new AutoRedRight244());
+    // m_autoChooser.addOption("Red Right 244", new AutoRedLeft244());
+    // m_autoChooser.addOption("Red Center 4", new AutoRedCenter4());
+    // m_autoChooser.addOption("Blue Center 4", new AutoBlueCenter4());
     m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 
