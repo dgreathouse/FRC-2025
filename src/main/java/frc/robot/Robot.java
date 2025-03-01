@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
 import frc.robot.commandGroups.AutoDriveToPoseTest;
+import frc.robot.commandGroups.AutoBlueRight222;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.defaultCommands.LiftDefaultCommand;
@@ -49,7 +50,7 @@ public class Robot extends TimedRobot {
     // m_autoChooser.addOption("Red Right 244", new AutoRedRight244());
     // m_autoChooser.addOption("Red Right 244", new AutoRedLeft244());
     // m_autoChooser.addOption("Red Center 4", new AutoRedCenter4());
-    // m_autoChooser.addOption("Blue Center 4", new AutoBlueCenter4());
+     m_autoChooser.addOption("Blue Right 222", new AutoBlueRight222());
     m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 

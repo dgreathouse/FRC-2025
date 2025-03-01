@@ -175,7 +175,7 @@ public class VisionProcessor implements IUpdateDashboard{
                         for (PhotonTrackedTarget target : targets) { // Loop through all the targets
                             ambiguity = target.poseAmbiguity; // Get the ambiguity of the target
                             tagID = target.getFiducialId(); // Get the ID of the target
-                            if(ambiguity >= 0 && ambiguity < g.VISION.AMBIGUITY_SETPOINT){  // If the ambiguity is within the setpoint
+                            if(ambiguity >= 0 && ambiguity < g.VISION.AMBIGUITY_SETPOINT && g.DRIVETRAIN.driveSpeedActual_mps < 1.0){  // If the ambiguity is within the setpoint
                                 if(tagState != TagFoundState.TARGET_ID_FOUND){  
                                     tagState = TagFoundState.TAG_FOUND; 
                                 }
@@ -240,6 +240,7 @@ public class VisionProcessor implements IUpdateDashboard{
             g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
             if (m_leftCamera.isConnected() && m_rightCamera.isConnected()) {
                 leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
+                
                 g.VISION.leftTargetAmbiguity = leftCamState.getAmbiguity();
 
                 rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
@@ -272,6 +273,9 @@ public class VisionProcessor implements IUpdateDashboard{
                 }
             }
         }
+    }
+    public boolean isYawResetComplete(){
+        return m_resetYawInitFlag;
     }
     /* Notes for trusting vision pose.
      * Things we know:

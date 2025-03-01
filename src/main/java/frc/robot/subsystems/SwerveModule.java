@@ -35,7 +35,7 @@ public class SwerveModule implements IUpdateDashboard {
   // TODO Tune Steer PID kP, kI, kD
   private PIDController m_steerPID = new PIDController(g.SWERVE.STEER.PID_KP, g.SWERVE.STEER.PID_KI, 0);
   // TODO: Tune Drive PID kP, kI, kD
-  //private PIDController m_drivePID = new PIDController(g.SWERVE.DRIVE.PID_KP, g.SWERVE.DRIVE.PID_KI, 0);
+  private PIDController m_drivePID = new PIDController(g.SWERVE.DRIVE.PID_KP, g.SWERVE.DRIVE.PID_KI, 0);
   // TODO Tune Drive FF kV, kS, and kA
   private SimplerMotorFeedforward m_driveFF = new SimplerMotorFeedforward(g.SWERVE.DRIVE.PID_KS, g.SWERVE.DRIVE.PID_KV, 0.0);
   private VoltageOut m_steerVoltageOut = new VoltageOut(0.0).withEnableFOC(true).withOverrideBrakeDurNeutral(true);
@@ -165,7 +165,7 @@ public class SwerveModule implements IUpdateDashboard {
         
         m_steerMotor.setControl(m_steerVoltageOut.withOutput(steerVolts));
         SmartDashboard.putNumber("Swerve/SteerVolts "+ m_name, steerVolts);
-        SmartDashboard.putNumber("Swerve/SteerActualAng " + m_name, m_position.angle.getDegrees());
+        SmartDashboard.putNumber("Swerve/SteerActualAng " + m_name, m_position.angle.getDegrees() % 180);
         SmartDashboard.putNumber("Swerve/SteerSetAng " + m_name,_state.angle.getDegrees());
       } else {
         m_steerMotor.setControl(m_steerVoltageOut.withOutput(0));
@@ -178,7 +178,7 @@ public class SwerveModule implements IUpdateDashboard {
         //driveVolts = MathUtil.clamp(driveVolts, -6, 6);
 
        // driveVolts = driveVolts + m_driveFF.calculate(driveSetVelocity_mps, 0.0);
-       double driveVolts = m_driveFF.calculate(driveSetVelocity_mps, 0.0);
+        double driveVolts = m_driveFF.calculate(driveSetVelocity_mps, 0.0);
         SmartDashboard.putNumber("Swerve/DriveVolts "+this.m_name, driveVolts);
         SmartDashboard.putNumber("Swerve/DriveActualVelocity" + m_name, m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm);
         SmartDashboard.putNumber("Swerve/DriveSetVelocity" + m_name, driveSetVelocity_mps);

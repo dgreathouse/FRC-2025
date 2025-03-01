@@ -37,7 +37,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private double m_angularVelocityZPrimary;
   private double m_yawSecondary = 0;
   private double m_angularVelocityZSecondary = 0;
-
+  boolean m_isVisionEnabled = true;
   // TODO: Tune KP,KI,KD max output should be +/-1 Start around 1/3.14 for Kp
   private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
 
@@ -115,6 +115,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
                                                   VecBuilder.fill(0.9,0.9,0.9));
    
    SmartDashboard.putBoolean("Robot/IsGyroPrimaryActive", true);
+   SmartDashboard.putBoolean("Robot/IsVisionEnabled", m_isVisionEnabled);
    g.DASHBOARD.updates.add(this);
 
   }
@@ -519,12 +520,21 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     //  [ ] Test if this works
 
     if(g.DRIVETRAIN.driveSpeedActual_mps < g.DRIVETRAIN.DRIVE_SPEED_LOW_mps){ // If the robot is moving slow
-      m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH); // Set the standard deviation to high for Vision
+      if(m_isVisionEnabled){
+    //  m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH); // Set the standard deviation to high for Vision
+      //if(g.ROBOT.vision.isYawResetComplete())
       m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp); // Add the vision measurement to the PoseEstimator
+    }
     }else {
-      m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_LOW); // Set the standard deviation to high for Vision
+    //  m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_LOW); // Set the standard deviation to high for Vision
     }
     
+  }
+  public boolean getIsVisionEnabled(){
+    return m_isVisionEnabled;
+  }
+  public void setIsVisionEnabled(boolean _enabled){
+    m_isVisionEnabled = _enabled;
   }
   public void updateDashboard() {
     // g.SWERVE.totalSwerveCurrent_amps = 0;
@@ -552,6 +562,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
+    m_isVisionEnabled = SmartDashboard.getBoolean("Robot/IsVisionEnabled", true);
     
   }
 }
