@@ -153,8 +153,8 @@ public class Robot extends TimedRobot {
 
     //Button board
     //  g.OI.BB_ALGAE_BARGE.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.BARGE; }, g.ROBOT.algae ));
-    //  g.OI.BB_ALGAE_HIGH.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.HIGH; }, g.ROBOT.algae ));
-    //  g.OI.BB_ALGAE_LOW.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.LOW; }, g.ROBOT.algae ));
+    g.OI.BB_ALGAE_HIGH.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.ALGAE_HIGH; }, g.ROBOT.coral ));
+    g.OI.BB_ALGAE_LOW.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.ALGAE_LOW; }, g.ROBOT.coral ));
     //  g.OI.BB_ALGAE_PROCESSOR.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.PROCESSOR; }, g.ROBOT.algae ));
     //  g.OI.BB_ALGAE_FLORAL.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.FLORAL; }, g.ROBOT.algae ));
     //  g.OI.BB_ALGAE_FLOOR.onTrue(new InstantCommand(() ->{ g.ALGAE.armState = AlgaeArmState.FLOOR; }, g.ROBOT.algae ));

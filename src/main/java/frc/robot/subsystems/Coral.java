@@ -104,13 +104,13 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
       speed = 0.45;
         break;
       case L1:
-      speed = 0.15;
+      speed = 0.1;
         break;
       case L2:
-      speed = 0.45;
+      speed = 0.25;
         break;
       case L3:
-      speed = 0.45;
+      speed = 0.15;
         break;
       case START:
         break;
@@ -129,19 +129,19 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   public void rotate(CoralArmState _state){
     switch (_state) { // TODO: adjust the angles for the levels
       case L1:
-        rotateToAngle(50);
+        rotateToAngle(55);
         break;
       case L2:
-      rotateToAngle(15);
+      rotateToAngle(0);
         break;
       case L3:
       rotateToAngle(20);
         break;
       case ALGAE_HIGH:
-      rotateToAngle(30);
+      rotateToAngle(55);
         break;
       case ALGAE_LOW:
-      rotateToAngle(30);
+      rotateToAngle(55);
         break;
       case START:
       rotateToAngle(-73);
@@ -191,7 +191,6 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
    * @return boolean
    */
   public boolean isAtState(){
-
     return m_rotatePID.atSetpoint();
   }
 
