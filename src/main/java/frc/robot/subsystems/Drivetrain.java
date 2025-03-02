@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import com.ctre.phoenix6.StatusSignal;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -100,7 +101,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
     // TODO set Derivative tolerance so atSetPoint only returns true at low speeds
-    m_turnPID.setTolerance(Math.toRadians(0.5), Double.POSITIVE_INFINITY);
+    m_turnPID.setTolerance(Math.toRadians(1), Double.POSITIVE_INFINITY);
     m_turnPID.setIZone(Math.toRadians(20));
     m_turnPID.setIntegratorRange(-0.25, 0.25);
     
@@ -174,7 +175,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
 
     double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
-    //rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND_rad);
+    rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND_rad);
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
 
 
@@ -289,9 +290,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(180.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
-          g.ROBOT.angleRobotTarget_deg -= 40;
+          g.ROBOT.angleRobotTarget_deg -= 60;
         }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
-          g.ROBOT.angleRobotTarget_deg += 40;
+          g.ROBOT.angleRobotTarget_deg += 60;
         }
       }
         break;
@@ -300,9 +301,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle( -120.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
-          g.ROBOT.angleRobotTarget_deg -= 40;
+          g.ROBOT.angleRobotTarget_deg -= 60;
         }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
-          g.ROBOT.angleRobotTarget_deg += 40;
+          g.ROBOT.angleRobotTarget_deg += 60;
         }
       }
         break;
@@ -311,9 +312,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(120.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
-          g.ROBOT.angleRobotTarget_deg -= 40;
+          g.ROBOT.angleRobotTarget_deg -= 60;
         }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
-          g.ROBOT.angleRobotTarget_deg += 40;
+          g.ROBOT.angleRobotTarget_deg += 60;
         }
       }
         break;
@@ -322,9 +323,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
-          g.ROBOT.angleRobotTarget_deg -= 40;
+          g.ROBOT.angleRobotTarget_deg -= 60;
         }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
-          g.ROBOT.angleRobotTarget_deg += 40;
+          g.ROBOT.angleRobotTarget_deg += 60;
         }
       }
         break;
@@ -333,9 +334,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-60.0);
       if(g.CORAL.armState == CoralArmState.L1){
         if(g.VISION.aprilTagAlignState == AprilTagAlignState.LEFT){
-          g.ROBOT.angleRobotTarget_deg -= 40;
+          g.ROBOT.angleRobotTarget_deg -= 60;
         }else if(g.VISION.aprilTagAlignState == AprilTagAlignState.RIGHT){
-          g.ROBOT.angleRobotTarget_deg += 40;
+          g.ROBOT.angleRobotTarget_deg += 60;
         }
       }
         break;
@@ -460,9 +461,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
   public String getSpeedMode(){
    if(g.DRIVETRAIN.speedMultiplier < 0.75){
-    return "HIGH";
-   }else{
     return "LOW";
+   }else{
+    return "HIGH";
    }
   }
   public void resetOdometry(Pose2d _pose){
@@ -578,13 +579,15 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putNumber("Robot/PD_Volts", g.ROBOT.pd.getVoltage());
     SmartDashboard.putNumber("Robot/PD_Amps", g.ROBOT.pd.getTotalCurrent());
 
-    SmartDashboard.putNumber("Drive Speed Actual", g.DRIVETRAIN.driveSpeedActual_mps);
-    SmartDashboard.putNumber("Drive Speed Requested", g.DRIVETRAIN.driveSpeedRequested_mps);
-    SmartDashboard.putString("Drive/DriveMode", g.DRIVETRAIN.driveMode.toString());
+    SmartDashboard.putNumber("Drive/Speed Actual", g.DRIVETRAIN.driveSpeedActual_mps);
+    SmartDashboard.putNumber("Drive/Speed Requested", g.DRIVETRAIN.driveSpeedRequested_mps);
+    SmartDashboard.putNumber("Drive/Speed Error", getDriveSpeedError(getDriveSpeed()));
+    SmartDashboard.putString("Drive/Speed Mode", getSpeedMode());
+    SmartDashboard.putString("Drive/Drive Mode", g.DRIVETRAIN.driveMode.toString());
     SmartDashboard.putNumber("Drive/TurnPID error Derivative", g.DRIVETRAIN.turnPIDErrorDerivative);  
-    SmartDashboard.putString("Robot/Drive Speed Mode", getSpeedMode());
-    SmartDashboard.putNumber("Robot/Drive Speed Error", getDriveSpeedError(getDriveSpeed()));
+    
 
+    SmartDashboard.putData("Drive/Subsystem",this);
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
     m_isVisionEnabled = SmartDashboard.getBoolean("Robot/IsVisionEnabled", true);

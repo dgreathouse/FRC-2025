@@ -7,7 +7,7 @@ import frc.robot.lib.g;
 public class AutoDriveDefaultCommand extends Command {
   /** Creates a new AutoDriveDefaultCommand. */
   public AutoDriveDefaultCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(g.ROBOT.drive);
   }
 
   // Called when the command is initially scheduled.
