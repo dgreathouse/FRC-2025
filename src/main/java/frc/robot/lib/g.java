@@ -313,7 +313,7 @@ public class g {
     public static final double TURN_DEADBAND_rad = 0.02;
     public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.0254; // 1 inches
     public static final double AUTO_DRIVE_POSE_ANGLE_TOLERANCE_deg = 1.0; 
-    public static volatile DriveMode driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
+    public static volatile DriveMode driveMode = DriveMode.FIELD_CENTRIC;
     public static volatile double speedMultiplier = 1.0;
     public static final Translation2d ZERO_CENTER_OF_ROTATION_m = new Translation2d();
     public static volatile Translation2d centerOfRotation_m = new Translation2d();

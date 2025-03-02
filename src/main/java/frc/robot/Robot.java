@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
 import frc.robot.commandGroups.AutoDriveToPoseTest;
 import frc.robot.commandGroups.AutoBlueRight222;
+import frc.robot.defaultCommands.AutoDriveDefaultCommand;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.defaultCommands.LiftDefaultCommand;
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
   private Notifier m_telemetry = new Notifier(this::updateDashboard);
 
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
+  private AutoDriveDefaultCommand m_autoDriveDefaultCommand = new AutoDriveDefaultCommand();
   private CoralDefaultCommand m_coralDefaultCommand = new CoralDefaultCommand();
   private LiftDefaultCommand m_LiftDefaultCommand  = new LiftDefaultCommand();
 
@@ -35,7 +37,7 @@ public class Robot extends TimedRobot {
    */
   public Robot() {
     // Set the default commands for the subsystems
-    g.ROBOT.drive.setDefaultCommand(m_drivetrainDefaultCommand);
+    g.ROBOT.drive.setDefaultCommand(m_autoDriveDefaultCommand);
     g.ROBOT.coral.setDefaultCommand(m_coralDefaultCommand);
     g.ROBOT.lift.setDefaultCommand(m_LiftDefaultCommand); 
     
@@ -100,6 +102,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    g.ROBOT.drive.setDefaultCommand(m_drivetrainDefaultCommand);
     //g.ROBOT.drive.resetYaw(g.VISION.pose2d.getRotation().getDegrees());
     // g.ROBOT.drive.setOdometry(StartLocation.RIGHT);
     // g.ROBOT.vision.setOdometry(StartLocation.RIGHT);

@@ -160,35 +160,35 @@ public class SwerveModule implements IUpdateDashboard {
     // TODO: Cosine compensation needs testing
     // _state.speedMetersPerSecond *=
     // _state.angle.minus(g.ROBOT.angleActual_Rot2d).getCos();
-    //if (!g.DRIVETRAIN.playingMarch) {
-      /*-------------------- Steer---------------------*/
-      if (g.SWERVE.isEnabled) {
-        double steerVolts = m_steerPID.calculate(m_position.angle.getDegrees(), _state.angle.getDegrees());
-        
-        m_steerMotor.setControl(m_steerVoltageOut.withOutput(steerVolts));
-        SmartDashboard.putNumber("Swerve/SteerVolts "+ m_name, steerVolts);
-        SmartDashboard.putNumber("Swerve/SteerActualAng " + m_name, m_position.angle.getDegrees() % 180);
-        SmartDashboard.putNumber("Swerve/SteerSetAng " + m_name,_state.angle.getDegrees());
-      } else {
-        m_steerMotor.setControl(m_steerVoltageOut.withOutput(0));
-      }
-      /*-------------------- Drive---------------------*/
-      if (g.SWERVE.isEnabled) {
+    
+    /*-------------------- Steer---------------------*/
+    if (g.SWERVE.isEnabled) {
+      double steerVolts = m_steerPID.calculate(m_position.angle.getDegrees(), _state.angle.getDegrees());
+      
+      m_steerMotor.setControl(m_steerVoltageOut.withOutput(steerVolts));
+      SmartDashboard.putNumber("Swerve/SteerVolts "+ m_name, steerVolts);
+      SmartDashboard.putNumber("Swerve/SteerActualAng " + m_name, m_position.angle.getDegrees() % 180);
+      SmartDashboard.putNumber("Swerve/SteerSetAng " + m_name,_state.angle.getDegrees());
+    } else {
+      m_steerMotor.setControl(m_steerVoltageOut.withOutput(0));
+    }
+    /*-------------------- Drive---------------------*/
+    if (g.SWERVE.isEnabled) {
 
-        double driveSetVelocity_mps = _state.speedMetersPerSecond * g.DRIVETRAIN.speedMultiplier;
-        double driveErrorVolts = m_drivePID.calculate(m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
-        driveErrorVolts = MathUtil.clamp(driveErrorVolts, -6, 6); // Limit the amount the PID can contribute
+      double driveSetVelocity_mps = _state.speedMetersPerSecond * g.DRIVETRAIN.speedMultiplier;
+      double driveErrorVolts = m_drivePID.calculate(m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
+      driveErrorVolts = MathUtil.clamp(driveErrorVolts, -6, 6); // Limit the amount the PID can contribute
 
-        double driveVolts = driveErrorVolts + m_driveFF.calculate(driveSetVelocity_mps, 0.0);
-        //driveVolts = m_driveFF.calculate(driveSetVelocity_mps, 0.0);
-        SmartDashboard.putNumber("Swerve/DriveVolts "+this.m_name, driveVolts);
-        SmartDashboard.putNumber("Swerve/DriveActualVelocity" + m_name, m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm);
-        SmartDashboard.putNumber("Swerve/DriveSetVelocity" + m_name, driveSetVelocity_mps);
-        m_driveMotor.setControl(m_driveVoltageOut.withOutput(driveVolts));
-      } else {
-        m_driveMotor.setControl(m_driveVoltageOut.withOutput(0));
-      }
-    //}
+      double driveVolts = driveErrorVolts + m_driveFF.calculate(driveSetVelocity_mps, 0.0);
+      //driveVolts = m_driveFF.calculate(driveSetVelocity_mps, 0.0);
+      SmartDashboard.putNumber("Swerve/DriveVolts "+this.m_name, driveVolts);
+      SmartDashboard.putNumber("Swerve/DriveActualVelocity" + m_name, m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm);
+      SmartDashboard.putNumber("Swerve/DriveSetVelocity" + m_name, driveSetVelocity_mps);
+      m_driveMotor.setControl(m_driveVoltageOut.withOutput(driveVolts));
+    } else {
+      m_driveMotor.setControl(m_driveVoltageOut.withOutput(0));
+    }
+
   }
 
   public double getDriveCurrent() {
