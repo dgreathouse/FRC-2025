@@ -91,6 +91,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    g.ROBOT.drive.setDefaultCommand(m_autoDriveDefaultCommand);
   }
 
   /** This function is called periodically during autonomous. */

@@ -178,7 +178,6 @@ public class g {
     public static final Trigger DRIVER_ALGAE_OUT = driverController.triangle();
     public static final Trigger DRIVER_ALGAE_IN = driverController.cross();
     public static final Trigger DRIVER_MODE_SPEED_TOGGLE = driverController.PS();
-    public static final Trigger DRIVER_RAISE_LIFT = driverController.R2();
      
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;
@@ -203,9 +202,10 @@ public class g {
     public static final Trigger BB_CORAL_L3 = buttonBoard.button(11);
     public static final Trigger BB_CORAL_L2 = buttonBoard.button(10);
     public static final Trigger BB_CORAL_L1 = buttonBoard.button(9);
-    public static final Trigger BB_CORAL_FLOOR_VERT = buttonBoard.button(7);
-    public static final Trigger BB_CORAL_FLOOR_HORZ = buttonBoard.button(8);
     public static final Trigger BB_CORAL_START = buttonBoard.button(30);
+
+    public static final Trigger BB_LIFT_RAISE = buttonBoard.button(7);
+    public static final Trigger BB_LIFT_LOWER = buttonBoard.button(8);
 
     public static final Trigger BB_ROBOT_BACK = buttonBoard.button(3);
     public static final Trigger BB_ROBOT_FRONT = buttonBoard.button(2);

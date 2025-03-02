@@ -1,10 +1,10 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Millimeter;
+//import static edu.wpi.first.units.Units.Millimeter;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANrange;
+//import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -27,7 +27,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   TalonFXS m_leftMotor;
   TalonFXS m_rightMotor;
   SparkMax m_rotateMotor;
-  CANrange m_rangeSensor;
+  //CANrange m_rangeSensor;
   PIDController m_rotatePID;
   PIDController m_spinnerPid;
   SimpleMotorFeedforward m_spinnerFF;
@@ -41,9 +41,9 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_leftMotor = new TalonFXS(g.CAN_IDS_ROBORIO.CORAL_LEFT_MOTOR);
     m_rightMotor = new TalonFXS(g.CAN_IDS_ROBORIO.CORAL_RIGHT_MOTOR);
     m_rotateMotor = new SparkMax(g.CAN_IDS_ROBORIO.CORAL_ROTATE_MOTOR, MotorType.kBrushless);
-    m_rangeSensor = new CANrange(g.CAN_IDS_ROBORIO.CORAL_RANGE_SENSOR);
+    //m_rangeSensor = new CANrange(g.CAN_IDS_ROBORIO.CORAL_RANGE_SENSOR);
 
-    m_rotatePID = new PIDController(3.45, 1, 0);
+    m_rotatePID = new PIDController(7, 2, 0);
     m_rotatePID.setIZone(Math.toRadians(7.5));
 
     m_rotateFF = new ArmFeedforward(0, 0, 0);
@@ -132,7 +132,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
         rotateToAngle(55);
         break;
       case L2:
-      rotateToAngle(0);
+      rotateToAngle(45);
         break;
       case L3:
       rotateToAngle(20);
@@ -159,7 +159,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     //double ff = m_rotateFF.calculate(Math.toRadians(_angle_deg), 0.1);
     double pid = m_rotatePID.calculate(Math.toRadians(getRotateAngle_deg()), Math.toRadians(_angle_deg));
     SmartDashboard.putNumber("Coral/pid", pid);
-    pid = MathUtil.clamp(pid, -4.5, 4.5);
+    pid = MathUtil.clamp(pid, -8, 8);
     m_rotateMotor.setVoltage(pid);
   }
 
@@ -170,17 +170,17 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
  *  Returns true if the coral is detected by the range sensor
  * @return boolean
  */
-  public boolean getIsDetected(){
-    return m_rangeSensor.getIsDetected().getValue();
-  }
+  // public boolean getIsDetected(){
+  //   return m_rangeSensor.getIsDetected().getValue();
+  // }
   /**
    * Returns the distance in mm from the range sensor
    * @return double
    */
-  public double getRange(){
-    boolean status = m_rangeSensor.getIsDetected().getValue();
-    return status ? m_rangeSensor.getDistance().getValue().in(Millimeter) : -1;
-  }
+  // public double getRange(){
+  //   boolean status = m_rangeSensor.getIsDetected().getValue();
+  //   return status ? m_rangeSensor.getDistance().getValue().in(Millimeter) : -1;
+  // }
 
   @Override
   public void periodic() {
@@ -198,8 +198,8 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   public void updateDashboard() {
     SmartDashboard.putString("Coral/Claw Arm State", g.CORAL.armState.toString());
     SmartDashboard.putNumber("Coral/Arm Angle", getRotateAngle_deg());
-    SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
-    SmartDashboard.putBoolean("Coral/IsCoralDetected", getIsDetected());
+    // SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
+    // SmartDashboard.putBoolean("Coral/IsCoralDetected", getIsDetected());
     SmartDashboard.putNumber("Coral/Spinner Velocity", m_leftMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Coral/LeftMotorAmps", m_leftMotor.getStatorCurrent().getValueAsDouble());
   }
