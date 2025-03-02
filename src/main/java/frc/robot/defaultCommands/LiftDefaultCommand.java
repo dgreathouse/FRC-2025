@@ -20,13 +20,12 @@ public class LiftDefaultCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(g.OI.driverController.getL2Axis() > 0){
-    g.ROBOT.lift.moveToPosition(g.CORAL.armState);
-    }else {
+    if (g.OI.driverController.getL2Axis() > 0) {
+      g.ROBOT.lift.moveToPosition(g.CORAL.armState);
+    } else {
       g.ROBOT.lift.moveToPosition(CoralArmState.START);
     }
   }
-
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}

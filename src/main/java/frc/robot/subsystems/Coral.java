@@ -132,19 +132,25 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
         rotateToAngle(55);
         break;
       case L2:
-      rotateToAngle(0);
+        rotateToAngle(0);
         break;
       case L3:
-      rotateToAngle(20);
+        rotateToAngle(20);
         break;
       case ALGAE_HIGH:
-      rotateToAngle(55);
+        rotateToAngle(55);
         break;
       case ALGAE_LOW:
-      rotateToAngle(55);
+        rotateToAngle(55);
         break;
       case START:
-      rotateToAngle(-73);
+        rotateToAngle(-73);
+        break;
+      case LIFT_CLIMB_UP:
+        rotateToAngle(55);
+        break;
+      case LIFT_CLIMB_DOWN:
+        rotateToAngle(55);
         break;
       default:
         break;

@@ -203,8 +203,8 @@ public class g {
     public static final Trigger BB_CORAL_L3 = buttonBoard.button(11);
     public static final Trigger BB_CORAL_L2 = buttonBoard.button(10);
     public static final Trigger BB_CORAL_L1 = buttonBoard.button(9);
-    public static final Trigger BB_CORAL_FLOOR_VERT = buttonBoard.button(7);
-    public static final Trigger BB_CORAL_FLOOR_HORZ = buttonBoard.button(8);
+    public static final Trigger BB_LIFT_CLIMB_UP = buttonBoard.button(7);
+    public static final Trigger BB_LIFT_CLIMB_DOWN = buttonBoard.button(8);
     public static final Trigger BB_CORAL_START = buttonBoard.button(30);
 
     public static final Trigger BB_ROBOT_BACK = buttonBoard.button(3);

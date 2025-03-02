@@ -164,6 +164,9 @@ public class Robot extends TimedRobot {
      g.OI.BB_ROBOT_FRONT_RIGHT.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.FRONT_RIGHT); }, g.ROBOT.drive ));
      g.OI.BB_ROBOT_FRONT_LEFT.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.FRONT_LEFT); }, g.ROBOT.drive ));
 
+     g.OI.BB_LIFT_CLIMB_UP.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.LIFT_CLIMB_UP; }, g.ROBOT.coral ));
+     g.OI.BB_LIFT_CLIMB_DOWN.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.LIFT_CLIMB_DOWN; }, g.ROBOT.coral ));
+     
      g.OI.BB_ROBOT_STATION_LEFT.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_LEFT); }, g.ROBOT.drive ));
      g.OI.BB_ROBOT_STATION_RIGHT.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_RIGHT); }, g.ROBOT.drive ));
 
