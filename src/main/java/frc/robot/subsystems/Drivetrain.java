@@ -266,6 +266,22 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     }
   }
 
+  /* There are the following states for the robot to react to.
+   * 1. g.ROBOT.alignmentState
+   *  a. Set by buttons in teleop 
+   *  b. Set by autonomous commands
+   * 2. g.CORAL.armState
+   * 3. g.VISION.aprilTagAlignState
+   * 
+   * Order that the states are changed are the problem.
+   * 
+   * One wat to solve this is to have one method that is called with all the states.
+   */
+/**
+ * Set the target angle for the robot to drive to in AngleFieldCentric mode
+ * @param _state
+ * @return
+ */
   public double setTargetRobotAngle(RobotAlignStates _state){
     switch (_state) {
       case BACK:
@@ -453,8 +469,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_poseEstimator.resetPose(_pose);
   }
   public void setAprilTagAlignment(AprilTagAlignState _alignState){
-    //g.DRIVETRAIN.isAutoToAprilTagDone = false;
     g.VISION.aprilTagAlignState = _alignState;
+    setTargetRobotAngle(g.ROBOT.alignmentState);
   }
   public double getDriveSpeed(){
     double speed = 0.0;;
@@ -567,6 +583,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putString("Drive/DriveMode", g.DRIVETRAIN.driveMode.toString());
     SmartDashboard.putNumber("Drive/TurnPID error Derivative", g.DRIVETRAIN.turnPIDErrorDerivative);  
     SmartDashboard.putString("Robot/Drive Speed Mode", getSpeedMode());
+    SmartDashboard.putNumber("Robot/Drive Speed Error", getDriveSpeedError(getDriveSpeed()));
 
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);

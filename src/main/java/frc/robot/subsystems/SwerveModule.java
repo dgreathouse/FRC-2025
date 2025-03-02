@@ -11,6 +11,8 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -174,11 +176,11 @@ public class SwerveModule implements IUpdateDashboard {
       if (g.SWERVE.isEnabled) {
 
         double driveSetVelocity_mps = _state.speedMetersPerSecond * g.DRIVETRAIN.speedMultiplier;
-        //double driveVolts = m_drivePID.calculate(m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
-        //driveVolts = MathUtil.clamp(driveVolts, -6, 6);
+        double driveErrorVolts = m_drivePID.calculate(m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
+        driveErrorVolts = MathUtil.clamp(driveErrorVolts, -6, 6); // Limit the amount the PID can contribute
 
-       // driveVolts = driveVolts + m_driveFF.calculate(driveSetVelocity_mps, 0.0);
-        double driveVolts = m_driveFF.calculate(driveSetVelocity_mps, 0.0);
+        double driveVolts = driveErrorVolts + m_driveFF.calculate(driveSetVelocity_mps, 0.0);
+        //driveVolts = m_driveFF.calculate(driveSetVelocity_mps, 0.0);
         SmartDashboard.putNumber("Swerve/DriveVolts "+this.m_name, driveVolts);
         SmartDashboard.putNumber("Swerve/DriveActualVelocity" + m_name, m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm);
         SmartDashboard.putNumber("Swerve/DriveSetVelocity" + m_name, driveSetVelocity_mps);

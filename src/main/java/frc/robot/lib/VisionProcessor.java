@@ -352,7 +352,6 @@ public class VisionProcessor implements IUpdateDashboard{
         return rtn;
 
     }
-
     @Override
     public void updateDashboard() {
         if(g.VISION.pose2d.isPresent()){
