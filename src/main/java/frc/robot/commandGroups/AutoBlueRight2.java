@@ -10,18 +10,20 @@ import frc.robot.commands.coral.CoralMoveToStateCommand;
 import frc.robot.commands.coral.CoralSpinInCommand;
 import frc.robot.commands.coral.CoralSpinOutCommand;
 import frc.robot.commands.drive.AutoDriveToPose;
+import frc.robot.commands.drive.AutoDriveDelay;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.CoralArmState;
 import frc.robot.lib.g;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoBlueRight222 extends SequentialCommandGroup {
-  /** Creates a new AutoBlueRight222. */
-  public AutoBlueRight222() {
+
+public class AutoBlueRight2 extends SequentialCommandGroup {
+  public double m_delay;
+  /** Creates a new AutoBlueRight2. */
+  public AutoBlueRight2(double _delay) {
+    m_delay = _delay;
 
     addCommands(
+      new AutoDriveDelay(m_delay),
       new ParallelCommandGroup(
         new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.3, 3),
         new CoralMoveToStateCommand(CoralArmState.L2)

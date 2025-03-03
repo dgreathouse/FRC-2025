@@ -4,7 +4,6 @@
 
 package frc.robot.lib;
 
-import frc.robot.lib.g.LIFT;
 
 /** Add your docs here. */
 public enum CoralArmState {

@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
 import frc.robot.commandGroups.AutoDriveToPoseTest;
-import frc.robot.commandGroups.AutoBlueRight222;
+import frc.robot.commandGroups.AutoBlueRight2;
 import frc.robot.defaultCommands.AutoDriveDefaultCommand;
 import frc.robot.defaultCommands.CoralDefaultCommand;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
@@ -25,11 +25,10 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   private Notifier m_telemetry = new Notifier(this::updateDashboard);
-
   private DrivetrainDefaultCommand m_drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   private AutoDriveDefaultCommand m_autoDriveDefaultCommand = new AutoDriveDefaultCommand();
   private CoralDefaultCommand m_coralDefaultCommand = new CoralDefaultCommand();
-  private LiftDefaultCommand m_LiftDefaultCommand  = new LiftDefaultCommand();
+  private LiftDefaultCommand m_liftDefaultCommand  = new LiftDefaultCommand();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -39,16 +38,15 @@ public class Robot extends TimedRobot {
     // Set the default commands for the subsystems
     g.ROBOT.drive.setDefaultCommand(m_autoDriveDefaultCommand);
     g.ROBOT.coral.setDefaultCommand(m_coralDefaultCommand);
-    g.ROBOT.lift.setDefaultCommand(m_LiftDefaultCommand); 
+    g.ROBOT.lift.setDefaultCommand(m_liftDefaultCommand); 
     
-
     // Configure/Map all the controller buttons to commands
     configureBindings();
 
     // Setup the autonomous play default and send to dashboard for selection
     m_autoChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
-    m_autoChooser.addOption("Blue Right 222", new AutoBlueRight222());
-    m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
+    m_autoChooser.addOption("Blue Right 2", new AutoBlueRight2(0));
+    //m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 
     // Start telemetry in a slower rate than the main loop

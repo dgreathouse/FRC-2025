@@ -324,8 +324,8 @@ public class g {
     public static volatile double driveSpeedActual_mps = 0.0;
     public static volatile double driveSpeedRequested_mps = 0.0;
     public static volatile double driveSpeedError_mps = 0.0;
-    public static final Vector<N3> STD_DEV_HIGH = VecBuilder.fill(0.1,0.1,0.1);
-    public static final Vector<N3> STD_DEV_LOW = VecBuilder.fill(0.9,0.9,0.9);
+    public static final Vector<N3> STD_DEV_HIGH = VecBuilder.fill(0.15,0.15,0.15);
+    public static final Vector<N3> STD_DEV_LOW = VecBuilder.fill(0.5,0.5,0.5);
     //public static boolean isAutoToAprilTagDone = false;
     public static final double DRIVE_SPEED_LOW_mps = 1;
     public static double turnPIDErrorDerivative = Double.POSITIVE_INFINITY;

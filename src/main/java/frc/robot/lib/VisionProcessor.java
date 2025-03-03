@@ -240,7 +240,6 @@ public class VisionProcessor implements IUpdateDashboard{
             g.VISION.aprilTagRequestedID = getAprilTagID(g.ROBOT.alignmentState, DriverStation.getAlliance().get());
             if (m_leftCamera.isConnected() && m_rightCamera.isConnected()) {
                 leftCamState = calculatePose(m_leftCamera, m_leftPoseEstimator);
-                
                 g.VISION.leftTargetAmbiguity = leftCamState.getAmbiguity();
 
                 rightCamState = calculatePose(m_rightCamera, m_rightPoseEstimator);
@@ -300,13 +299,13 @@ public class VisionProcessor implements IUpdateDashboard{
             && g.DRIVETRAIN.isAutoDriveEnabled) {
             return true;
         }
-        if (g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.DRIVETRAIN.isAutoDriveEnabled)
-            if (g.VISION.aprilTagRequestedID == 12 
-                || g.VISION.aprilTagRequestedID == 13 
-                || g.VISION.aprilTagRequestedID == 1 
-                || g.VISION.aprilTagRequestedID == 2) {
-                return true;
-            }
+        // if (g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.DRIVETRAIN.isAutoDriveEnabled)
+        //     if (g.VISION.aprilTagRequestedID == 12 
+        //         || g.VISION.aprilTagRequestedID == 13 
+        //         || g.VISION.aprilTagRequestedID == 1 
+        //         || g.VISION.aprilTagRequestedID == 2) {
+        //         return true;
+        //     }
         return false;
     }
     public int getAprilTagID(RobotAlignStates _alignState, Alliance _alliance) {
