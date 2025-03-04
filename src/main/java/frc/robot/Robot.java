@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
-import frc.robot.commandGroups.AutoDriveToPoseTest;
 import frc.robot.commandGroups.AutoBlueRight2;
 import frc.robot.defaultCommands.AutoDriveDefaultCommand;
 import frc.robot.defaultCommands.CoralDefaultCommand;

@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import com.ctre.phoenix6.StatusSignal;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -38,6 +36,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private double m_yawSecondary = 0;
   private double m_angularVelocityZSecondary = 0;
   boolean m_isVisionEnabled = true;
+  private double m_speedScale = 1.0;
   // TODO: Tune KP,KI,KD max output should be +/-1 Start around 1/3.14 for Kp
   private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
 
@@ -95,28 +94,29 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.SWERVE.modules[0].m_location,
         g.SWERVE.modules[1].m_location,
         g.SWERVE.modules[2].m_location);
-        
-   // m_odometry = new SwerveDriveOdometry(m_kinematics, g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
+
+    // m_odometry = new SwerveDriveOdometry(m_kinematics, g.ROBOT.angleActual_Rot2d,
+    // g.SWERVE.positions);
 
     m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
     // TODO set Derivative tolerance so atSetPoint only returns true at low speeds
     m_turnPID.setTolerance(Math.toRadians(1), Double.POSITIVE_INFINITY);
     m_turnPID.setIZone(Math.toRadians(20));
     m_turnPID.setIntegratorRange(-0.25, 0.25);
-    
+
     m_poseEstimatorThread = new PoseEstimatorThread();
     m_poseEstimatorThread.start();
 
-    
-    m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics, 
-                                                  g.ROBOT.angleActual_Rot2d, 
-                                                  g.SWERVE.positions, new Pose2d(),
-                                                  g.DRIVETRAIN.STD_DEV_HIGH,
-                                                  g.DRIVETRAIN.STD_DEV_LOW);
-   
-   SmartDashboard.putBoolean("Robot/IsGyroPrimaryActive", true);
-   SmartDashboard.putBoolean("Robot/IsVisionEnabled", m_isVisionEnabled);
-   g.DASHBOARD.updates.add(this);
+    m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics,
+        g.ROBOT.angleActual_Rot2d,
+        g.SWERVE.positions, new Pose2d(),
+        g.DRIVETRAIN.STD_DEV_HIGH,
+        g.DRIVETRAIN.STD_DEV_LOW);
+
+    SmartDashboard.putBoolean("Robot/IsGyroPrimaryActive", true);
+    SmartDashboard.putBoolean("Robot/IsVisionEnabled", m_isVisionEnabled);
+    SmartDashboard.putNumber("Drive/SpeedScale", m_speedScale);
+    g.DASHBOARD.updates.add(this);
 
   }
 
@@ -125,34 +125,43 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     // This method will be called once per scheduler run
   }
 
-  /** Drive in old fashion mode. Forward on thumb stick makes the robot go forward with reference to the front of the robot.
+  /**
+   * Drive in old fashion mode. Forward on thumb stick makes the robot go forward
+   * with reference to the front of the robot.
    * 
-   * @param _xSpeed The X speed in +/- 1.0 Forward +
-   * @param _ySpeed The Y speed in +/- 1.0 Left +
-   * @param _rotate The rotational speed in +/- 1.0
-   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
+   * @param _xSpeed             The X speed in +/- 1.0 Forward +
+   * @param _ySpeed             The Y speed in +/- 1.0 Left +
+   * @param _rotate             The rotational speed in +/- 1.0
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the
+   *                            ceter of the robot use
+   *                            g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
   public void driveRobotCentric(double _xSpeed, double _ySpeed, double _rotate, Translation2d _centerOfRotation_m) {
-    m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-    m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-    m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
-    
+    m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * m_speedScale;
+    m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * m_speedScale;
+    m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec * m_speedScale;
+
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
-  /** Drive in field centric mode. Forward on thumb stick is always forward on field no matter what way the robot is facing
+  /**
+   * Drive in field centric mode. Forward on thumb stick is always forward on
+   * field no matter what way the robot is facing
    * 
-   * @param _xSpeed The X speed in +/- 1.0 Forward +
-   * @param _ySpeed The Y speed in +/- 1.0 Left +
-   * @param _rotate The rotational speed in +/- 1.0
-   * @param _robotAngle_deg The current robot angle 
-   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
+   * @param _xSpeed             The X speed in +/- 1.0 Forward +
+   * @param _ySpeed             The Y speed in +/- 1.0 Left +
+   * @param _rotate             The rotational speed in +/- 1.0
+   * @param _robotAngle_deg     The current robot angle
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the
+   *                            ceter of the robot use
+   *                            g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
-  public void driveFieldCentric(double _xSpeed, double _ySpeed, double _rotate, double _robotAngle_deg, Translation2d _centerOfRotation_m) {
-    
-    m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-    m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-    m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
+  public void driveFieldCentric(double _xSpeed, double _ySpeed, double _rotate, double _robotAngle_deg,
+      Translation2d _centerOfRotation_m) {
+
+    m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * m_speedScale;
+    m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * m_speedScale;
+    m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec * m_speedScale;
     SmartDashboard.putNumber("Drive/m_speeds.vxMetersPerSecond", m_speeds.vxMetersPerSecond);
     SmartDashboard.putNumber("Drive/m_speeds.vyMetersPerSecond", m_speeds.vyMetersPerSecond);
     SmartDashboard.putNumber("Drive/m_speeds.omegaRadiansPerSecond", m_speeds.omegaRadiansPerSecond);
@@ -160,62 +169,78 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
-  /** Use the X and Y values that usually come from a joystick and drive with a robot target angle.
+  /**
+   * Use the X and Y values that usually come from a joystick and drive with a
+   * robot target angle.
    * This maintains the robot facing direction to the target angle.
    * 
-   * @param _xSpeed The X speed in +/- 1.0
-   * @param _ySpeed The Y speed in +/- 1.0
-   * @param _robotAngle_deg The current robot angle 
-   * @param _targetAngle_deg The desired angle for the front of the robot to face.
-   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
+   * @param _xSpeed             The X speed in +/- 1.0
+   * @param _ySpeed             The Y speed in +/- 1.0
+   * @param _robotAngle_deg     The current robot angle
+   * @param _targetAngle_deg    The desired angle for the front of the robot to
+   *                            face.
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the
+   *                            ceter of the robot use
+   *                            g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
-  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, Translation2d _centerOfRotation_m) {
-    m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-    m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
+  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg,
+      Translation2d _centerOfRotation_m) {
+    m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * m_speedScale;
+    m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * m_speedScale;
 
     double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
-    rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND_rad);
-    m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
-
-
+    // rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND_rad);
+    m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec * m_speedScale;
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
 
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);
   }
 
-  /** Get the X and Y values from the Drive Angle and call {@link #driveAngleFieldCentric(double, double, double, double)}
+  /**
+   * Get the X and Y values from the Drive Angle and call
+   * {@link #driveAngleFieldCentric(double, double, double, double)}
    * 
    * 
-   * @param _maxSpeed The max speed to drive at with range 0.0 to 1.0
-   * @param _robotAngle_deg The angle of the robot which usually is g.ROBOT.angleActual_deg
-   * @param _targetAngle_deg The angle you want the robot front to point to.
-   * @param _driveAngle_deg The drive angle you want the robot to drive at
-   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
+   * @param _maxSpeed           The max speed to drive at with range 0.0 to 1.0
+   * @param _robotAngle_deg     The angle of the robot which usually is
+   *                            g.ROBOT.angleActual_deg
+   * @param _targetAngle_deg    The angle you want the robot front to point to.
+   * @param _driveAngle_deg     The drive angle you want the robot to drive at
+   * @param _centerOfRotation_m The center of rotation for the robot. To be the
+   *                            ceter of the robot use
+   *                            g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
-  public void drivePolarFieldCentric(double _maxSpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m) {
-    
+  public void drivePolarFieldCentric(double _maxSpeed, double _robotAngle_deg, double _targetAngle_deg,
+      double _driveAngle_deg, Translation2d _centerOfRotation_m) {
+
     double y = Math.sin(Math.toRadians(_driveAngle_deg)) * _maxSpeed;
     double x = Math.cos(Math.toRadians(_driveAngle_deg)) * _maxSpeed;
     driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg, _centerOfRotation_m);
   }
-  /** This is a compensated AngleFieldCentric that takes the speed from the x,y and generates a new X,Y from driveAngle
-   * 
-   * @param _xSpeed The X speed in +/- 1.0
-   * @param _ySpeed The Y speed in +/- 1.0
-   * @param _robotAngle_deg The current robot angle 
-   * @param _targetAngle_deg The desired angle for the front of the robot to face.
-   * @param _driveAngle_deg The angle to drive the robot at on the field
-   * @param _centerOfRotation_m The center of rotation for the robot. To be the ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
-   */
-  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg, Translation2d _centerOfRotation_m){
+  // /** This is a compensated AngleFieldCentric that takes the speed from the x,y
+  // and generates a new X,Y from driveAngle
+  // *
+  // * @param _xSpeed The X speed in +/- 1.0
+  // * @param _ySpeed The Y speed in +/- 1.0
+  // * @param _robotAngle_deg The current robot angle
+  // * @param _targetAngle_deg The desired angle for the front of the robot to
+  // face.
+  // * @param _driveAngle_deg The angle to drive the robot at on the field
+  // * @param _centerOfRotation_m The center of rotation for the robot. To be the
+  // ceter of the robot use g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
+  // */
+  // public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double
+  // _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg,
+  // Translation2d _centerOfRotation_m){
 
-    double speed = Math.max(Math.abs(_xSpeed), Math.abs(_ySpeed));
-    double y = Math.sin(Math.toRadians(_driveAngle_deg)) * speed;
-    double x = Math.cos(Math.toRadians(_driveAngle_deg)) * speed;
-    driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg, _centerOfRotation_m);
-  }
+  // double speed = Math.max(Math.abs(_xSpeed), Math.abs(_ySpeed));
+  // double y = Math.sin(Math.toRadians(_driveAngle_deg)) * speed;
+  // double x = Math.cos(Math.toRadians(_driveAngle_deg)) * speed;
+  // driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg,
+  // _centerOfRotation_m);
+  // }
 
-  public void setSwerveModuleStates(ChassisSpeeds _speeds, Translation2d _centerOfRotation_m){
+  public void setSwerveModuleStates(ChassisSpeeds _speeds, Translation2d _centerOfRotation_m) {
     _centerOfRotation_m = _centerOfRotation_m == null ? g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m : _centerOfRotation_m;
 
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(_speeds, _centerOfRotation_m);
@@ -223,15 +248,15 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     g.DRIVETRAIN.driveSpeedRequested_mps = 0.0;
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.modules[i].setDesiredState(states[i]);
-       g.DRIVETRAIN.driveSpeedRequested_mps += Math.abs(states[i].speedMetersPerSecond);
+      g.DRIVETRAIN.driveSpeedRequested_mps += Math.abs(states[i].speedMetersPerSecond);
     }
     g.DRIVETRAIN.driveSpeedRequested_mps = g.DRIVETRAIN.driveSpeedRequested_mps / g.SWERVE.COUNT;
     g.DRIVETRAIN.driveSpeedActual_mps = getDriveSpeed();
     g.DRIVETRAIN.driveSpeedError_mps = Math.abs(g.DRIVETRAIN.driveSpeedActual_mps - g.DRIVETRAIN.driveSpeedActual_mps);
   }
 
-
-  /** Set the drive angle for AngleFieldCentric mode if the  
+  /**
+   * Set the drive angle for AngleFieldCentric mode if the
    * Hypotenus of the x,y is greater that a threashold
    * 
    * @param _x The X value which is Forward Positive
@@ -239,8 +264,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    */
   public void setTargetRobotAngle(double _x, double _y) {
 
-    double x = _x; 
-    double y = _y; 
+    double x = _x;
+    double y = _y;
     double hyp = Math.hypot(x, y); // Always positive
     double joystickAngle = Math.toDegrees(Math.atan2(y, x));
 
@@ -255,7 +280,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         setTargetRobotAngle(RobotAlignStates.BACK_LEFT);
       } else if ((joystickAngle >= 157.5 && joystickAngle <= 180.0)
           || (joystickAngle <= -157.5 && joystickAngle > -179.99)) { // South
-            setTargetRobotAngle(RobotAlignStates.BACK);
+        setTargetRobotAngle(RobotAlignStates.BACK);
       } else if (joystickAngle <= 67.5 && joystickAngle > 22.5) { // North West
         setTargetRobotAngle(RobotAlignStates.FRONT_RIGHT);
       } else if (joystickAngle <= 112.5 && joystickAngle > 67.5) { // West
@@ -266,78 +291,82 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     }
   }
 
-  /* There are the following states for the robot to react to.
+  /*
+   * There are the following states for the robot to react to.
    * 1. g.ROBOT.alignmentState
-   *  a. Set by buttons in teleop 
-   *  b. Set by autonomous commands
+   * a. Set by buttons in teleop
+   * b. Set by autonomous commands
    * 2. g.CORAL.armState
    * 3. g.VISION.aprilTagAlignState
    * 
    * Order that the states are changed are the problem.
    * 
-   * One wat to solve this is to have one method that is called with all the states.
+   * One wat to solve this is to have one method that is called with all the
+   * states.
    */
-/**
- * Set the target angle for the robot to drive to in AngleFieldCentric mode
- * @param _state
- * @return
- */
+  /**
+   * Set the target angle for the robot to drive to in AngleFieldCentric mode
+   * 
+   * @param _state
+   * @return
+   */
   public double setTargetRobotAngle(RobotAlignStates _state) {
-  switch (_state) {
-    case BACK:
-      g.ROBOT.alignmentState = RobotAlignStates.BACK;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(180.0);
-      break;
-    case BACK_LEFT:
-      g.ROBOT.alignmentState = RobotAlignStates.BACK_LEFT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-120.0);
-      break;
-    case BACK_RIGHT:
-      g.ROBOT.alignmentState = RobotAlignStates.BACK_RIGHT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(120.0);
-      break;
-    case FRONT:
-      g.ROBOT.alignmentState = RobotAlignStates.FRONT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
-      break;
-    case FRONT_LEFT:
-      g.ROBOT.alignmentState = RobotAlignStates.FRONT_LEFT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-60.0);
-      break;
-    case FRONT_RIGHT:
-      g.ROBOT.alignmentState = RobotAlignStates.FRONT_RIGHT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(60.0);
-      break;
-    case LEFT:
-      g.ROBOT.alignmentState = RobotAlignStates.LEFT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(90.0);
-      break;
-    case RIGHT:
-      g.ROBOT.alignmentState = RobotAlignStates.RIGHT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-90.0);
-      break;
-    case STATION_LEFT:
-      g.CORAL.armState = CoralArmState.START;
-      g.ROBOT.alignmentState = RobotAlignStates.STATION_LEFT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-54.0);
-      break;
-    case STATION_RIGHT:
-      g.CORAL.armState = CoralArmState.START;
-      g.ROBOT.alignmentState = RobotAlignStates.STATION_RIGHT;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(54.0);
-      break;
-    case UNKNOWN:
-      g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
-      break;
-    default:
-      g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
-      g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
-      break;
+    switch (_state) {
+      case BACK:
+        g.ROBOT.alignmentState = RobotAlignStates.BACK;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(180.0);
+        break;
+      case BACK_LEFT:
+        g.ROBOT.alignmentState = RobotAlignStates.BACK_LEFT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-120.0);
+        break;
+      case BACK_RIGHT:
+        g.ROBOT.alignmentState = RobotAlignStates.BACK_RIGHT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(120.0);
+        break;
+      case FRONT:
+        g.ROBOT.alignmentState = RobotAlignStates.FRONT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
+        break;
+      case FRONT_LEFT:
+        g.ROBOT.alignmentState = RobotAlignStates.FRONT_LEFT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-60.0);
+        break;
+      case FRONT_RIGHT:
+        g.ROBOT.alignmentState = RobotAlignStates.FRONT_RIGHT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(60.0);
+        break;
+      case LEFT:
+        g.ROBOT.alignmentState = RobotAlignStates.LEFT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(90.0);
+        break;
+      case RIGHT:
+        g.ROBOT.alignmentState = RobotAlignStates.RIGHT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-90.0);
+        break;
+      case STATION_LEFT:
+        g.CORAL.armState = CoralArmState.START;
+        g.ROBOT.alignmentState = RobotAlignStates.STATION_LEFT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(-54.0);
+        break;
+      case STATION_RIGHT:
+        g.CORAL.armState = CoralArmState.START;
+        g.ROBOT.alignmentState = RobotAlignStates.STATION_RIGHT;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(54.0);
+        break;
+      case UNKNOWN:
+        g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
+        break;
+      default:
+        g.ROBOT.alignmentState = RobotAlignStates.UNKNOWN;
+        g.ROBOT.angleRobotTarget_deg = setTargetRobotAngle(0.0);
+        break;
 
+    }
+    return g.ROBOT.angleRobotTarget_deg;
   }
-  return g.ROBOT.angleRobotTarget_deg;
-}
+
   /**
    * Directly set the g.ROBOT.angleTarget_deg to a angle. Generally this is used
    * in autonomous or by a button.
@@ -346,8 +375,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    *                   AngleFieldCentric Mode.
    */
   public double setTargetRobotAngle(double _angle_deg) {
-    if(DriverStation.getAlliance().isPresent()){
-      if(DriverStation.getAlliance().get() == Alliance.Red){
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get() == Alliance.Red) {
         _angle_deg = _angle_deg - 180;
       }
     }
@@ -355,7 +384,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     return g.ROBOT.angleRobotTarget_deg;
   }
 
-    /**
+  /**
    * Is the robot rotational on target for g.ROBOT.AngleTarget_deg
    *
    * @return if the rotation of the robot is on target
@@ -367,9 +396,9 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
   public void resetYaw(double _angle) {
     // if(DriverStation.getAlliance().isPresent()){
-    //   if(DriverStation.getAlliance().get() == Alliance.Red){
-    //     _angle = _angle - 180;
-    //   } 
+    // if(DriverStation.getAlliance().get() == Alliance.Red){
+    // _angle = _angle - 180;
+    // }
     // }
     g.ROBOT.gyro_pigeon2.setYaw(_angle);
     g.ROBOT.gyro_navx.reset();
@@ -382,73 +411,91 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     }
   }
 
-  public double getYaw(){
+  public double getYaw() {
     return g.ROBOT.isPrimaryGyroActive ? m_yawPrimary : m_yawSecondary;
   }
-  public double getAngularVelocityZ(){
+
+  public double getAngularVelocityZ() {
     return g.ROBOT.isPrimaryGyroActive ? m_angularVelocityZPrimary : m_angularVelocityZSecondary;
   }
 
   public void setOdometry(StartLocation _start) {
     switch (_start) {
       case LEFT:
-      m_poseEstimator.resetPose(g.ROBOT.POSE_START_LEFT);
+        m_poseEstimator.resetPose(g.ROBOT.POSE_START_LEFT);
         break;
       case RIGHT:
-      m_poseEstimator.resetPose(g.ROBOT.POSE_START_RIGHT);
+        m_poseEstimator.resetPose(g.ROBOT.POSE_START_RIGHT);
         break;
       case CENTER:
-      m_poseEstimator.resetPose(g.ROBOT.POSE_START_CENTER);
+        m_poseEstimator.resetPose(g.ROBOT.POSE_START_CENTER);
         break;
       case ZERO:
-      m_poseEstimator.resetPose(g.ROBOT.POSE_START_ZERO);
+        m_poseEstimator.resetPose(g.ROBOT.POSE_START_ZERO);
         break;
       default:
-      m_poseEstimator.resetPose(g.ROBOT.POSE_START_LEFT);
+        m_poseEstimator.resetPose(g.ROBOT.POSE_START_LEFT);
         break;
     }
   }
-  public void toggleSpeed(){
-    if(g.DRIVETRAIN.speedMultiplier < 0.75){
+
+  public void toggleSpeed() {
+    if (g.DRIVETRAIN.speedMultiplier < 0.75) {
       g.DRIVETRAIN.speedMultiplier = 1.0;
-    }else {
+    } else {
       g.DRIVETRAIN.speedMultiplier = 0.5;
     }
   }
-  public String getSpeedMode(){
-   if(g.DRIVETRAIN.speedMultiplier < 0.75){
-    return "LOW";
-   }else{
-    return "HIGH";
-   }
+
+  public String getSpeedMode() {
+    if (g.DRIVETRAIN.speedMultiplier < 0.75) {
+      return "LOW";
+    } else {
+      return "HIGH";
+    }
   }
-  public void resetOdometry(Pose2d _pose){
+
+  public void resetOdometry(Pose2d _pose) {
     m_poseEstimator.resetPose(_pose);
   }
-  public void setAprilTagAlignment(AprilTagAlignState _alignState){
+
+  public void setAprilTagAlignment(AprilTagAlignState _alignState) {
     g.VISION.aprilTagAlignState = _alignState;
     setTargetRobotAngle(g.ROBOT.alignmentState);
   }
-  public double getDriveSpeed(){
-    double speed = 0.0;;
-    for(int i = 0; i < g.SWERVE.COUNT; i++){
+
+  public double getDriveSpeed() {
+    double speed = 0.0;
+    ;
+    for (int i = 0; i < g.SWERVE.COUNT; i++) {
       speed = speed + g.SWERVE.modules[i].getDriveSpeed();
     }
     speed = speed / g.SWERVE.COUNT;
     return speed;
   }
-  public double getDriveSpeedError(double _speed){
+
+  public double getDriveSpeedError(double _speed) {
     return Math.abs(_speed - g.DRIVETRAIN.driveSpeedActual_mps);
   }
-  private class PoseEstimatorThread extends Thread{
-    public PoseEstimatorThread(){
+
+  public double getSpeedScale() {
+    return m_speedScale;
+  }
+
+  public void setSpeedScale(double _scale) {
+    m_speedScale = _scale;
+  }
+
+  private class PoseEstimatorThread extends Thread {
+    public PoseEstimatorThread() {
       super();
     }
+
     @Override
-    public void run(){
-      while(true){
+    public void run() {
+      while (true) {
         updatePositions();
-        
+
         m_yawStatusPigeon2 = g.ROBOT.gyro_pigeon2.getYaw();
         m_angularVelocityZStatusPigeon2 = g.ROBOT.gyro_pigeon2.getAngularVelocityZDevice();
         m_yawSecondary = m_yawStatusPigeon2.getValueAsDouble();
@@ -459,12 +506,12 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
         g.ROBOT.angleActual_deg = getYaw();
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
-        
-        g.ROBOT.vision.calculatePose(); 
+
+        g.ROBOT.vision.calculatePose();
 
         g.ROBOT.pose2d = m_poseEstimator.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
         g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
-        
+
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
 
         try {
@@ -472,43 +519,51 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         } catch (InterruptedException e) {
           System.out.println(e.getMessage());
         }
-        
+
       }
     }
   }
+
   /**
    * Add a vision measurement to the PoseEstimator.
-   * This only gets called if a vision measurement is available and with low ambiguity.
-   * @param _estPose The estimated pose from the vision system
+   * This only gets called if a vision measurement is available and with low
+   * ambiguity.
+   * 
+   * @param _estPose   The estimated pose from the vision system
    * @param _timeStamp The time the vision measurement was taken
    */
-  public void addVisionMeasurement(Pose2d _estPose, double _timeStamp){
+  public void addVisionMeasurement(Pose2d _estPose, double _timeStamp) {
     // TODO only add vision measurement if drive speed is low. TEST
-    //  [x] Add speed check
-    //  [ ] Test if this works
+    // [x] Add speed check
+    // [ ] Test if this works
 
-    if(g.DRIVETRAIN.driveSpeedActual_mps < g.DRIVETRAIN.DRIVE_SPEED_LOW_mps){ // If the robot is moving slow
-      if(m_isVisionEnabled){
-    //  m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH); // Set the standard deviation to high for Vision
-      //if(g.ROBOT.vision.isYawResetComplete())
-      m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp); // Add the vision measurement to the PoseEstimator
+    if (g.DRIVETRAIN.driveSpeedActual_mps < g.DRIVETRAIN.DRIVE_SPEED_LOW_mps) { // If the robot is moving slow
+      if (m_isVisionEnabled) {
+        // m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_HIGH); //
+        // Set the standard deviation to high for Vision
+        // if(g.ROBOT.vision.isYawResetComplete())
+        m_poseEstimator.addVisionMeasurement(_estPose, _timeStamp); // Add the vision measurement to the PoseEstimator
+      }
+    } else {
+      // m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_LOW); // Set
+      // the standard deviation to high for Vision
     }
-    }else {
-      //m_poseEstimator.setVisionMeasurementStdDevs(g.DRIVETRAIN.STD_DEV_LOW); // Set the standard deviation to high for Vision
-    }
-    
+
   }
-  public boolean getIsVisionEnabled(){
+
+  public boolean getIsVisionEnabled() {
     return m_isVisionEnabled;
   }
-  public void setIsVisionEnabled(boolean _enabled){
+
+  public void setIsVisionEnabled(boolean _enabled) {
     m_isVisionEnabled = _enabled;
   }
+
   public void updateDashboard() {
     // g.SWERVE.totalSwerveCurrent_amps = 0;
     // for (SwerveModule swerveModule : g.SWERVE.modules) {
-    //   g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
-    //       + Math.abs(swerveModule.getSteerCurrent());
+    // g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
+    // + Math.abs(swerveModule.getSteerCurrent());
     // }
 
     SmartDashboard.putData("Robot/Drive Field2d", g.ROBOT.field2d);
@@ -528,13 +583,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putNumber("Drive/Speed Error", getDriveSpeedError(getDriveSpeed()));
     SmartDashboard.putString("Drive/Speed Mode", getSpeedMode());
     SmartDashboard.putString("Drive/Drive Mode", g.DRIVETRAIN.driveMode.toString());
-    SmartDashboard.putNumber("Drive/TurnPID error Derivative", g.DRIVETRAIN.turnPIDErrorDerivative);  
-    
+    SmartDashboard.putNumber("Drive/TurnPID error Derivative", g.DRIVETRAIN.turnPIDErrorDerivative);
 
-    SmartDashboard.putData("Drive/Subsystem",this);
+    SmartDashboard.putData("Drive/Subsystem", this);
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
     m_isVisionEnabled = SmartDashboard.getBoolean("Robot/IsVisionEnabled", true);
-    
+    m_speedScale = SmartDashboard.getNumber("Drive/SpeedScale", 1.0);
+
   }
 }

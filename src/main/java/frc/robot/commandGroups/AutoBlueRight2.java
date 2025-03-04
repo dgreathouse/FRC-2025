@@ -27,7 +27,6 @@ public class AutoBlueRight2 extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.3, 3),
         new CoralMoveToStateCommand(CoralArmState.L2)
-        
       ),
       new CoralSpinOutCommand(CoralArmState.L2, 1.5)
       // new ParallelCommandGroup(

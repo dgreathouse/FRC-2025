@@ -3,7 +3,6 @@ package frc.robot.defaultCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.g;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AutoDriveDefaultCommand extends Command {
   /** Creates a new AutoDriveDefaultCommand. */
   public AutoDriveDefaultCommand() {

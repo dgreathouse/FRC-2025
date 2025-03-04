@@ -18,7 +18,7 @@ public class AutoDriveToPose extends Command {
   double m_driveDistance_m = 0;
   double m_driveAngle_deg = 0;
   double m_robotTargetAngle_deg = 0;
-  double m_rampuUpTime_sec = 0.5;
+  double m_rampuUpTime_sec = 0.15;
   Rotation2d m_zeroRotation = new Rotation2d();
   PIDController m_drivePID = new PIDController(.55, 0.4  , 0);
   Timer m_timer = new Timer();
@@ -37,7 +37,7 @@ public class AutoDriveToPose extends Command {
     m_timeOut_sec = _timeOut_sec;
     m_drivePID.setTolerance(g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m);
     m_drivePID.setIZone(0.5);
-    m_drivePID.setIntegratorRange(-.35, .35);
+    m_drivePID.setIntegratorRange(-0.35, 0.35);
     m_alignState = RobotAlignStates.UNKNOWN;
     m_apriltagAlignState = AprilTagAlignState.NONE;
     m_robotTargetAngle_deg = _desiredPose.getRotation().getDegrees();
@@ -64,8 +64,11 @@ public class AutoDriveToPose extends Command {
     double speed = Math.abs(m_drivePID.calculate(m_driveDistance_m,0));
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, 0, m_speed);
+    double y = Math.sin(Math.toRadians(m_driveAngle_deg));
+    double x = Math.cos(Math.toRadians(m_driveAngle_deg));
+    g.ROBOT.drive.driveAngleFieldCentric(x,y, g.ROBOT.angleActual_deg, m_robotTargetAngle_deg,  g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
     // Drive the robot in Polar mode since we have a speed and angle.
-    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_robotTargetAngle_deg, m_driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+    //g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_robotTargetAngle_deg, m_driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
   }
 
   private double rampUpValue(double _val, double _rampTime_sec) {
