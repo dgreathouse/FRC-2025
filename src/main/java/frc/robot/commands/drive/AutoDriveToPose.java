@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.AprilTagAlignState;
+import frc.robot.lib.DriveMode;
 import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.g;
 
@@ -22,7 +23,6 @@ public class AutoDriveToPose extends Command {
   Rotation2d m_zeroRotation = new Rotation2d();
   PIDController m_drivePID = new PIDController(.55, 0.4  , 0);
   Timer m_timer = new Timer();
-  RobotAlignStates m_alignState = RobotAlignStates.UNKNOWN;
   AprilTagAlignState m_apriltagAlignState = AprilTagAlignState.NONE;
   /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
    * 
@@ -48,6 +48,7 @@ public class AutoDriveToPose extends Command {
   public void initialize() {
     m_timer.restart();
     g.ROBOT.angleRobotTarget_deg = m_robotTargetAngle_deg;
+    g.DRIVETRAIN.driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
   }
 
   // TODO: Test this class. Possible issues.

@@ -20,13 +20,13 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   PIDController m_pid;
   double m_kG = 0.0;
   double m_maxUpSpeed_volts = 12;
-  double m_maxDownSpeed_volts = -8;
+  double m_maxDownSpeed_volts = -10;
   VoltageOut m_voltageOut;
   /** Creates a new ScissorLift. */
   public Lift() {
     m_motor = new TalonFX(10, g.CAN_IDS_ROBORIO.NAME); // Creates a new TalonFX.
     m_voltageOut = new VoltageOut(0).withEnableFOC(true); // Creates a new VoltageOut.
-    m_pid = new PIDController(0.65, 0.1, 0); // Creates a new PID Controller.
+    m_pid = new PIDController(1.5, 0.5, 0); // Creates a new PID Controller.
     m_pid.setIZone(20); // Sets the IZone range.
     m_pid.setIntegratorRange(-.1, .1); // Sets the Integrator range.
     m_pid.setTolerance(0.1); // Sets the tolerance
@@ -74,7 +74,7 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
         moveToPosition(0);
         break;
         case LIFT_CLIMB_UP:
-        moveToPosition(200);  
+        moveToPosition(350);  
         break;
         case LIFT_CLIMB_DOWN:
         moveToPosition(100);    

@@ -108,7 +108,7 @@ public class g {
     public static final Pose2d POSE_START_CENTER = new Pose2d(7.1374, 4.064, new Rotation2d());
     public static final double TELEMETRY_RATE_sec = 0.02;
     public static final long ODOMETRY_RATE_ms = 5;
-    public static volatile double centerDistanceToFrontBumper_m = 0.535;
+    public static volatile double centerDistanceToFrontBumper_m = 0.565;//0.535;
     public static volatile double centerDistanceToBackBumper_m = 0.42211;
     public static volatile double centerDistanceToStationSide_m = 0.609;
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
@@ -184,7 +184,15 @@ public class g {
     public static CommandPS5Controller operatorController = new CommandPS5Controller(OPERATOR_CONTROLLER_PORT);
     public static final Trigger OPERATOR_ALIGN_LEFT = operatorController.square();
     public static final Trigger OPERATOR_ALIGN_RIGHT = operatorController.circle();
-    public static final Trigger OPERATOR_ALIGN_CENTER = operatorController.cross();
+    public static final Trigger OPERATOR_CORAL_L1 = operatorController.povUp();
+    public static final Trigger OPERATOR_CORAL_L2 = operatorController.povLeft();
+    public static final Trigger OPERATOR_CORAL_L3 = operatorController.povDown();
+    public static final Trigger OPERATOR_ALGAE_HIGH = operatorController.R2();
+    public static final Trigger OPERATOR_ALGAE_LOW = operatorController.L2();
+    public static final Trigger OPERATOR_CORAL_START = operatorController.L1();
+    public static final Trigger OPERATOR_LIFT_CLIMB_UP = operatorController.R1();
+    public static final Trigger OPERATOR_LIFT_CLIMB_DOWN = operatorController.L1();
+
 
     // Button Board
     public static final int BUTTON_BOARD_PORT = 2;
@@ -202,8 +210,8 @@ public class g {
     public static final Trigger BB_CORAL_L3 = buttonBoard.button(11);
     public static final Trigger BB_CORAL_L2 = buttonBoard.button(10);
     public static final Trigger BB_CORAL_L1 = buttonBoard.button(9);
-    public static final Trigger BB_LIFT_CLIMB_UP = buttonBoard.button(7);
-    public static final Trigger BB_LIFT_CLIMB_DOWN = buttonBoard.button(8);
+    public static final Trigger BB_LIFT_CLIMB_UP = buttonBoard.button(8);
+    public static final Trigger BB_LIFT_CLIMB_DOWN = buttonBoard.button(7);
     public static final Trigger BB_CORAL_START = buttonBoard.button(30);
 
     public static final Trigger BB_LIFT_RAISE = buttonBoard.button(7);
