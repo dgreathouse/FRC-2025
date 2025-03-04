@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.AprilTagAlignState;
+import frc.robot.lib.DriveMode;
 import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.g;
 
@@ -22,7 +23,6 @@ public class AutoDriveToPose extends Command {
   Rotation2d m_zeroRotation = new Rotation2d();
   PIDController m_drivePID = new PIDController(.55, 0.4  , 0);
   Timer m_timer = new Timer();
-  RobotAlignStates m_alignState = RobotAlignStates.UNKNOWN;
   AprilTagAlignState m_apriltagAlignState = AprilTagAlignState.NONE;
   /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
    * 
@@ -38,7 +38,6 @@ public class AutoDriveToPose extends Command {
     m_drivePID.setTolerance(g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m);
     m_drivePID.setIZone(0.5);
     m_drivePID.setIntegratorRange(-.35, .35);
-    m_alignState = RobotAlignStates.UNKNOWN;
     m_apriltagAlignState = AprilTagAlignState.NONE;
     m_robotTargetAngle_deg = _desiredPose.getRotation().getDegrees();
 
@@ -48,6 +47,7 @@ public class AutoDriveToPose extends Command {
   public void initialize() {
     m_timer.restart();
     g.ROBOT.angleRobotTarget_deg = m_robotTargetAngle_deg;
+    g.DRIVETRAIN.driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
   }
 
   // TODO: Test this class. Possible issues.
@@ -63,7 +63,7 @@ public class AutoDriveToPose extends Command {
 
     double speed = Math.abs(m_drivePID.calculate(m_driveDistance_m,0));
     speed = rampUpValue(speed, m_rampuUpTime_sec);
-    speed = MathUtil.clamp(speed, 0, m_speed);
+    speed = MathUtil.clamp(speed, -m_speed, m_speed);
     // Drive the robot in Polar mode since we have a speed and angle.
     g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_robotTargetAngle_deg, m_driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
   }

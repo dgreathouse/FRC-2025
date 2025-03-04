@@ -143,9 +143,17 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_MODE_SPEED_TOGGLE.onTrue(new InstantCommand(() -> {g.ROBOT.drive.toggleSpeed();}));
 
     // Operator controls
-    g.OI.OPERATOR_ALIGN_CENTER.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.CENTER);}, g.ROBOT.drive));
     g.OI.OPERATOR_ALIGN_LEFT.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.LEFT);}, g.ROBOT.drive));
     g.OI.OPERATOR_ALIGN_RIGHT.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.RIGHT);}, g.ROBOT.drive));
+    g.OI.OPERATOR_CORAL_L1.onTrue(new InstantCommand(()-> {g.CORAL.armState = CoralArmState.L1;}, g.ROBOT.coral));
+    g.OI.OPERATOR_CORAL_L2.onTrue(new InstantCommand(()-> {g.CORAL.armState = CoralArmState.L2;}, g.ROBOT.coral));
+    g.OI.OPERATOR_CORAL_L3.onTrue(new InstantCommand(()-> {g.CORAL.armState = CoralArmState.L3;}, g.ROBOT.coral));
+    g.OI.OPERATOR_ALGAE_HIGH.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.ALGAE_HIGH; }, g.ROBOT.coral ));
+    g.OI.OPERATOR_ALGAE_LOW.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.ALGAE_LOW; }, g.ROBOT.coral ));
+    g.OI.OPERATOR_CORAL_START.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.START; }, g.ROBOT.coral ));
+    g.OI.OPERATOR_LIFT_CLIMB_UP.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.LIFT_CLIMB_UP; }, g.ROBOT.coral ));
+    g.OI.OPERATOR_LIFT_CLIMB_DOWN.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.LIFT_CLIMB_DOWN; }, g.ROBOT.coral ));
+    
 
     //Button board
     g.OI.BB_ALGAE_HIGH.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.ALGAE_HIGH; }, g.ROBOT.coral ));

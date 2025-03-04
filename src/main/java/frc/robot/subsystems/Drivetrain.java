@@ -176,8 +176,6 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
     rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND_rad);
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
-
-
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
 
     setSwerveModuleStates(m_speeds, _centerOfRotation_m);

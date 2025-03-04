@@ -104,7 +104,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
       speed = 0.45;
         break;
       case L1:
-      speed = 0.1;
+      speed = 0.15;
         break;
       case L2:
       speed = 0.25;
