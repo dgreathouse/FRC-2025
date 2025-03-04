@@ -38,7 +38,7 @@ public class AutoDriveToPose extends Command {
     m_drivePID.setTolerance(g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m);
     m_drivePID.setIZone(0.5);
     m_drivePID.setIntegratorRange(-0.35, 0.35);
-    m_alignState = RobotAlignStates.UNKNOWN;
+    //m_alignState = RobotAlignStates.UNKNOWN;
     m_apriltagAlignState = AprilTagAlignState.NONE;
     m_robotTargetAngle_deg = _desiredPose.getRotation().getDegrees();
 
