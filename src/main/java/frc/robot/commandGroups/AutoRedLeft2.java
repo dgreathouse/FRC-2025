@@ -16,16 +16,16 @@ import frc.robot.lib.CoralArmState;
 import frc.robot.lib.g;
 
 
-public class AutoBlueRight2 extends SequentialCommandGroup {
+public class AutoRedLeft2 extends SequentialCommandGroup {
   public double m_delay;
   /** Creates a new AutoBlueRight2. */
-  public AutoBlueRight2(double _delay) {
+  public AutoRedLeft2(double _delay) {
     m_delay = _delay;
 
     addCommands(
       new AutoDriveDelay(m_delay),
       new ParallelCommandGroup(
-        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.4, 5),
+        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(11, AprilTagAlignState.RIGHT), 0.4, 5),
         new CoralMoveToStateCommand(CoralArmState.L2)
       ),
       new CoralSpinOutCommand(CoralArmState.L2, 1.5)

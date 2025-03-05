@@ -26,7 +26,7 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   public Lift() {
     m_motor = new TalonFX(10, g.CAN_IDS_ROBORIO.NAME); // Creates a new TalonFX.
     m_voltageOut = new VoltageOut(0).withEnableFOC(true); // Creates a new VoltageOut.
-    m_pid = new PIDController(1.5, 0.5, 0); // Creates a new PID Controller.
+    m_pid = new PIDController(1.25, 0.2, 0); // Creates a new PID Controller.
     m_pid.setIZone(20); // Sets the IZone range.
     m_pid.setIntegratorRange(-.1, .1); // Sets the Integrator range.
     m_pid.setTolerance(0.1); // Sets the tolerance

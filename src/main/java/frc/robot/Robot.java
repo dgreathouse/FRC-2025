@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
+import frc.robot.commandGroups.AutoRedLeft2;
+import frc.robot.commandGroups.AutoRedRight2;
+import frc.robot.commandGroups.AutoBlueLeft2;
 import frc.robot.commandGroups.AutoBlueRight2;
 import frc.robot.defaultCommands.AutoDriveDefaultCommand;
 import frc.robot.defaultCommands.CoralDefaultCommand;
@@ -45,6 +48,9 @@ public class Robot extends TimedRobot {
     // Setup the autonomous play default and send to dashboard for selection
     m_autoChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
     m_autoChooser.addOption("Blue Right 2", new AutoBlueRight2(0));
+    m_autoChooser.addOption("Blue Left 2", new AutoBlueLeft2(0));
+    m_autoChooser.addOption("Red Left 2", new AutoRedLeft2(0));
+    m_autoChooser.addOption("Red Right 2", new AutoRedRight2(0));
     //m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 
@@ -138,7 +144,7 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue( new InstantCommand( () -> { g.SWERVE.isEnabled = !g.SWERVE.isEnabled; }, g.ROBOT.drive));
     g.OI.DRIVER_STATION_RIGHT.onTrue( new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_RIGHT); }, g.ROBOT.drive));
     g.OI.DRIVER_STATION_LEFT.onTrue( new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_LEFT);}, g.ROBOT.drive));
-    g.OI.DRIVER_TOGGLE_AUTO_DRIVE.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.isAutoDriveEnabled = !g.DRIVETRAIN.isAutoDriveEnabled;}));
+    //g.OI.DRIVER_TOGGLE_AUTO_DRIVE.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.isAutoDriveEnabled = !g.DRIVETRAIN.isAutoDriveEnabled;}));
     g.OI.DRIVER_MODE_SPEED_TOGGLE.onTrue(new InstantCommand(() -> {g.ROBOT.drive.toggleSpeed();}));
 
     // Operator controls

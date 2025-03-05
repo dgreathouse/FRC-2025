@@ -36,7 +36,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private double m_yawSecondary = 0;
   private double m_angularVelocityZSecondary = 0;
   boolean m_isVisionEnabled = true;
-  private double m_speedScale = 1.0;
+  private double m_speedScale = 0.75;
   // TODO: Tune KP,KI,KD max output should be +/-1 Start around 1/3.14 for Kp
   private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
 
@@ -183,12 +183,12 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    *                            ceter of the robot use
    *                            g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m.
    */
-  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg,
-      Translation2d _centerOfRotation_m) {
+  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg, Translation2d _centerOfRotation_m) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * m_speedScale;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * m_speedScale;
 
     double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
+    SmartDashboard.putNumber("Rotate", rotate);
     // rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND_rad);
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec * m_speedScale;
     m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-_robotAngle_deg)));
@@ -440,15 +440,16 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
 
   public void toggleSpeed() {
-    if (g.DRIVETRAIN.speedMultiplier < 0.75) {
-      g.DRIVETRAIN.speedMultiplier = 1.0;
+    if (g.ROBOT.drive.getSpeedScale() < 0.65) {
+      g.ROBOT.drive.setSpeedScale(0.75);
+
     } else {
-      g.DRIVETRAIN.speedMultiplier = 0.5;
+      g.ROBOT.drive.setSpeedScale(0.50);
     }
   }
 
   public String getSpeedMode() {
-    if (g.DRIVETRAIN.speedMultiplier < 0.75) {
+    if (g.ROBOT.drive.getSpeedScale() < 0.65) {
       return "LOW";
     } else {
       return "HIGH";
@@ -589,7 +590,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     // Get from Dashboard
     g.ROBOT.isPrimaryGyroActive = SmartDashboard.getBoolean("Robot/IsGyroPrimaryActive", true);
     m_isVisionEnabled = SmartDashboard.getBoolean("Robot/IsVisionEnabled", true);
-    m_speedScale = SmartDashboard.getNumber("Drive/SpeedScale", 1.0);
+
 
   }
 }

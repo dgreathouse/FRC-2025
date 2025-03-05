@@ -295,8 +295,7 @@ public class VisionProcessor implements IUpdateDashboard{
      */
     public boolean getIsAutoAprilTagActive(){
         if (g.VISION.aprilTagAlignState != AprilTagAlignState.NONE 
-            && g.VISION.tagState == TagFoundState.TARGET_ID_FOUND
-            && g.DRIVETRAIN.isAutoDriveEnabled) {
+            && g.VISION.tagState == TagFoundState.TARGET_ID_FOUND ) {
             return true;
         }
         // if (g.VISION.aprilTagAlignState != AprilTagAlignState.NONE && g.DRIVETRAIN.isAutoDriveEnabled)

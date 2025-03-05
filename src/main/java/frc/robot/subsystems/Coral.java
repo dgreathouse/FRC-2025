@@ -202,11 +202,11 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
 
   @Override
   public void updateDashboard() {
-    SmartDashboard.putString("Coral/Claw Arm State", g.CORAL.armState.toString());
-    SmartDashboard.putNumber("Coral/Arm Angle", getRotateAngle_deg());
+    SmartDashboard.putString("Coral/Coral Arm State", g.CORAL.armState.toString());
+    SmartDashboard.putNumber("Coral/Coral Arm Angle", getRotateAngle_deg());
     // SmartDashboard.putNumber("Coral/RangeSensor_mm", getRange());
     // SmartDashboard.putBoolean("Coral/IsCoralDetected", getIsDetected());
     SmartDashboard.putNumber("Coral/Spinner Velocity", m_leftMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Coral/LeftMotorAmps", m_leftMotor.getStatorCurrent().getValueAsDouble());
+   
   }
 }

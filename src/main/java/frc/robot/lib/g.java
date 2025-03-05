@@ -108,7 +108,7 @@ public class g {
     public static final Pose2d POSE_START_CENTER = new Pose2d(7.1374, 4.064, new Rotation2d());
     public static final double TELEMETRY_RATE_sec = 0.02;
     public static final long ODOMETRY_RATE_ms = 5;
-    public static volatile double centerDistanceToFrontBumper_m = 0.565;//0.535;
+    public static volatile double centerDistanceToFrontBumper_m = 0.535;//0.535;
     public static volatile double centerDistanceToBackBumper_m = 0.42211;
     public static volatile double centerDistanceToStationSide_m = 0.609;
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
@@ -168,7 +168,7 @@ public class g {
     public static final Trigger DRIVER_MODE_FIELDCENTRIC = driverController.povLeft();
     public static final Trigger DRIVER_MODE_ROBOTCENTRIC = driverController.povRight();
     public static final Trigger DRIVER_MODE_ANGLEFIELDCENTRIC = driverController.povDown();
-    public static final Trigger DRIVER_TOGGLE_AUTO_DRIVE = driverController.povUp();
+    //public static final Trigger DRIVER_TOGGLE_AUTO_DRIVE = driverController.povUp();
     public static final Trigger DRIVER_CORAL_IN = driverController.R1();
     public static final Trigger DRIVER_CORAL_OUT = driverController.L1();
     public static final Trigger DRIVER_RESET_YAW = driverController.create();
@@ -324,16 +324,16 @@ public class g {
     public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.0254; // 1 inches
     public static final double AUTO_DRIVE_POSE_ANGLE_TOLERANCE_deg = 1.0; 
     public static volatile DriveMode driveMode = DriveMode.FIELD_CENTRIC;
-    public static volatile double speedMultiplier = 1.0;
+    //public static volatile double speedMultiplier = 1.0;
     public static final Translation2d ZERO_CENTER_OF_ROTATION_m = new Translation2d();
     public static volatile Translation2d centerOfRotation_m = new Translation2d();
-    public static volatile boolean playingMarch = true;
-    public static boolean isAutoDriveEnabled = true;
+    //public static volatile boolean playingMarch = true;
+    //public static boolean isAutoDriveEnabled = true;
     public static volatile double driveSpeedActual_mps = 0.0;
     public static volatile double driveSpeedRequested_mps = 0.0;
     public static volatile double driveSpeedError_mps = 0.0;
     public static final Vector<N3> STD_DEV_HIGH = VecBuilder.fill(0.15,0.15,0.15);
-    public static final Vector<N3> STD_DEV_LOW = VecBuilder.fill(0.5,0.5,0.5);
+    public static final Vector<N3> STD_DEV_LOW = VecBuilder.fill(0.25,0.25,0.25);
     //public static boolean isAutoToAprilTagDone = false;
     public static final double DRIVE_SPEED_LOW_mps = 1;
     public static double turnPIDErrorDerivative = Double.POSITIVE_INFINITY;
@@ -377,7 +377,7 @@ public class g {
     public static volatile TagFoundState tagState = TagFoundState.EMPTY;
     public static volatile Pose2d aprilTagRequestedPose = new Pose2d();
     public static volatile boolean isGlobalPoseResetActive = true; // Not implemented
-    public static final double AMBIGUITY_SETPOINT = 0.0075;
+    public static final double AMBIGUITY_SETPOINT = 0.05;
     public static volatile double leftTargetAmbiguity = -1.0;
     public static volatile double rightTargetAmbiguity = -1.0;
     public static volatile Field2d field2d = new Field2d();

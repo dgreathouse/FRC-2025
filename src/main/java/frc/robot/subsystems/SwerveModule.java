@@ -175,7 +175,7 @@ public class SwerveModule implements IUpdateDashboard {
     /*-------------------- Drive---------------------*/
     if (g.SWERVE.isEnabled) {
 
-      double driveSetVelocity_mps = _state.speedMetersPerSecond * g.DRIVETRAIN.speedMultiplier;
+      double driveSetVelocity_mps = _state.speedMetersPerSecond;
       double driveErrorVolts = m_drivePID.calculate(m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
       driveErrorVolts = MathUtil.clamp(driveErrorVolts, -6, 6); // Limit the amount the PID can contribute
 
