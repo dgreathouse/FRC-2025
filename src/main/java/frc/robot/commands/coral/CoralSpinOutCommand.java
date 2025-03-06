@@ -34,6 +34,7 @@ public class CoralSpinOutCommand extends Command {
   @Override
   public void execute() {
     g.ROBOT.coral.spinOut(m_state);
+    g.ROBOT.coral.rotate(m_state);
   }
 
   // Called once the command ends or is interrupted.

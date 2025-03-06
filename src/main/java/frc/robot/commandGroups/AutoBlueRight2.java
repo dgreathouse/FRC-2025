@@ -5,16 +5,15 @@
 package frc.robot.commandGroups;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.coral.CoralMoveToStateCommand;
-import frc.robot.commands.coral.CoralSpinInCommand;
 import frc.robot.commands.coral.CoralSpinOutCommand;
 import frc.robot.commands.drive.AutoDriveToPose;
 import frc.robot.commands.drive.AutoDriveDelay;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.CoralArmState;
 import frc.robot.lib.g;
-
 
 public class AutoBlueRight2 extends SequentialCommandGroup {
   public double m_delay;
@@ -24,7 +23,8 @@ public class AutoBlueRight2 extends SequentialCommandGroup {
 
     addCommands(
       new AutoDriveDelay(m_delay),
-      new ParallelCommandGroup(
+      
+      new ParallelDeadlineGroup(
         new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.4, 5),
         new CoralMoveToStateCommand(CoralArmState.L2)
       ),
