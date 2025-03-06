@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.coral.CoralMoveToStateCommand;
 import frc.robot.commands.coral.CoralSpinOutCommand;
 import frc.robot.commands.drive.AutoDriveToPose;
+import frc.robot.commands.drive.AutoRotateToPose;
 import frc.robot.commands.drive.AutoDriveDelay;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.CoralArmState;
@@ -23,13 +24,13 @@ public class AutoBlueRight2 extends SequentialCommandGroup {
 
     addCommands(
       new AutoDriveDelay(m_delay),
-      
+      new AutoRotateToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), .3, 1),
       new ParallelDeadlineGroup(
-        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.4, 5),
+        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.5, 3),
         new CoralMoveToStateCommand(CoralArmState.L2)
       ),
       new CoralSpinOutCommand(CoralArmState.L2, 1.5)
-      // new ParallelCommandGroup(
+      // // new ParallelCommandGroup(
       //   new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.CENTER), 0.3, 7),
       //   new CoralMoveToStateCommand(CoralArmState.START)
       // ),

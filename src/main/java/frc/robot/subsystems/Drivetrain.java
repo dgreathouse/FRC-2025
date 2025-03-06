@@ -38,7 +38,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   boolean m_isVisionEnabled = true;
   private double m_speedScale = 0.75;
   // TODO: Tune KP,KI,KD max output should be +/-1 Start around 1/3.14 for Kp
-  private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
+  private PIDController m_turnPID = new PIDController(0.45, 0.4, 0);
 
   private ChassisSpeeds m_speeds = new ChassisSpeeds();
 
@@ -116,6 +116,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     SmartDashboard.putBoolean("Robot/IsGyroPrimaryActive", true);
     SmartDashboard.putBoolean("Robot/IsVisionEnabled", m_isVisionEnabled);
     SmartDashboard.putNumber("Drive/SpeedScale", m_speedScale);
+    SmartDashboard.putData("Drive/AngleFCTurnPid",m_turnPID);
     g.DASHBOARD.updates.add(this);
 
   }

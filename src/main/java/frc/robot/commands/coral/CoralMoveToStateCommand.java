@@ -32,6 +32,6 @@ public class CoralMoveToStateCommand extends Command {
   @Override
   public boolean isFinished() {
 
-    return g.ROBOT.coral.isAtState();
+    return false;
   }
 }

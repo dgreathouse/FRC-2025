@@ -108,7 +108,7 @@ public class g {
     public static final Pose2d POSE_START_CENTER = new Pose2d(7.1374, 4.064, new Rotation2d());
     public static final double TELEMETRY_RATE_sec = 0.02;
     public static final long ODOMETRY_RATE_ms = 5;
-    public static volatile double centerDistanceToFrontBumper_m = 0.535;//0.535;
+    public static volatile double centerDistanceToFrontBumper_m = 0.565;//0.535;
     public static volatile double centerDistanceToBackBumper_m = 0.42211;
     public static volatile double centerDistanceToStationSide_m = 0.609;
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
