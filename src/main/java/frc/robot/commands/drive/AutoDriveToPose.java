@@ -21,7 +21,7 @@ public class AutoDriveToPose extends Command {
   double m_driveAngle_deg = 0;
   double m_robotTargetAngle_deg = 0;
   double m_rampuUpTime_sec = 0.25;
-  PIDController m_drivePID = new PIDController(0.45, 0.002  , 0);
+  PIDController m_drivePID = new PIDController(0.45, 0.002, 0);
   PIDController m_turnPID = new PIDController(0.4, 0.001, 0.0);
   Timer m_timer = new Timer();
 
