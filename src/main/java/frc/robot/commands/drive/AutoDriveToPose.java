@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.DriveMode;
-import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.g;
 
 
@@ -22,11 +21,9 @@ public class AutoDriveToPose extends Command {
   double m_driveAngle_deg = 0;
   double m_robotTargetAngle_deg = 0;
   double m_rampuUpTime_sec = 0.15;
-  Rotation2d m_zeroRotation = new Rotation2d();
-  PIDController m_drivePID = new PIDController(.25, 0.0  , 0);
+  PIDController m_drivePID = new PIDController(0.25, 0.0  , 0);
+  PIDController m_turnPID = new PIDController(0.075, 0.0, 0.0);
   Timer m_timer = new Timer();
-  AprilTagAlignState m_apriltagAlignState = AprilTagAlignState.NONE;
-  private PIDController m_turnPID = new PIDController(.075, 0.0, 0.0);
 
   private ChassisSpeeds m_speeds = new ChassisSpeeds();
   /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
@@ -44,8 +41,7 @@ public class AutoDriveToPose extends Command {
     m_drivePID.setTolerance(.005);
     //m_drivePID.setIZone(0.5);
     //m_drivePID.setIntegratorRange(-0.35, 0.35);
-    //m_alignState = RobotAlignStates.UNKNOWN;
-    m_apriltagAlignState = AprilTagAlignState.NONE;
+
     m_robotTargetAngle_deg = _desiredPose.getRotation().getDegrees();
     m_turnPID.setTolerance(Math.toRadians(1));
     m_turnPID.setIntegratorRange(-0.15, 0.15);
@@ -60,33 +56,31 @@ public class AutoDriveToPose extends Command {
     g.DRIVETRAIN.driveMode = DriveMode.FIELD_CENTRIC;
   }
 
-  // TODO: Test this class. Possible issues.
-  //  [x] Starting Pose, CAN vision reset pose at beginning before match. OrangePI is on and working. Just reset Gyro based on yaw to tag
-  //  [ ] Tolerance
-  //  [ ] PIDs
-  //  [ ] Speeds
 
   @Override
   public void execute() {
     m_driveAngle_deg = m_desiredPose.getTranslation().minus(g.ROBOT.pose2d.getTranslation()).getAngle().getDegrees();
     m_driveDistance_m = g.ROBOT.pose2d.getTranslation().getDistance(m_desiredPose.getTranslation());
-    SmartDashboard.putNumber("Auto/m_driveDistance_m", m_driveDistance_m);
-    double speed = Math.abs(m_drivePID.calculate(m_driveDistance_m,0));
-    speed = rampUpValue(speed, m_rampuUpTime_sec);
-    speed = MathUtil.clamp(speed, -m_speed, m_speed);
-    double y = Math.sin(Math.toRadians(m_driveAngle_deg)) * speed;
-    double x = Math.cos(Math.toRadians(m_driveAngle_deg)) * speed;
-    m_speeds.vxMetersPerSecond = x * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-    m_speeds.vyMetersPerSecond = y * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
-    double rotate = m_turnPID.calculate(Math.toRadians(g.ROBOT.angleActual_deg), Math.toRadians(m_robotTargetAngle_deg));
-    m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
-    SmartDashboard.putNumber("Rotate", rotate);
-    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-g.ROBOT.angleActual_deg)));
-    g.ROBOT.drive.setSwerveModuleStates(m_speeds, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+    
 
-    //g.ROBOT.drive.driveAngleFieldCentric(x,y, g.ROBOT.angleActual_deg, m_robotTargetAngle_deg,  g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
-    // Drive the robot in Polar mode since we have a speed and angle.
-    //g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_robotTargetAngle_deg, m_driveAngle_deg, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m);
+    double speed = Math.abs(m_drivePID.calculate(m_driveDistance_m,0)); // Calculate the speed based on the distance to the target
+    speed = rampUpValue(speed, m_rampuUpTime_sec);  // Ramp up the speed
+    speed = MathUtil.clamp(speed, -m_speed, m_speed); // Clamp the speed to the max speed
+
+    double y = Math.sin(Math.toRadians(m_driveAngle_deg)); // Calculate the x and y components of the speed
+    double x = Math.cos(Math.toRadians(m_driveAngle_deg));
+    m_speeds.vxMetersPerSecond = x * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * speed; // Set the speed of the robot
+    m_speeds.vyMetersPerSecond = y * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec * speed; // Set the speed of the robot
+
+    double rotate = m_turnPID.calculate(Math.toRadians(g.ROBOT.angleActual_deg), Math.toRadians(m_robotTargetAngle_deg)); // Calculate the rotation speed
+    m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec; // Set the rotation speed
+    m_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(m_speeds, new Rotation2d(Math.toRadians(-g.ROBOT.angleActual_deg))); // Convert the speed to robot relative speeds
+
+    g.ROBOT.drive.setSwerveModuleStates(m_speeds, g.DRIVETRAIN.ZERO_CENTER_OF_ROTATION_m); // Set the speeds of the swerve modules
+    
+    SmartDashboard.putNumber("Auto/m_driveAngle_deg", m_driveAngle_deg);
+    SmartDashboard.putNumber("Auto/m_driveDistance_m", m_driveDistance_m);
+    SmartDashboard.putNumber("Auto/rotate", rotate);
   }
 
   private double rampUpValue(double _val, double _rampTime_sec) {
