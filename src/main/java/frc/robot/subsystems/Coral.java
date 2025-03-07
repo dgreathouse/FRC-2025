@@ -88,7 +88,11 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_leftMotor.setControl(m_leftVoltageOut.withOutput(volts));
     m_rightMotor.setControl(m_rightVoltageOut.withOutput(-volts));
   }
-
+  public void spin(double _speed){
+    double volts = _speed * g.ROBOT.MAX_BATTERY_SUPPLY_volts;
+    m_leftMotor.setControl(m_leftVoltageOut.withOutput(volts));
+    m_rightMotor.setControl(m_rightVoltageOut.withOutput(-volts));
+  }
   /**
    * Spins the coral out at the desired speed
    * 

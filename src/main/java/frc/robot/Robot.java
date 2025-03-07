@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
 import frc.robot.commandGroups.AutoRedLeft2;
 import frc.robot.commandGroups.AutoRedRight2;
+import frc.robot.commands.coral.CoralReverseCommand;
 import frc.robot.commandGroups.AutoBlueLeft2;
 import frc.robot.commandGroups.AutoBlueRight2;
 import frc.robot.defaultCommands.AutoDriveDefaultCommand;
@@ -146,6 +147,7 @@ public class Robot extends TimedRobot {
     g.OI.DRIVER_STATION_LEFT.onTrue( new InstantCommand(() -> {g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_LEFT);}, g.ROBOT.drive));
     //g.OI.DRIVER_TOGGLE_AUTO_DRIVE.onTrue(new InstantCommand(() -> {g.DRIVETRAIN.isAutoDriveEnabled = !g.DRIVETRAIN.isAutoDriveEnabled;}));
     g.OI.DRIVER_MODE_SPEED_TOGGLE.onTrue(new InstantCommand(() -> {g.ROBOT.drive.toggleSpeed();}));
+    g.OI.DRIVER_CORAL_REVERSE.onTrue(new CoralReverseCommand());
 
     // Operator controls
     g.OI.OPERATOR_ALIGN_LEFT.onTrue(new InstantCommand(()-> {g.ROBOT.drive.setAprilTagAlignment(AprilTagAlignState.LEFT);}, g.ROBOT.drive));
