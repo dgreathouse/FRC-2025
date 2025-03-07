@@ -1,5 +1,7 @@
 package frc.robot.commands.drive;
 
+import com.ctre.phoenix6.configs.GyroTrimConfigs;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,7 +23,7 @@ public class AutoDriveToPose extends Command {
   double m_driveAngle_deg = 0;
   double m_robotTargetAngle_deg = 0;
   double m_rampuUpTime_sec = 0.25;
-  PIDController m_drivePID = new PIDController(0.45, 0.002, 0);
+  PIDController m_drivePID = new PIDController(0.45, 0.015, 0);
   PIDController m_turnPID = new PIDController(0.4, 0.001, 0.0);
   Timer m_timer = new Timer();
 
@@ -39,7 +41,7 @@ public class AutoDriveToPose extends Command {
     m_timeOut_sec = _timeOut_sec;
    // m_drivePID.setTolerance(g.DRIVETRAIN.AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m);
     m_drivePID.setTolerance(.0154);
-    m_drivePID.setIZone(0.5);
+    m_drivePID.setIZone(0.15);
     //m_drivePID.setIntegratorRange(-0.35, 0.35);
 
     m_robotTargetAngle_deg = _desiredPose.getRotation().getDegrees();
@@ -84,6 +86,8 @@ public class AutoDriveToPose extends Command {
     SmartDashboard.putNumber("Auto/m_driveAngle_deg", m_driveAngle_deg);
     SmartDashboard.putNumber("Auto/m_driveDistance_m", m_driveDistance_m);
     SmartDashboard.putNumber("Auto/rotate", rotate);
+    SmartDashboard.putNumber("Auto/Pose2d_X", g.ROBOT.pose2d.getX());
+    SmartDashboard.putNumber("Auto/Pose2d_Y", g.ROBOT.pose2d.getY());
   }
 
   private double rampUpValue(double _val, double _rampTime_sec) {

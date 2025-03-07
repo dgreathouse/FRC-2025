@@ -37,9 +37,9 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
     motorOutputConfig.Inverted = InvertedValue.Clockwise_Positive;
     m_motor.getConfigurator().apply(motorOutputConfig);
 
-    OpenLoopRampsConfigs openLoopRampsConfig = new OpenLoopRampsConfigs();
-    openLoopRampsConfig.VoltageOpenLoopRampPeriod = 0.0;
-    m_motor.getConfigurator().apply(openLoopRampsConfig);
+    // OpenLoopRampsConfigs openLoopRampsConfig = new OpenLoopRampsConfigs();
+    // openLoopRampsConfig.VoltageOpenLoopRampPeriod = 0.0;
+    // m_motor.getConfigurator().apply(openLoopRampsConfig);
 
     g.DASHBOARD.updates.add(this);
   }

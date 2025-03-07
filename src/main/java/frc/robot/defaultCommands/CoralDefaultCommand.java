@@ -20,12 +20,17 @@ public class CoralDefaultCommand extends Command {
   @Override
   public void execute() {
     if(g.OI.DRIVER_CORAL_IN.getAsBoolean()){
-      g.ROBOT.coral.spinIn(0.25);
+      g.ROBOT.coral.spinIn(0.15);
     }else if(g.OI.DRIVER_CORAL_OUT.getAsBoolean()){
       g.ROBOT.coral.spinOut(g.CORAL.armState);
     }else { // OFF
       g.ROBOT.coral.spinIn(0);
     }
+    // if(g.OI.DRIVER_CORAL_REVERSE.getAsBoolean()){
+    //   g.ROBOT.coral.spinIn(-0.05);
+    // }else {
+    //   g.ROBOT.coral.spinIn(0);
+    // }
     g.ROBOT.coral.rotate(g.CORAL.armState);
   }
   

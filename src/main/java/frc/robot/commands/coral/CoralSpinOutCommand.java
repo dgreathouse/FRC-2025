@@ -44,6 +44,11 @@ public class CoralSpinOutCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_timer.hasElapsed(m_timeout);
+    if(m_timer.hasElapsed(m_timeout)){
+      g.ROBOT.coral.spinIn(0);
+      return m_timer.hasElapsed(m_timeout);
+    } else{
+      return false;
+    }
   }
 }

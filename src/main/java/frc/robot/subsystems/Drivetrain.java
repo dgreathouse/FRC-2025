@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.AprilTagAlignState;
 import frc.robot.lib.CoralArmState;
+import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.RobotAlignStates;
 import frc.robot.lib.StartLocation;
@@ -312,6 +313,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @return
    */
   public double setTargetRobotAngle(RobotAlignStates _state) {
+     g.DRIVETRAIN.driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
     switch (_state) {
       case BACK:
         g.ROBOT.alignmentState = RobotAlignStates.BACK;

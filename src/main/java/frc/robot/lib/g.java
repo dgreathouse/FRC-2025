@@ -171,12 +171,13 @@ public class g {
     //public static final Trigger DRIVER_TOGGLE_AUTO_DRIVE = driverController.povUp();
     public static final Trigger DRIVER_CORAL_IN = driverController.R1();
     public static final Trigger DRIVER_CORAL_OUT = driverController.L1();
+    public static final Trigger DRIVER_CORAL_REVERSE = driverController.triangle();
     public static final Trigger DRIVER_RESET_YAW = driverController.create();
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
     public static final Trigger DRIVER_STATION_RIGHT = driverController.circle();
     public static final Trigger DRIVER_STATION_LEFT = driverController.square();
-    public static final Trigger DRIVER_ALGAE_OUT = driverController.triangle();
-    public static final Trigger DRIVER_ALGAE_IN = driverController.cross();
+    // public static final Trigger DRIVER_ALGAE_OUT = driverController.triangle();
+    // public static final Trigger DRIVER_ALGAE_IN = driverController.cross();
     public static final Trigger DRIVER_MODE_SPEED_TOGGLE = driverController.PS();
      
     // Operator controller
@@ -377,7 +378,7 @@ public class g {
     public static volatile TagFoundState tagState = TagFoundState.EMPTY;
     public static volatile Pose2d aprilTagRequestedPose = new Pose2d();
     public static volatile boolean isGlobalPoseResetActive = true; // Not implemented
-    public static final double AMBIGUITY_SETPOINT = 0.05;
+    public static final double AMBIGUITY_SETPOINT = 0.075;
     public static volatile double leftTargetAmbiguity = -1.0;
     public static volatile double rightTargetAmbiguity = -1.0;
     public static volatile Field2d field2d = new Field2d();

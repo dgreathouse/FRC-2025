@@ -123,10 +123,11 @@ public class VisionProcessor implements IUpdateDashboard{
         g.AprilTagLocations.pose.add(new ApriltagPose(cx-(g.FIELD.TAG_TO_POST_m*0.866), cy+g.FIELD.TAG_TO_POST_m/2, cx + g.FIELD.TAG_TO_POST_m*0.866,cy - g.FIELD.TAG_TO_POST_m/2, cx, cy, 60));   // ID 11
         x = m_apriltagFieldLayout.getTagPose(12).get().getX();
         y = m_apriltagFieldLayout.getTagPose(12).get().getY();
-        g.AprilTagLocations.pose.add(new ApriltagPose(0.6315, 1.3429, 1.5871,0.6445,1.1247,0.9846, 54.011));  // ID 12
+        // g.AprilTagLocations.pose.add(new ApriltagPose(0.6315, 1.3429, 1.5871,0.6445,1.1247,0.9846, 54.0));  // ID 12
+        g.AprilTagLocations.pose.add(new ApriltagPose(0.6315, 1.3429, 1.4871,0.5445,1.1247,0.9846, 54.0));  // ID 12
         x = m_apriltagFieldLayout.getTagPose(13).get().getX();
         y = m_apriltagFieldLayout.getTagPose(13).get().getY();
-        g.AprilTagLocations.pose.add(new ApriltagPose(1.6789, 7.4039, 0.6315, 6.6872, 1.1247, 7.0456, -54.011));  // ID 13
+        g.AprilTagLocations.pose.add(new ApriltagPose(1.6789, 7.4039, 0.6315, 6.6872, 1.1247, 7.0456, -54.0));  // ID 13
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 14
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 15
         g.AprilTagLocations.pose.add(new ApriltagPose(0, 0, 0, 0, 0, 0, 0));  // ID 16
@@ -175,6 +176,7 @@ public class VisionProcessor implements IUpdateDashboard{
                         for (PhotonTrackedTarget target : targets) { // Loop through all the targets
                             ambiguity = target.poseAmbiguity; // Get the ambiguity of the target
                             tagID = target.getFiducialId(); // Get the ID of the target
+                            
                             if(ambiguity >= 0 && ambiguity < g.VISION.AMBIGUITY_SETPOINT && g.DRIVETRAIN.driveSpeedActual_mps < 1.0){  // If the ambiguity is within the setpoint
                                 if(tagState != TagFoundState.TARGET_ID_FOUND){  
                                     tagState = TagFoundState.TAG_FOUND; 
@@ -182,6 +184,7 @@ public class VisionProcessor implements IUpdateDashboard{
                                 Optional<EstimatedRobotPose> estimatedRobotPose = _poseEstimtor.update(photonPipelineResult); // Update the pose estimator with the result
                                 if(estimatedRobotPose.isPresent()){ 
                                     Pose2d pose = estimatedRobotPose.get().estimatedPose.toPose2d(); // Get the pose of the robot
+
                                     g.ROBOT.drive.addVisionMeasurement(pose, estimatedRobotPose.get().timestampSeconds); // Add the pose to the drive
                                     g.VISION.pose2d = Optional.of(pose); // Set the global vision pose to the pose
                                 }
