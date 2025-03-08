@@ -4,21 +4,13 @@
 
 package frc.robot.commands.coral;
 
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFXS;
-
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.g;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class CoralReverseCommand extends Command {
-  TalonFXS m_leftMotor;
-  TalonFXS m_rightMotor;
-  PIDController spinnerPid;
-  VoltageOut m_leftVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
-  VoltageOut m_rightVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
-
+  Timer m_timer = new Timer();
+  double m_timeOut_sec = 0.1;
   public CoralReverseCommand() {
     addRequirements(g.ROBOT.coral);
     
@@ -26,11 +18,15 @@ public class CoralReverseCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_timer.restart();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    g.ROBOT.coral.spin(-0.1);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -39,6 +35,6 @@ public class CoralReverseCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_timer.hasElapsed(m_timeOut_sec);
   }
 }
