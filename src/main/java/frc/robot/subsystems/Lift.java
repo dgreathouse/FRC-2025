@@ -62,7 +62,7 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
       moveToPosition(0);
         break;
       case L3:
-      moveToPosition(390);
+      moveToPosition(370);
         break;
       case ALGAE_HIGH:
         moveToPosition(400);

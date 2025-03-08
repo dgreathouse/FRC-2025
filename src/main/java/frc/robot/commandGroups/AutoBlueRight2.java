@@ -32,14 +32,14 @@ public class AutoBlueRight2 extends SequentialCommandGroup {
         new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(22, AprilTagAlignState.RIGHT), 0.5, 3),
         new CoralMoveToStateCommand(CoralArmState.L2)
       ),
-      new CoralSpinOutCommand(CoralArmState.L2, 1.5),
-      new AutoRotateToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.RIGHT), .3, 1),
-       new ParallelDeadlineGroup(
-        new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.RIGHT), 0.5, 7),
-        new CoralMoveToStateCommand(CoralArmState.START)
-      ),
-      new CoralSpinInCommand(CoralArmState.START, 2),
-      new AutoDriveToPose(new Pose2d(2,4, new Rotation2d(0)),0.3, 3)
+      new CoralSpinOutCommand(CoralArmState.L2, 1.5)
+      // new AutoRotateToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.RIGHT), .3, 1),
+      //  new ParallelDeadlineGroup(
+      //   new AutoDriveToPose(g.ROBOT.vision.getRobotPoseForAprilTag(12, AprilTagAlignState.RIGHT), 0.5, 7),
+      //   new CoralMoveToStateCommand(CoralArmState.START)
+      // ),
+      // new CoralSpinInCommand(CoralArmState.START, 2),
+      // new AutoDriveToPose(new Pose2d(2,4, new Rotation2d(0)),0.3, 3)
     );
   }
 }
