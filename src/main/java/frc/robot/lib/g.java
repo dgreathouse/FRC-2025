@@ -378,7 +378,7 @@ public class g {
     public static volatile TagFoundState tagState = TagFoundState.EMPTY;
     public static volatile Pose2d aprilTagRequestedPose = new Pose2d();
     public static volatile boolean isGlobalPoseResetActive = true; // Not implemented
-    public static final double AMBIGUITY_SETPOINT = 0.075;
+    public static final double AMBIGUITY_SETPOINT = 0.02;
     public static volatile double leftTargetAmbiguity = -1.0;
     public static volatile double rightTargetAmbiguity = -1.0;
     public static volatile Field2d field2d = new Field2d();

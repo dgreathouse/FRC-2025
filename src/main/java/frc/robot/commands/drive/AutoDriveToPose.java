@@ -45,6 +45,7 @@ public class AutoDriveToPose extends Command {
     //m_drivePID.setIntegratorRange(-0.35, 0.35);
 
     m_robotTargetAngle_deg = _desiredPose.getRotation().getDegrees();
+    m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
     m_turnPID.setTolerance(Math.toRadians(.2));
     m_turnPID.setIntegratorRange(-0.05, 0.05);
     m_turnPID.setIZone(0.15);
