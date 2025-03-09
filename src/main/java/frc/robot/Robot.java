@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
     // Setup the autonomous play default and send to dashboard for selection
     m_autoChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
     m_autoChooser.addOption("Blue Right 2", new AutoBlueRight2(8));
-    m_autoChooser.addOption("Blue Left 2", new AutoBlueLeft2(0));
+    m_autoChooser.addOption("Blue Left 2", new AutoBlueLeft2(8));
     m_autoChooser.addOption("Red Left 2", new AutoRedLeft2(0));
     m_autoChooser.addOption("Red Right 2", new AutoRedRight2(0));
     //m_autoChooser.addOption("Drive To Pose Test", new AutoDriveToPoseTest());
@@ -168,7 +168,7 @@ public class Robot extends TimedRobot {
     g.OI.BB_ALGAE_START.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.START; }, g.ROBOT.coral ));
     g.OI.BB_CORAL_L3.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L3; }, g.ROBOT.coral ));
     g.OI.BB_CORAL_L2.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L2; }, g.ROBOT.coral ));
-    g.OI.BB_CORAL_L1.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.L1; }, g.ROBOT.coral ));
+    g.OI.BB_CORAL_L1.onTrue(new InstantCommand(() ->{g.ROBOT.coral.setCoralArmState(CoralArmState.L1); }, g.ROBOT.coral ));
     g.OI.BB_CORAL_START.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.START; }, g.ROBOT.coral ));
 
      g.OI.BB_ROBOT_BACK.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.BACK); }, g.ROBOT.drive ));
@@ -177,8 +177,10 @@ public class Robot extends TimedRobot {
      g.OI.BB_ROBOT_FRONT.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.FRONT); }, g.ROBOT.drive ));
      g.OI.BB_ROBOT_FRONT_RIGHT.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.FRONT_RIGHT); }, g.ROBOT.drive ));
      g.OI.BB_ROBOT_FRONT_LEFT.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.FRONT_LEFT); }, g.ROBOT.drive ));
+     g.OI.BB_LIFT_CLIMB_UP.onTrue(new InstantCommand(() ->{g.ROBOT.lift.moveWithVoltage (6,CoralArmState.LIFT_CLIMB_UP);} ));
+     g.OI.BB_LIFT_CLIMB_UP.onFalse(new InstantCommand(() ->{g.ROBOT.lift.moveWithVoltage (0,CoralArmState.LIFT_CLIMB_UP);} ));
 
-     g.OI.BB_LIFT_CLIMB_UP.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.LIFT_CLIMB_UP; }, g.ROBOT.coral ));
+    // g.OI.BB_LIFT_CLIMB_UP.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.LIFT_CLIMB_UP; }, g.ROBOT.coral ));
      g.OI.BB_LIFT_CLIMB_DOWN.onTrue(new InstantCommand(() ->{ g.CORAL.armState = CoralArmState.LIFT_CLIMB_DOWN; }, g.ROBOT.coral ));
      
      g.OI.BB_ROBOT_STATION_LEFT.onTrue(new InstantCommand(() ->{ g.ROBOT.drive.setTargetRobotAngle(RobotAlignStates.STATION_LEFT); }, g.ROBOT.drive ));

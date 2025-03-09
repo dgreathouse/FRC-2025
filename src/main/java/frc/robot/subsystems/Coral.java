@@ -108,7 +108,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
       speed = 0.45;
         break;
       case L1:
-      speed = 0.15;
+      speed = 0.10;
         break;
       case L2:
       speed = 0.25;
@@ -126,6 +126,10 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     m_rightMotor.setControl(m_rightVoltageOut.withOutput(-speed * g.ROBOT.MAX_BATTERY_SUPPLY_volts));
   
   }
+  public void setCoralArmState(CoralArmState _state){
+
+    g.CORAL.armState = _state;
+  }
   /**
    * Rotates the arm to the desired state
    * @param _state The CoralArmState to rotate to as L1, L2, L3, ALGAE_HIGH, ALGAE_LOW, START
@@ -133,7 +137,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
   public void rotate(CoralArmState _state){
     switch (_state) { // TODO: adjust the angles for the levels
       case L1:
-        rotateToAngle(55);
+        rotateToAngle(65);
         break;
       case L2:
       rotateToAngle(60);
@@ -169,7 +173,7 @@ public class Coral extends SubsystemBase implements IUpdateDashboard{
     //double ff = m_rotateFF.calculate(Math.toRadians(_angle_deg), 0.1);
     double pid = m_rotatePID.calculate(Math.toRadians(getRotateAngle_deg()), Math.toRadians(_angle_deg));
     SmartDashboard.putNumber("Coral/pid", pid);
-    pid = MathUtil.clamp(pid, -8, 8);
+    pid = MathUtil.clamp(pid, -5.5, 8);
     m_rotateMotor.setVoltage(pid);
   }
 

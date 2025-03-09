@@ -74,7 +74,7 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
         moveToPosition(0);
         break;
         case LIFT_CLIMB_UP:
-        moveToPosition(350);  
+        // moveToPosition(350);  
         break;
         case LIFT_CLIMB_DOWN:
         moveToPosition(100);    
@@ -95,6 +95,20 @@ public class Lift extends SubsystemBase implements IUpdateDashboard{
   public double getPosition_mm(){
     return m_motor.getPosition().getValueAsDouble() / g.LIFT.MOTOR_ROTATIONS_TO_LIFT_DISTANCE_rotPmm;
   } 
+  public void moveWithVoltage(double _volts, CoralArmState _state){
+    g.CORAL.armState = _state;
+    if (_volts > 0 && getPosition_mm()<350 ){
+       m_motor.setControl(m_voltageOut.withOutput(_volts));
+
+    } else {
+      m_motor.setControl(m_voltageOut.withOutput(0));
+
+
+    }
+    
+    
+
+  }
   public void moveWithVoltage(double _volts){
     m_motor.setControl(m_voltageOut.withOutput(_volts));
 
